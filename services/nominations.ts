@@ -4,10 +4,10 @@ import { Category, Nomination } from 'types/nominations';
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
 const categoriesBase = base('categories');
 
-export const getCategories = async () => {
+export const getCategories = async (): Promise<Category[]> => {
   const categoriesResult = await categoriesBase.select().firstPage();
 
-  const categories = [];
+  const categories: Category[] = [];
   categoriesResult.forEach((category) => {
     const formattedCategory: Category = {
       id: category.id,

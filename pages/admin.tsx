@@ -11,7 +11,7 @@ import { getCategories, getNominations } from 'services/nominations';
 import { Category, Nomination } from 'types/nominations';
 
 interface Props {
-  categories: any;
+  categories: Category[];
   nominations: Nomination[];
 }
 
@@ -37,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const categories = await getCategories();
-  console.log(categories);
 
   return { props: { categories } };
 };
