@@ -8,6 +8,9 @@ export interface Nomination {
 }
 
 export interface Category {
-  id: number;
+  id: string;
+  slug: string;
   name: string;
+  nominations: string[];
+  bets: string[];
 }

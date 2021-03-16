@@ -1,101 +1,30 @@
-import { db } from 'lib/db';
+import Airtable from 'airtable';
 import { Category, Nomination } from 'types/nominations';
 
-interface ResponseNomination {
-  id: number;
-  year: number;
-  category_id: number;
-  category_name: string;
-  won: boolean;
-  film: string;
-  nominee: string;
-}
+const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
+const categoriesBase = base('categories');
 
-type NominationsResponse = ResponseNomination[];
+export const getCategories = async () => {
+  const categoriesResult = await categoriesBase.select().firstPage();
 
-export const getNominations = async (): Promise<Nomination[]> => {
-  try {
-    const nominations: NominationsResponse = await db.any(
-      `
-      SELECT 
-        nominations.id,
-        nominations.year,
-        nominations.category as "category_id",
-        nominations.won,
-        nominations.film,
-        nominations.nominee,
-        categories.name as "category_name"
-      FROM nominations
-      JOIN categories
-      ON nominations.category = categories.id
-      `
-    );
+  const categories = [];
+  categoriesResult.forEach((category) => {
+    const formattedCategory: Category = {
+      id: category.id,
+      slug: category.get('slug'),
+      name: category.get('name'),
+      nominations: category.get('nominations') ?? null,
+      bets: category.get('bets') ?? null
+    };
+    categories.push(formattedCategory);
+  });
 
-    return formatNominations(nominations);
-  } catch (e) {
-    console.error(e);
-  }
+  return categories;
 };
 
-const formatNominations = (nominations: NominationsResponse): Nomination[] => {
-  return nominations.map((nomination) => ({
-    id: nomination.id,
-    year: nomination.year,
-    category: {
-      id: nomination.category_id,
-      name: nomination.category_name
-    },
-    won: nomination.won,
-    film: nomination.film,
-    nominee: nomination.nominee
-  }));
-};
-
-export const addNomination = async (nomination: Nomination) => {
+export const getNominations = async (): Promise<any> => {
   try {
-    const insertedNominationId: Number = await db.one(
-      `
-      INSERT INTO
-        nominations(
-          year,
-          category,
-          film,
-          nominee
-        )
-      VALUES(
-        $1,
-        $2,
-        $3,
-        $4
-      )
-      RETURNING id
-      `,
-      [
-        nomination.year,
-        nomination.category,
-        nomination.film,
-        nomination.nominee
-      ]
-    );
-
-    return insertedNominationId;
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const getCategories = async (): Promise<Category[]> => {
-  try {
-    const categories: Category[] = await db.any(
-      `
-      SELECT 
-        id,
-        name
-      FROM categories
-      `
-    );
-
-    return categories;
+    return {};
   } catch (e) {
     console.error(e);
   }
