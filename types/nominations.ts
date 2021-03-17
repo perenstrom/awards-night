@@ -1,5 +1,5 @@
 export interface Nomination {
-  id: number;
+  id: string;
   year: number;
   category: Category;
   won: boolean;
