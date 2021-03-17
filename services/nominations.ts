@@ -1,4 +1,5 @@
 import Airtable from 'airtable';
+import Record from 'airtable/lib/record';
 import { Category, Nomination } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
@@ -9,18 +10,27 @@ export const getCategories = async (): Promise<Category[]> => {
 
   const categories: Category[] = [];
   categoriesResult.forEach((category) => {
-    const formattedCategory: Category = {
-      id: category.id,
-      slug: category.get('slug'),
-      name: category.get('name'),
-      nominations: category.get('nominations') ?? null,
-      bets: category.get('bets') ?? null
-    };
-    categories.push(formattedCategory);
+    categories.push(formatCategory(category));
   });
 
   return categories;
 };
+
+export const getCategory = async (slug: string): Promise<Category> => {
+  const categoryResult = await categoriesBase
+    .select({ filterByFormula: `{slug} = '${slug}'` })
+    .firstPage();
+
+  return formatCategory(categoryResult[0]);
+};
+
+const formatCategory = (categoryResponse: Record): Category => ({
+  id: categoryResponse.id,
+  slug: categoryResponse.get('slug'),
+  name: categoryResponse.get('name'),
+  nominations: categoryResponse.get('nominations') ?? null,
+  bets: categoryResponse.get('bets') ?? null
+});
 
 export const getNominations = async (): Promise<any> => {
   try {
