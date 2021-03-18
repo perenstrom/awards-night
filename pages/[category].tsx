@@ -8,9 +8,9 @@ import {
   getFilms,
   getNominations
 } from 'services/nominations';
-import { Category, Film, Nomination, NormalizedFilms } from 'types/nominations';
+import { Category, Nomination, NormalizedFilms } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
-import { NominatedFilm } from 'components/NominatedFilm';
+import { Category as CategoryComponent } from 'components/Category';
 
 interface Props {
   category: Category;
@@ -29,16 +29,8 @@ const CategoryPage: NextPage<Props> = ({ category, nominations, films }) => {
         <title>{category.name}</title>
       </Head>
       <ul>
-        {nominations.map((nomination) => (
-          <NominatedFilm
-            nomination={nomination}
-            film={films[nomination.film]}
-          />
-        ))}
+        <CategoryComponent nominations={nominations} films={films} />
       </ul>
-      <pre>{JSON.stringify(category, null, 2)}</pre>
-      <pre>{JSON.stringify(nominations, null, 2)}</pre>
-      <pre>{JSON.stringify(films, null, 2)}</pre>
     </div>
   );
 };
