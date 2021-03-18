@@ -1,10 +1,11 @@
 import Airtable from 'airtable';
 import Record from 'airtable/lib/record';
-import { Category, Nomination } from 'types/nominations';
+import { Category, Film, Nomination } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
 const categoriesBase = base('categories');
 const nominationsBase = base('nominations');
+const filmsBase = base('films');
 
 export const getCategories = async (): Promise<Category[]> => {
   const categoriesResult = await categoriesBase.select().firstPage();
@@ -59,4 +60,25 @@ const formatNomination = (nominationResponse: Record): Nomination => ({
   film: nominationResponse.get('film')[0],
   nominee: nominationResponse.get('nominee') ?? null,
   won: !!nominationResponse.get('won')
+});
+
+export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
+  const query = `OR(${filmIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+    `;
+  const filmsResult = await filmsBase
+    .select({ filterByFormula: query })
+    .firstPage();
+
+  const films: Film[] = [];
+  filmsResult.forEach((film) => {
+    films.push(formatFilm(film));
+  });
+
+  return films;
+};
+
+const formatFilm = (filmResponse: Record): Film => ({
+  id: filmResponse.id,
+  imdbId: filmResponse.get('imdb_id'),
+  name: filmResponse.get('name')
 });

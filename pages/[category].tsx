@@ -5,21 +5,23 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import {
   getCategories,
   getCategory,
+  getFilms,
   getNominations
 } from 'services/nominations';
-import { Category, Nomination } from 'types/nominations';
+import { Category, Film, Nomination } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 
 interface Props {
   category: Category;
   nominations: Nomination[];
+  films: Film[];
 }
 
 interface Params extends ParsedUrlQuery {
   category: string;
 }
 
-const CategoryPage: NextPage<Props> = ({ category, nominations }) => {
+const CategoryPage: NextPage<Props> = ({ category, nominations, films }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -27,6 +29,7 @@ const CategoryPage: NextPage<Props> = ({ category, nominations }) => {
       </Head>
       <pre>{JSON.stringify(category, null, 2)}</pre>
       <pre>{JSON.stringify(nominations, null, 2)}</pre>
+      <pre>{JSON.stringify(films, null, 2)}</pre>
     </div>
   );
 };
@@ -36,8 +39,9 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 }) => {
   const category = await getCategory(params.category);
   const nominations = await getNominations(category.nominations);
+  const films = await getFilms(nominations.map((n) => n.film));
 
-  return { props: { category, nominations } };
+  return { props: { category, nominations, films } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

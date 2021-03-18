@@ -14,3 +14,9 @@ export interface Category {
   nominations: string[];
   bets: string[];
 }
+
+export interface Film {
+  id: string;
+  imdbId: string;
+  name: string;
+}
