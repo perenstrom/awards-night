@@ -20,3 +20,5 @@ export interface Film {
   imdbId: string;
   name: string;
 }
+
+export type NormalizedFilms = Record<string, Film>;

@@ -8,13 +8,14 @@ import {
   getFilms,
   getNominations
 } from 'services/nominations';
-import { Category, Film, Nomination } from 'types/nominations';
+import { Category, Film, Nomination, NormalizedFilms } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
+import { NominatedFilm } from 'components/NominatedFilm';
 
 interface Props {
   category: Category;
   nominations: Nomination[];
-  films: Film[];
+  films: NormalizedFilms;
 }
 
 interface Params extends ParsedUrlQuery {
@@ -27,6 +28,14 @@ const CategoryPage: NextPage<Props> = ({ category, nominations, films }) => {
       <Head>
         <title>{category.name}</title>
       </Head>
+      <ul>
+        {nominations.map((nomination) => (
+          <NominatedFilm
+            nomination={nomination}
+            film={films[nomination.film]}
+          />
+        ))}
+      </ul>
       <pre>{JSON.stringify(category, null, 2)}</pre>
       <pre>{JSON.stringify(nominations, null, 2)}</pre>
       <pre>{JSON.stringify(films, null, 2)}</pre>
@@ -40,8 +49,10 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   const category = await getCategory(params.category);
   const nominations = await getNominations(category.nominations);
   const films = await getFilms(nominations.map((n) => n.film));
+  const normalizedFilms: NormalizedFilms = {};
+  films.forEach((film) => (normalizedFilms[film.id] = film));
 
-  return { props: { category, nominations, films } };
+  return { props: { category, nominations, films: normalizedFilms } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
