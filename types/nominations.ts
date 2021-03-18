@@ -13,6 +13,8 @@ export interface Category {
   name: string;
   nominations: string[];
   bets: string[];
+  previousCategory: string;
+  nextCategory: string;
 }
 
 export interface Film {

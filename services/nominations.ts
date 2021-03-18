@@ -11,27 +11,38 @@ export const getCategories = async (): Promise<Category[]> => {
   const categoriesResult = await categoriesBase.select().firstPage();
 
   const categories: Category[] = [];
-  categoriesResult.forEach((category) => {
-    categories.push(formatCategory(category));
+  categoriesResult.forEach((category, index) => {
+    const previousCategory =
+      index === 0 ? null : categoriesResult[index - 1].get('slug');
+    const nextCategory =
+      index === categoriesResult.length - 1
+        ? null
+        : categoriesResult[index + 1].get('slug');
+    categories.push(formatCategory(category, previousCategory, nextCategory));
   });
 
   return categories;
 };
 
 export const getCategory = async (slug: string): Promise<Category> => {
-  const categoryResult = await categoriesBase
-    .select({ filterByFormula: `slug = '${slug}'` })
-    .firstPage();
+  const categories = await getCategories();
+  const category = categories.find((category) => category.slug === slug);
 
-  return formatCategory(categoryResult[0]);
+  return { ...category };
 };
 
-const formatCategory = (categoryResponse: Record): Category => ({
+const formatCategory = (
+  categoryResponse: Record,
+  previousCategory: string,
+  nextCategory: string
+): Category => ({
   id: categoryResponse.id,
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
   nominations: categoryResponse.get('nominations') ?? null,
-  bets: categoryResponse.get('bets') ?? null
+  bets: categoryResponse.get('bets') ?? null,
+  previousCategory: previousCategory,
+  nextCategory: nextCategory
 });
 
 export const getNominations = async (
@@ -46,7 +57,7 @@ export const getNominations = async (
     .firstPage();
 
   const nominations: Nomination[] = [];
-  nominationsResult.forEach((nomination) => {
+  nominationsResult.forEach((nomination, index) => {
     nominations.push(formatNomination(nomination));
   });
 

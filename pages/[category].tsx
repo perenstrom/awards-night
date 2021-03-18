@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import {
   getCategories,
@@ -11,6 +12,16 @@ import {
 import { Category, Nomination, NormalizedFilms } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
+
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 50px auto 50px;
+  justify-content: stretch;
+  align-content: stretch;
+  width: 100vw;
+  height: 100vh;
+`;
 
 interface Props {
   category: Category;
@@ -28,9 +39,9 @@ const CategoryPage: NextPage<Props> = ({ category, nominations, films }) => {
       <Head>
         <title>{category.name}</title>
       </Head>
-      <ul>
+      <GridContainer>
         <CategoryComponent nominations={nominations} films={films} />
-      </ul>
+      </GridContainer>
     </div>
   );
 };
