@@ -8,13 +8,15 @@ import {
   getCategories,
   getCategory,
   getFilms,
-  getNominations
+  getNominations,
+  getPlayers
 } from 'services/nominations';
 import {
   Category,
   Nomination,
   NormalizedBets,
-  NormalizedFilms
+  NormalizedFilms,
+  NormalizedPlayers
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -35,13 +37,20 @@ interface Props {
   nominations: Nomination[];
   films: NormalizedFilms;
   bets: NormalizedBets;
+  players: NormalizedPlayers;
 }
 
 interface Params extends ParsedUrlQuery {
   category: string;
 }
 
-const CategoryPage: NextPage<Props> = ({ category, nominations, films, bets }) => {
+const CategoryPage: NextPage<Props> = ({
+  category,
+  nominations,
+  films,
+  bets,
+  players
+}) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -49,8 +58,13 @@ const CategoryPage: NextPage<Props> = ({ category, nominations, films, bets }) =
       </Head>
       <GridContainer>
         <CategoryMenu category={category} />
-        <CategoryComponent nominations={nominations} films={films} />
-        <pre>{JSON.stringify(bets, null, 2)}</pre>
+        <CategoryComponent
+          nominations={nominations}
+          films={films}
+          bets={bets}
+          players={players}
+        />
+        <pre>{JSON.stringify(players, null, 2)}</pre>
       </GridContainer>
     </div>
   );
@@ -67,13 +81,17 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   const bets = await getBets(nominations.map((n) => n.bets).flat());
   const normalizedBets: NormalizedBets = {};
   bets.forEach((bet) => (normalizedBets[bet.id] = bet));
+  const players = await getPlayers(bets.map((b) => b.player));
+  const normalizedPlayers: NormalizedPlayers = {};
+  players.forEach((player) => (normalizedPlayers[player.id] = player));
 
   return {
     props: {
       category,
       nominations,
       films: normalizedFilms,
-      bets: normalizedBets
+      bets: normalizedBets,
+      players: normalizedPlayers
     }
   };
 };

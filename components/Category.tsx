@@ -1,5 +1,10 @@
 import { memo } from 'react';
-import { Nomination, NormalizedBets, NormalizedFilms } from 'types/nominations';
+import {
+  Nomination,
+  NormalizedBets,
+  NormalizedFilms,
+  NormalizedPlayers
+} from 'types/nominations';
 import styled from 'styled-components';
 import { NominatedFilm } from './NominatedFilm';
 
@@ -15,10 +20,11 @@ interface Props {
   nominations: Nomination[];
   films: NormalizedFilms;
   bets: NormalizedBets;
+  players: NormalizedPlayers;
 }
 
 export const Category: React.FC<Props> = memo(
-  ({ nominations, films, bets }) => {
+  ({ nominations, films, bets, players }) => {
     return (
       <FilmList>
         {nominations.map((nomination) => (
@@ -27,6 +33,7 @@ export const Category: React.FC<Props> = memo(
             nomination={nomination}
             film={films[nomination.film]}
             bets={bets}
+            players={players}
           />
         ))}
       </FilmList>

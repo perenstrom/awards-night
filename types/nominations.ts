@@ -28,8 +28,15 @@ export type NormalizedFilms = Record<string, Film>;
 
 export interface Bet {
   id: string;
-  user: string;
+  player: string;
   nomination: string;
 }
 
 export type NormalizedBets = Record<string, Bet>;
+
+export interface Player {
+  id: string;
+  name: string;
+}
+
+export type NormalizedPlayers = Record<string, Player>;

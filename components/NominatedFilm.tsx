@@ -1,5 +1,10 @@
 import { memo } from 'react';
-import { Film, Nomination, NormalizedBets } from 'types/nominations';
+import {
+  Film,
+  Nomination,
+  NormalizedBets,
+  NormalizedPlayers
+} from 'types/nominations';
 import styled from 'styled-components';
 
 const Wrapper = styled.li`
@@ -38,14 +43,15 @@ interface Props {
   nomination: Nomination;
   film: Film;
   bets: NormalizedBets;
+  players: NormalizedPlayers;
 }
 
 export const NominatedFilm: React.FC<Props> = memo(
-  ({ nomination, film, bets }) => {
+  ({ nomination, film, bets, players }) => {
     const bettingPlayers = nomination.bets
       ? nomination.bets.map((bet) => (
           <BetList>
-            <BettingPlayer>{bet}</BettingPlayer>
+            <BettingPlayer key={bet}>{players[bets[bet].player].name}</BettingPlayer>
           </BetList>
         ))
       : null;

@@ -1,12 +1,13 @@
 import Airtable from 'airtable';
 import Record from 'airtable/lib/record';
-import { Bet, Category, Film, Nomination } from 'types/nominations';
+import { Bet, Category, Film, Nomination, Player } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
 const categoriesBase = base('categories');
 const nominationsBase = base('nominations');
 const filmsBase = base('films');
 const betsBase = base('bets');
+const playersBase = base('players');
 
 export const getCategories = async (): Promise<Category[]> => {
   const categoriesResult = await categoriesBase.select().firstPage();
@@ -113,6 +114,26 @@ export const getBets = async (betIds: string[]): Promise<Bet[]> => {
 
 const formatBet = (betResponse: Record): Bet => ({
   id: betResponse.id,
-  user: betResponse.get('user')[0],
+  player: betResponse.get('player')[0],
   nomination: betResponse.get('nomination')[0]
+});
+
+export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
+  const query = `OR(${playerIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+    `;
+  const playersResult = await playersBase
+    .select({ filterByFormula: query })
+    .firstPage();
+
+  const players: Player[] = [];
+  playersResult.forEach((player) => {
+    players.push(formatPlayer(player));
+  });
+
+  return players;
+};
+
+const formatPlayer = (playerResponse: Record): Player => ({
+  id: playerResponse.id,
+  name: playerResponse.get('name')
 });
