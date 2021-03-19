@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Film, Nomination } from 'types/nominations';
+import { Film, Nomination, NormalizedBets } from 'types/nominations';
 import styled from 'styled-components';
 
 const Wrapper = styled.li`
@@ -18,19 +18,47 @@ const Poster = styled.img`
   width: 100%;
 `;
 
+const BetList = styled.ul`
+  text-align: center;
+  overflow: hidden;
+`;
+
+const BettingPlayer = styled.li`
+  list-style: none;
+  display: inline-block;
+  background-color: #2ecc71;
+  padding: 0.3em;
+  border-radius: 0.3em;
+  margin-right: 0.3em;
+  margin-top: 0.3em;
+  font-size: 1.3em;
+`;
+
 interface Props {
   nomination: Nomination;
   film: Film;
+  bets: NormalizedBets;
 }
 
-export const NominatedFilm: React.FC<Props> = memo(({ nomination, film }) => {
-  return (
-    <Wrapper>
-      <Poster
-        alt={film.name}
-        src={`https://via.placeholder.com/500x700.png?text=${film.name}`}
-      />
-      <p>{nomination.nominee}</p>
-    </Wrapper>
-  );
-});
+export const NominatedFilm: React.FC<Props> = memo(
+  ({ nomination, film, bets }) => {
+    const bettingPlayers = nomination.bets
+      ? nomination.bets.map((bet) => (
+          <BetList>
+            <BettingPlayer>{bet}</BettingPlayer>
+          </BetList>
+        ))
+      : null;
+
+    return (
+      <Wrapper>
+        <Poster
+          alt={film.name}
+          src={`https://via.placeholder.com/500x700.png?text=${film.name}`}
+        />
+        <p>{nomination.nominee}</p>
+        {bettingPlayers}
+      </Wrapper>
+    );
+  }
+);

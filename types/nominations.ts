@@ -5,6 +5,7 @@ export interface Nomination {
   won: boolean;
   film: string;
   nominee: string;
+  bets: string[];
 }
 
 export interface Category {
@@ -24,3 +25,11 @@ export interface Film {
 }
 
 export type NormalizedFilms = Record<string, Film>;
+
+export interface Bet {
+  id: string;
+  user: string;
+  nomination: string;
+}
+
+export type NormalizedBets = Record<string, Bet>;
