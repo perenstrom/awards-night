@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/globals.css';
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
@@ -7,6 +6,10 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: Futura, Helvetica, Arial, sans-serif;
+  }
+
+  p {
+    margin: 0;
   }
 `;
 

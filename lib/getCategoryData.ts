@@ -51,7 +51,6 @@ export const getCategoryData = async (): Promise<CategoryData> => {
           normalizedPlayers[normalizedBets[bet].player].correct++;
         })
       }
-      status.completedCategories += normalizedNominations[n].won ? 1 : 0;
     });
   });
 

@@ -52,13 +52,15 @@ export const NominatedFilm: React.FC<Props> = memo(
     const bettingPlayers = nomination.bets
       ? nomination.bets.map((bet) => (
           <BetList>
-            <BettingPlayer key={bet}>{players[bets[bet].player].name}</BettingPlayer>
+            <BettingPlayer key={bet}>
+              {players[bets[bet].player].name}
+            </BettingPlayer>
           </BetList>
         ))
       : null;
 
     return (
-      <Wrapper>
+      <Wrapper winner={nomination.won}>
         <Poster
           alt={film.name}
           src={`https://via.placeholder.com/500x700.png?text=${film.name}`}

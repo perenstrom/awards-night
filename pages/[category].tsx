@@ -1,19 +1,10 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { getCategories } from 'services/nominations';
 import {
-  getBets,
-  getCategories,
-  getCategory,
-  getFilms,
-  getNominations,
-  getPlayers
-} from 'services/nominations';
-import {
-  CategoryData,
   Nomination,
   NormalizedBets,
   NormalizedCategories,
@@ -26,11 +17,12 @@ import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
 import { getCategoryData } from 'lib/getCategoryData';
+import { PlayerStandings } from 'components/PlayerStandings';
 
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 50px auto 50px;
+  grid-template-rows: 50px auto 66px;
   justify-content: stretch;
   align-content: stretch;
   width: 100vw;
@@ -55,18 +47,19 @@ const CategoryPage: NextPage<Props> = ({
   nominations,
   films,
   bets,
-  players
+  players,
+  status
 }) => {
   const router = useRouter();
   const { category: slug } = router.query;
   const category = categories[slug as string];
   const categoryNominations: Nomination[] = category.nominations.map(
     (n) => nominations[n]
-    );
-    console.log(categoryNominations);
+  );
+  console.log(status);
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>{category.name}</title>
       </Head>
@@ -78,6 +71,12 @@ const CategoryPage: NextPage<Props> = ({
           bets={bets}
           players={players}
         />
+        <PlayerStandings
+          completedCategories={status.completedCategories}
+          players={Object.entries(players)
+            .map((p) => p[1])
+            .sort((a, b) => a.correct - b.correct)}
+        />
       </GridContainer>
     </div>
   );
@@ -85,7 +84,14 @@ const CategoryPage: NextPage<Props> = ({
 
 export const getStaticProps: GetStaticProps<Props, Params> = async () => {
   const categoryData = await getCategoryData();
-  const { categories, nominations, films, bets, players, status } = categoryData;
+  const {
+    categories,
+    nominations,
+    films,
+    bets,
+    players,
+    status
+  } = categoryData;
 
   return {
     props: {
