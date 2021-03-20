@@ -10,17 +10,19 @@ const betsBase = base('bets');
 const playersBase = base('players');
 
 export const getCategories = async (): Promise<Category[]> => {
-  const categoriesResult = await categoriesBase.select().firstPage();
-
   const categories: Category[] = [];
-  categoriesResult.forEach((category, index) => {
-    const previousCategory =
-      index === 0 ? null : categoriesResult[index - 1].get('slug');
-    const nextCategory =
-      index === categoriesResult.length - 1
-        ? null
-        : categoriesResult[index + 1].get('slug');
-    categories.push(formatCategory(category, previousCategory, nextCategory));
+  await categoriesBase.select().eachPage((categoriesResult, fetchNextPage) => {
+    categoriesResult.forEach((category, index) => {
+      const previousCategory =
+        index === 0 ? null : categoriesResult[index - 1].get('slug');
+      const nextCategory =
+        index === categoriesResult.length - 1
+          ? null
+          : categoriesResult[index + 1].get('slug');
+      categories.push(formatCategory(category, previousCategory, nextCategory));
+    });
+
+    fetchNextPage();
   });
 
   return categories;
@@ -54,14 +56,17 @@ export const getNominations = async (
     .map((id) => `RECORD_ID() = '${id}'`)
     .join(',')})
     `;
-  const nominationsResult = await nominationsBase
-    .select({ filterByFormula: query })
-    .firstPage();
 
   const nominations: Nomination[] = [];
-  nominationsResult.forEach((nomination, index) => {
-    nominations.push(formatNomination(nomination));
-  });
+  await nominationsBase
+    .select({ filterByFormula: query })
+    .eachPage((nominationsResult, fetchNextPage) => {
+      nominationsResult.forEach((nomination, index) => {
+        nominations.push(formatNomination(nomination));
+      });
+
+      fetchNextPage();
+    });
 
   return nominations;
 };
@@ -79,14 +84,16 @@ const formatNomination = (nominationResponse: Record): Nomination => ({
 export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
   const query = `OR(${filmIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
-  const filmsResult = await filmsBase
-    .select({ filterByFormula: query })
-    .firstPage();
-
   const films: Film[] = [];
-  filmsResult.forEach((film) => {
-    films.push(formatFilm(film));
-  });
+  await filmsBase
+    .select({ filterByFormula: query })
+    .eachPage((filmsResult, fetchNextPage) => {
+      filmsResult.forEach((film) => {
+        films.push(formatFilm(film));
+      });
+
+      fetchNextPage();
+    });
 
   return films;
 };
@@ -100,14 +107,16 @@ const formatFilm = (filmResponse: Record): Film => ({
 export const getBets = async (betIds: string[]): Promise<Bet[]> => {
   const query = `OR(${betIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
-  const betsResult = await betsBase
-    .select({ filterByFormula: query })
-    .firstPage();
-
   const bets: Bet[] = [];
-  betsResult.forEach((bet) => {
-    bets.push(formatBet(bet));
-  });
+  await betsBase
+    .select({ filterByFormula: query })
+    .eachPage((betsResult, fetchNextPage) => {
+      betsResult.forEach((bet) => {
+        bets.push(formatBet(bet));
+      });
+
+      fetchNextPage();
+    });
 
   return bets;
 };
@@ -121,14 +130,16 @@ const formatBet = (betResponse: Record): Bet => ({
 export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
   const query = `OR(${playerIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
-  const playersResult = await playersBase
-    .select({ filterByFormula: query })
-    .firstPage();
-
   const players: Player[] = [];
-  playersResult.forEach((player) => {
-    players.push(formatPlayer(player));
-  });
+  await playersBase
+    .select({ filterByFormula: query })
+    .eachPage((playersResult, fetchNextPage) => {
+      playersResult.forEach((player) => {
+        players.push(formatPlayer(player));
+      });
+
+      fetchNextPage();
+    });
 
   return players;
 };

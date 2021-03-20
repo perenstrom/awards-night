@@ -8,6 +8,8 @@ export interface Nomination {
   bets: string[];
 }
 
+export type NormalizedNominations = Record<string, Nomination>
+
 export interface Category {
   id: string;
   slug: string;
@@ -17,6 +19,8 @@ export interface Category {
   previousCategory: string;
   nextCategory: string;
 }
+
+export type NormalizedCategories = Record<string, Category>
 
 export interface Film {
   id: string;
@@ -40,3 +44,11 @@ export interface Player {
 }
 
 export type NormalizedPlayers = Record<string, Player>;
+
+export interface CategoryData {
+  categories: NormalizedCategories;
+  nominations: NormalizedNominations;
+  films: NormalizedFilms;
+  bets: NormalizedBets;
+  players: NormalizedPlayers;
+}

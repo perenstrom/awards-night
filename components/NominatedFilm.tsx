@@ -26,6 +26,7 @@ const Poster = styled.img`
 const BetList = styled.ul`
   text-align: center;
   overflow: hidden;
+  padding: 0;
 `;
 
 const BettingPlayer = styled.li`

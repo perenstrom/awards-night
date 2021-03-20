@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import styled from 'styled-components';
@@ -12,15 +13,18 @@ import {
   getPlayers
 } from 'services/nominations';
 import {
-  Category,
+  CategoryData,
   Nomination,
   NormalizedBets,
+  NormalizedCategories,
   NormalizedFilms,
+  NormalizedNominations,
   NormalizedPlayers
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
+import { getCategoryData } from 'lib/getCategoryData';
 
 const GridContainer = styled.div`
   display: grid;
@@ -33,8 +37,8 @@ const GridContainer = styled.div`
 `;
 
 interface Props {
-  category: Category;
-  nominations: Nomination[];
+  categories: NormalizedCategories;
+  nominations: NormalizedNominations;
   films: NormalizedFilms;
   bets: NormalizedBets;
   players: NormalizedPlayers;
@@ -45,12 +49,20 @@ interface Params extends ParsedUrlQuery {
 }
 
 const CategoryPage: NextPage<Props> = ({
-  category,
+  categories,
   nominations,
   films,
   bets,
   players
 }) => {
+  const router = useRouter();
+  const { category: slug } = router.query;
+  const category = categories[slug as string];
+  const categoryNominations: Nomination[] = category.nominations.map(
+    (n) => nominations[n]
+    );
+    console.log(categoryNominations);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -59,39 +71,27 @@ const CategoryPage: NextPage<Props> = ({
       <GridContainer>
         <CategoryMenu category={category} />
         <CategoryComponent
-          nominations={nominations}
+          nominations={categoryNominations}
           films={films}
           bets={bets}
           players={players}
         />
-        <pre>{JSON.stringify(players, null, 2)}</pre>
       </GridContainer>
     </div>
   );
 };
 
-export const getStaticProps: GetStaticProps<Props, Params> = async ({
-  params
-}) => {
-  const category = await getCategory(params.category);
-  const nominations = await getNominations(category.nominations);
-  const films = await getFilms(nominations.map((n) => n.film));
-  const normalizedFilms: NormalizedFilms = {};
-  films.forEach((film) => (normalizedFilms[film.id] = film));
-  const bets = await getBets(nominations.map((n) => n.bets).flat());
-  const normalizedBets: NormalizedBets = {};
-  bets.forEach((bet) => (normalizedBets[bet.id] = bet));
-  const players = await getPlayers(bets.map((b) => b.player));
-  const normalizedPlayers: NormalizedPlayers = {};
-  players.forEach((player) => (normalizedPlayers[player.id] = player));
+export const getStaticProps: GetStaticProps<Props, Params> = async () => {
+  const categoryData = await getCategoryData();
+  const { categories, nominations, films, bets, players } = categoryData;
 
   return {
     props: {
-      category,
+      categories,
       nominations,
-      films: normalizedFilms,
-      bets: normalizedBets,
-      players: normalizedPlayers
+      films,
+      bets,
+      players
     }
   };
 };
