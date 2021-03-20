@@ -146,5 +146,6 @@ export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
 
 const formatPlayer = (playerResponse: Record): Player => ({
   id: playerResponse.id,
-  name: playerResponse.get('name')
+  name: playerResponse.get('name'),
+  correct: 0
 });

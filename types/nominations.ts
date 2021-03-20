@@ -41,6 +41,7 @@ export type NormalizedBets = Record<string, Bet>;
 export interface Player {
   id: string;
   name: string;
+  correct: number;
 }
 
 export type NormalizedPlayers = Record<string, Player>;
@@ -51,4 +52,9 @@ export interface CategoryData {
   films: NormalizedFilms;
   bets: NormalizedBets;
   players: NormalizedPlayers;
+  status: Status;
+}
+
+export interface Status {
+  completedCategories: number;
 }

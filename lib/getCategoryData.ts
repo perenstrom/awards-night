@@ -11,7 +11,8 @@ import {
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  NormalizedPlayers
+  NormalizedPlayers,
+  Status
 } from 'types/nominations';
 
 export const getCategoryData = async (): Promise<CategoryData> => {
@@ -37,11 +38,29 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   const normalizedPlayers: NormalizedPlayers = {};
   players.forEach((p) => (normalizedPlayers[p.id] = p));
 
+  const status: Status = {
+    completedCategories: 0
+  };
+  categories.forEach((category) => {
+    const categoryNominations = category.nominations;
+    categoryNominations.forEach((n) => {
+      if(normalizedNominations[n].won) {
+        status.completedCategories++;
+        const winningBets = normalizedNominations[n].bets;
+        winningBets.forEach(bet => {
+          normalizedPlayers[normalizedBets[bet].player].correct++;
+        })
+      }
+      status.completedCategories += normalizedNominations[n].won ? 1 : 0;
+    });
+  });
+
   return {
     categories: normalizedCategories,
     films: normalizedFilms,
     nominations: normalizedNominations,
     bets: normalizedBets,
-    players: normalizedPlayers
+    players: normalizedPlayers,
+    status: status
   };
 };

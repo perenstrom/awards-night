@@ -19,7 +19,8 @@ import {
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  NormalizedPlayers
+  NormalizedPlayers,
+  Status
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -42,6 +43,7 @@ interface Props {
   films: NormalizedFilms;
   bets: NormalizedBets;
   players: NormalizedPlayers;
+  status: Status;
 }
 
 interface Params extends ParsedUrlQuery {
@@ -83,7 +85,7 @@ const CategoryPage: NextPage<Props> = ({
 
 export const getStaticProps: GetStaticProps<Props, Params> = async () => {
   const categoryData = await getCategoryData();
-  const { categories, nominations, films, bets, players } = categoryData;
+  const { categories, nominations, films, bets, players, status } = categoryData;
 
   return {
     props: {
@@ -91,7 +93,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async () => {
       nominations,
       films,
       bets,
-      players
+      players,
+      status
     }
   };
 };
