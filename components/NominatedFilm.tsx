@@ -51,8 +51,8 @@ export const NominatedFilm: React.FC<Props> = memo(
   ({ nomination, film, bets, players }) => {
     const bettingPlayers = nomination.bets
       ? nomination.bets.map((bet) => (
-          <BetList>
-            <BettingPlayer key={bet}>
+          <BetList key={bet}>
+            <BettingPlayer>
               {players[bets[bet].player].name}
             </BettingPlayer>
           </BetList>

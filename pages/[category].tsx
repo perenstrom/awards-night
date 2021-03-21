@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
 import { getCategoryData } from 'lib/getCategoryData';
 import { PlayerStandings } from 'components/PlayerStandings';
+import { calculateWinnings } from 'utils/nominations';
 
 const GridContainer = styled.div`
   display: grid;
@@ -44,18 +45,50 @@ interface Params extends ParsedUrlQuery {
 
 const CategoryPage: NextPage<Props> = ({
   categories,
-  nominations,
+  nominations: initialNominations,
   films,
   bets,
-  players,
-  status
+  players: initialPlayers,
+  status: initialStatus
 }) => {
   const router = useRouter();
   const { category: slug } = router.query;
   const category = categories[slug as string];
-  const categoryNominations: Nomination[] = category.nominations.map(
-    (n) => nominations[n]
+
+  const [nominations, setNominations] = useState<NormalizedNominations>(
+    initialNominations
   );
+  const [players, setPlayers] = useState<NormalizedPlayers>(initialPlayers);
+  const [status, setStatus] = useState<Status>(initialStatus);
+
+  const categoryNominations: Nomination[] = category.nominations.map((n) =>
+    nominations ? nominations[n] : initialNominations[n]
+  );
+
+  useEffect(() => {
+    const interval = setInterval(refreshNominations, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const refreshNominations = () => {
+    fetch('/api/nominations')
+      .then((result) => result.json())
+      .then(prepareNewNominationData);
+  };
+
+  const prepareNewNominationData = (nominations: NormalizedNominations) => {
+    const { players: normalizedPlayers, status } = calculateWinnings(
+      Object.entries(categories).map((p) => p[1]),
+      nominations,
+      bets,
+      Object.entries(players).map((p) => p[1])
+    );
+    setNominations(nominations);
+    setPlayers(normalizedPlayers);
+    setStatus(status);
+    console.log('updated');
+  };
 
   return (
     <div>
@@ -68,11 +101,13 @@ const CategoryPage: NextPage<Props> = ({
           nominations={categoryNominations}
           films={films}
           bets={bets}
-          players={players}
+          players={players ?? initialPlayers}
         />
         <PlayerStandings
-          completedCategories={status.completedCategories}
-          players={Object.entries(players)
+          completedCategories={
+            status?.completedCategories ?? initialStatus.completedCategories
+          }
+          players={Object.entries(players ?? initialPlayers)
             .map((p) => p[1])
             .sort((a, b) => a.correct - b.correct)}
         />

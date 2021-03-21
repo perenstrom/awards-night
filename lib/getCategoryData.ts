@@ -57,7 +57,7 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   };
 };
 
-/* export const refreshNominations = async (): Promise<NormalizedNominations> => {
+export const refreshNominations = async (): Promise<NormalizedNominations> => {
   const categories = await getCategories();
   const nominations = await getNominations(
     categories.map((c) => c.nominations).flat()
@@ -65,4 +65,6 @@ export const getCategoryData = async (): Promise<CategoryData> => {
 
   const normalizedNominations: NormalizedNominations = {};
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
-}; */
+
+  return normalizedNominations
+}; 
