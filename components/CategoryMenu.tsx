@@ -53,7 +53,7 @@ export const CategoryMenu: React.FC<Props> = memo(({ category }) => {
         <CategoryLinkDisabled>Previous</CategoryLinkDisabled>
       )}
       <CategoryTitle>{category.name}</CategoryTitle>
-      {category.previousCategory ? (
+      {category.nextCategory ? (
         <Link href={`/${category.nextCategory}`} passHref>
           <CategoryLink>Next</CategoryLink>
         </Link>
