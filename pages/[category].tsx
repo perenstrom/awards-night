@@ -56,7 +56,6 @@ const CategoryPage: NextPage<Props> = ({
   const categoryNominations: Nomination[] = category.nominations.map(
     (n) => nominations[n]
   );
-  console.log(status);
 
   return (
     <div>

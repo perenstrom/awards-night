@@ -101,7 +101,8 @@ export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
 const formatFilm = (filmResponse: Record): Film => ({
   id: filmResponse.id,
   imdbId: filmResponse.get('imdb_id'),
-  name: filmResponse.get('name')
+  name: filmResponse.get('name'),
+  poster: null
 });
 
 export const getBets = async (betIds: string[]): Promise<Bet[]> => {

@@ -59,12 +59,13 @@ export const NominatedFilm: React.FC<Props> = memo(
         ))
       : null;
 
+    const poster =
+      film.poster ??
+      `https://via.placeholder.com/500x700.png?text=${film.name}`;
+
     return (
       <Wrapper winner={nomination.won}>
-        <Poster
-          alt={film.name}
-          src={`https://via.placeholder.com/500x700.png?text=${film.name}`}
-        />
+        <Poster alt={film.name} src={poster} />
         <p>{nomination.nominee}</p>
         {bettingPlayers}
       </Wrapper>

@@ -5,6 +5,7 @@ import {
   getNominations,
   getPlayers
 } from 'services/nominations';
+import { getPoster } from 'services/tmdb';
 import {
   CategoryData,
   NormalizedBets,
@@ -27,6 +28,10 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
 
   const films = await getFilms(nominations.map((n) => n.film));
+  films.forEach(async f => {
+    const poster = await getPoster(f.imdbId);
+    f.poster = poster;
+  })
   const normalizedFilms: NormalizedFilms = {};
   films.forEach((f) => (normalizedFilms[f.id] = f));
 
