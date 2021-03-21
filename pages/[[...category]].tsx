@@ -53,7 +53,7 @@ const CategoryPage: NextPage<Props> = ({
 }) => {
   const router = useRouter();
   const { category: slug } = router.query;
-  const category = categories[slug as string];
+  const category = categories[(slug as string) ?? Object.keys(categories)[0]];
 
   const [nominations, setNominations] = useState<NormalizedNominations>(
     initialNominations
@@ -142,12 +142,15 @@ export const getStaticProps: GetStaticProps<Props, Params> = async () => {
 export const getStaticPaths: GetStaticPaths = async () => {
   const categories = await getCategories();
 
+  const indexPath = {
+    params: { category: [] }
+  };
   const paths = categories.map((category) => ({
-    params: { category: category.slug }
+    params: { category: [category.slug] }
   }));
 
   return {
-    paths: paths,
+    paths: [...paths, indexPath],
     fallback: false
   };
 };
