@@ -34,7 +34,7 @@ interface Props {
 export const PlayerStandings: React.FC<Props> = memo(
   ({ players, completedCategories }) => {
     const playerStandings = players.map((p) => (
-      <PlayerListItem>
+      <PlayerListItem key={p.id}>
         <p>{`${p.name}: ${p.correct}/${completedCategories}`}</p>
       </PlayerListItem>
     ));

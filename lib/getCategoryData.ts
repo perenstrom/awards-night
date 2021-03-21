@@ -12,9 +12,8 @@ import {
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  NormalizedPlayers,
-  Status
 } from 'types/nominations';
+import { calculateWinnings } from 'utils/nominations';
 
 export const getCategoryData = async (): Promise<CategoryData> => {
   const categories = await getCategories();
@@ -28,10 +27,10 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
 
   const films = await getFilms(nominations.map((n) => n.film));
-  films.forEach(async f => {
+  films.forEach(async (f) => {
     const poster = await getPoster(f.imdbId);
     f.poster = poster;
-  })
+  });
   const normalizedFilms: NormalizedFilms = {};
   films.forEach((f) => (normalizedFilms[f.id] = f));
 
@@ -40,24 +39,13 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   bets.forEach((b) => (normalizedBets[b.id] = b));
 
   const players = await getPlayers(bets.map((b) => b.player));
-  const normalizedPlayers: NormalizedPlayers = {};
-  players.forEach((p) => (normalizedPlayers[p.id] = p));
 
-  const status: Status = {
-    completedCategories: 0
-  };
-  categories.forEach((category) => {
-    const categoryNominations = category.nominations;
-    categoryNominations.forEach((n) => {
-      if(normalizedNominations[n].won) {
-        status.completedCategories++;
-        const winningBets = normalizedNominations[n].bets;
-        winningBets.forEach(bet => {
-          normalizedPlayers[normalizedBets[bet].player].correct++;
-        })
-      }
-    });
-  });
+  const { players: normalizedPlayers, status } = calculateWinnings(
+    categories,
+    normalizedNominations,
+    normalizedBets,
+    players
+  );
 
   return {
     categories: normalizedCategories,
@@ -68,3 +56,13 @@ export const getCategoryData = async (): Promise<CategoryData> => {
     status: status
   };
 };
+
+/* export const refreshNominations = async (): Promise<NormalizedNominations> => {
+  const categories = await getCategories();
+  const nominations = await getNominations(
+    categories.map((c) => c.nominations).flat()
+  );
+
+  const normalizedNominations: NormalizedNominations = {};
+  nominations.forEach((n) => (normalizedNominations[n.id] = n));
+}; */
