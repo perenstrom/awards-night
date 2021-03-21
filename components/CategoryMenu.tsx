@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Category } from 'types/nominations';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Link from 'next/link';
 
 const Header = styled.div`
@@ -8,26 +8,24 @@ const Header = styled.div`
   display: flex;
 `;
 
-const PreviousCategory = styled.a`
+const linkStyle = css`
   display: block;
   height: 100%;
   line-height: 50px;
   flex-basis: 100px;
-  background-color: rgb(187, 162, 103);
   text-align: center;
   text-decoration: none;
   color: white;
 `;
 
-const NextCategory = styled.a`
-  display: block;
-  height: 100%;
-  line-height: 50px;
-  flex-basis: 100px;
+const CategoryLink = styled.a`
+  ${linkStyle}
   background-color: rgb(187, 162, 103);
-  text-align: center;
-  text-decoration: none;
-  color: white;
+`;
+
+const CategoryLinkDisabled = styled.p`
+  ${linkStyle}
+  background-color: rgb(192, 182, 160);
 `;
 
 const CategoryTitle = styled.h2`
@@ -47,13 +45,21 @@ interface Props {
 export const CategoryMenu: React.FC<Props> = memo(({ category }) => {
   return (
     <Header>
-      <Link href={`/${category.previousCategory}`} passHref>
-        <PreviousCategory>Previous</PreviousCategory>
-      </Link>
+      {category.previousCategory ? (
+        <Link href={`/${category.previousCategory}`} passHref>
+          <CategoryLink>Previous</CategoryLink>
+        </Link>
+      ) : (
+        <CategoryLinkDisabled>Previous</CategoryLinkDisabled>
+      )}
       <CategoryTitle>{category.name}</CategoryTitle>
-      <Link href={`/${category.nextCategory}`} passHref>
-        <NextCategory>Next</NextCategory>
-      </Link>
+      {category.previousCategory ? (
+        <Link href={`/${category.nextCategory}`} passHref>
+          <CategoryLink>Next</CategoryLink>
+        </Link>
+      ) : (
+        <CategoryLinkDisabled>Next</CategoryLinkDisabled>
+      )}
     </Header>
   );
 });
