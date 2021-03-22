@@ -44,7 +44,6 @@ const formatCategory = (
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
   nominations: categoryResponse.get('nominations') ?? null,
-  bets: categoryResponse.get('bets') ?? null,
   previousCategory: previousCategory,
   nextCategory: nextCategory
 });
@@ -129,18 +128,21 @@ const formatBet = (betResponse: Record): Bet => ({
 });
 
 export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
-  const query = `OR(${playerIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
-    `;
+  const params = playerIds
+    ? {
+        filterByFormula: `OR(${playerIds
+          .map((id) => `RECORD_ID() = '${id}'`)
+          .join(',')})`
+      }
+    : {};
   const players: Player[] = [];
-  await playersBase
-    .select({ filterByFormula: query })
-    .eachPage((playersResult, fetchNextPage) => {
-      playersResult.forEach((player) => {
-        players.push(formatPlayer(player));
-      });
-
-      fetchNextPage();
+  await playersBase.select(params).eachPage((playersResult, fetchNextPage) => {
+    playersResult.forEach((player) => {
+      players.push(formatPlayer(player));
     });
+
+    fetchNextPage();
+  });
 
   return players;
 };
@@ -148,5 +150,6 @@ export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
 const formatPlayer = (playerResponse: Record): Player => ({
   id: playerResponse.id,
   name: playerResponse.get('name'),
-  correct: 0
+  correct: 0,
+  bets: playerResponse.get('bets')
 });
