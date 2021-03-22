@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { getPlayers } from 'services/nominations';
+import { getPlayers } from 'services/airtable';
 import { BettingData, Category } from 'types/nominations';
 import { getBettingData } from 'lib/getBettingData';
 

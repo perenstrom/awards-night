@@ -4,7 +4,7 @@ import {
   getFilms,
   getNominations,
   getPlayers
-} from 'services/nominations';
+} from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
   CategoryData,
