@@ -151,5 +151,5 @@ const formatPlayer = (playerResponse: Record): Player => ({
   id: playerResponse.id,
   name: playerResponse.get('name'),
   correct: 0,
-  bets: playerResponse.get('bets')
+  bets: playerResponse.get('bets') ?? null
 });

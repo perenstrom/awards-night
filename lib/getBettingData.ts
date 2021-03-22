@@ -9,7 +9,6 @@ import { getPoster } from 'services/tmdb';
 import {
   BettingData,
   NormalizedBets,
-  NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations
 } from 'types/nominations';
