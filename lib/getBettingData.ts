@@ -52,7 +52,6 @@ export const getBettingData = async (
     player: player[0],
     categories: categories,
     nominations: normalizedNominations,
-    films: normalizedFilms,
-    bets: normalizedBets
+    films: normalizedFilms
   };
 };

@@ -65,5 +65,4 @@ export interface BettingData {
   categories: Category[];
   nominations: NormalizedNominations;
   films: NormalizedFilms;
-  bets: NormalizedBets;
 }
