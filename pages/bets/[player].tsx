@@ -6,6 +6,23 @@ import { getPlayers } from 'services/airtable';
 import { BettingData, Category } from 'types/nominations';
 import { getBettingData } from 'lib/getBettingData';
 import { createBet, updateBet as updateBetApi } from 'services/local';
+import styled from 'styled-components';
+import { BetItem } from 'components/BetItem';
+
+const Wrapper = styled.div`
+  padding: 2rem;
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const CategoryBets = styled.ul`
+  padding: 0;
+`;
+
+const CategoryHeading = styled.h2`
+  padding-top: 2rem;
+`;
 
 type Props = BettingData;
 
@@ -40,31 +57,30 @@ const CategoryPage: NextPage<Props> = ({
       <Head>
         <title>Bets</title>
       </Head>
-      <h1>Betting for {player.name}</h1>
-      {categories.map((category) => (
-        <div key={category.id}>
-          <h2>{category.name}</h2>
-          <ul>
-            {category.nominations.map((nominationId) => {
-              const nomination = nominations[nominationId];
-              return (
-                <li
-                  onClick={() => updateBet(nomination.id, category)}
-                  key={nominationId}
-                >
-                  {films[nomination.film].name}
-                  {nomination.nominee ? <i> – {nomination.nominee}</i> : ''}
-                  {nomination.bets.length > 0 && (
-                    <ul>
-                      <li>This is your bet!</li>
-                    </ul>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+      <Wrapper>
+        <h1>Betting for {player.name}</h1>
+        {categories.map((category) => (
+          <div key={category.id}>
+            <CategoryHeading>{category.name}</CategoryHeading>
+            <CategoryBets>
+              {category.nominations.map((nominationId) => {
+                const nomination = nominations[nominationId];
+                return (
+                  <BetItem
+                    key={nomination.id}
+                    category={category}
+                    nominationId={nomination.id}
+                    filmName={films[nomination.film].name}
+                    nominee={nomination.nominee}
+                    activeBet={nomination.bets.length > 0}
+                    updateBet={updateBet}
+                  />
+                );
+              })}
+            </CategoryBets>
+          </div>
+        ))}
+      </Wrapper>
     </div>
   );
 };
