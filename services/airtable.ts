@@ -9,6 +9,11 @@ const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
 
+export interface BetRecord {
+  player: string[];
+  nomination: string[];
+}
+
 export const getCategories = async (): Promise<Category[]> => {
   const categories: Category[] = [];
   await categoriesBase.select().eachPage((categoriesResult, fetchNextPage) => {
@@ -119,6 +124,19 @@ export const getBets = async (betIds: string[]): Promise<Bet[]> => {
     });
 
   return bets;
+};
+
+export const createBet = async (bet: BetRecord): Promise<Bet> => {
+  console.log(`Creating bet:\n${JSON.stringify(bet, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    betsBase
+      .create(bet)
+      .then((result) => resolve(formatBet(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 const formatBet = (betResponse: Record): Bet => ({
