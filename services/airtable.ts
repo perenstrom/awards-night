@@ -139,6 +139,24 @@ export const createBet = async (bet: BetRecord): Promise<Bet> => {
   });
 };
 
+export const updateBet = async (
+  betId: string,
+  nominationId: string
+): Promise<Bet> => {
+  console.log(
+    `Updating bet:\n${JSON.stringify({ betId, nominationId }, null, 2)}`
+  );
+  return new Promise((resolve, reject) => {
+    betsBase
+      .update(betId, { nomination: [nominationId] })
+      .then((result) => resolve(formatBet(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
+};
+
 const formatBet = (betResponse: Record): Bet => ({
   id: betResponse.id,
   player: betResponse.get('player')[0],
