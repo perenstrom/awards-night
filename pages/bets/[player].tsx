@@ -5,6 +5,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
 import { BettingData, Category } from 'types/nominations';
 import { getBettingData } from 'lib/getBettingData';
+import { createBet } from 'services/local';
 
 type Props = BettingData;
 
@@ -18,7 +19,7 @@ const CategoryPage: NextPage<Props> = ({
   nominations,
   films
 }) => {
-  const updateBet = (nominationId: string, category: Category) => {
+  const updateBet = async (nominationId: string, category: Category) => {
     const existingBets = category.nominations.filter(
       (nomination) => nominations[nomination].bets.length > 0
     );
@@ -27,11 +28,16 @@ const CategoryPage: NextPage<Props> = ({
     }
 
     console.log('updating nomination');
-    console.log(
-      'add bet for nomination: ' + nominationId + ' and player: ' + player.id
-    );
+
     if (existingBets[0]) {
+      console.log(
+        'add bet for nomination: ' + nominationId + ' and player: ' + player.id
+      );
       console.log('remove bet: ' + existingBets[0]);
+    } else {
+      console.log('saving new bet');
+      const savedBet = await createBet(player.id, nominationId);
+      console.log(savedBet);
     }
   };
 
