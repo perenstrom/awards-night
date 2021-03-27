@@ -146,6 +146,7 @@ export const updateBet = async (
   console.log(
     `Updating bet:\n${JSON.stringify({ betId, nominationId }, null, 2)}`
   );
+  console.log(JSON.stringify({ nomination: [nominationId] }));
   return new Promise((resolve, reject) => {
     betsBase
       .update(betId, { nomination: [nominationId] })

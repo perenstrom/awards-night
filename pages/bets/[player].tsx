@@ -5,7 +5,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
 import { BettingData, Category } from 'types/nominations';
 import { getBettingData } from 'lib/getBettingData';
-import { createBet } from 'services/local';
+import { createBet, updateBet as updateBetApi } from 'services/local';
 
 type Props = BettingData;
 
@@ -20,24 +20,18 @@ const CategoryPage: NextPage<Props> = ({
   films
 }) => {
   const updateBet = async (nominationId: string, category: Category) => {
-    const existingBets = category.nominations.filter(
+    const nominationsWithExistingBets = category.nominations.filter(
       (nomination) => nominations[nomination].bets.length > 0
     );
-    if (existingBets.length > 1) {
+    if (nominationsWithExistingBets.length > 1) {
       throw new Error('Multiple bets for one category');
     }
 
-    console.log('updating nomination');
-
-    if (existingBets[0]) {
-      console.log(
-        'add bet for nomination: ' + nominationId + ' and player: ' + player.id
-      );
-      console.log('remove bet: ' + existingBets[0]);
+    if (nominationsWithExistingBets[0]) {
+      const existingBet = nominations[nominationsWithExistingBets[0]].bets[0];
+      const updatedBet = await updateBetApi(existingBet, nominationId);
     } else {
-      console.log('saving new bet');
       const savedBet = await createBet(player.id, nominationId);
-      console.log(savedBet);
     }
   };
 
