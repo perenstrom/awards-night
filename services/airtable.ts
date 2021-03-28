@@ -1,5 +1,5 @@
 import Airtable from 'airtable';
-import Record from 'airtable/lib/record';
+import AirtableRecord from 'airtable/lib/record';
 import { Bet, Category, Film, Nomination, Player } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
@@ -49,7 +49,7 @@ export const getCategory = async (slug: string): Promise<Category> => {
 };
 
 const formatCategory = (
-  categoryResponse: Record,
+  categoryResponse: AirtableRecord,
   previousCategory: string,
   nextCategory: string
 ): Category => ({
@@ -83,7 +83,7 @@ export const getNominations = async (
   return nominations;
 };
 
-const formatNomination = (nominationResponse: Record): Nomination => ({
+const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   id: nominationResponse.id,
   year: nominationResponse.get('year'),
   category: nominationResponse.get('category')[0],
@@ -135,7 +135,7 @@ export const setFilmPoster = async (
   return updateFilm(filmId, { poster_url: poster });
 };
 
-const formatFilm = (filmResponse: Record): Film => ({
+const formatFilm = (filmResponse: AirtableRecord): Film => ({
   id: filmResponse.id,
   imdbId: filmResponse.get('imdb_id'),
   name: filmResponse.get('name'),
@@ -191,7 +191,14 @@ export const updateBet = async (
   });
 };
 
-const formatBet = (betResponse: Record): Bet => ({
+export const getBetsForPlayer = async (playerId: string): Promise<string[]> => {
+  const player = await getPlayers([playerId]);
+  const bets = await getBets(player[0].bets);
+
+  return bets.map((bet) => bet.nomination);
+};
+
+const formatBet = (betResponse: AirtableRecord): Bet => ({
   id: betResponse.id,
   player: betResponse.get('player')[0],
   nomination: betResponse.get('nomination')[0]
@@ -217,7 +224,7 @@ export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
   return players;
 };
 
-const formatPlayer = (playerResponse: Record): Player => ({
+const formatPlayer = (playerResponse: AirtableRecord): Player => ({
   id: playerResponse.id,
   name: playerResponse.get('name'),
   correct: 0,

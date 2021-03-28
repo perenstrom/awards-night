@@ -7,8 +7,8 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
+  Bet,
   BettingData,
-  NormalizedBets,
   NormalizedFilms,
   NormalizedNominations
 } from 'types/nominations';
@@ -32,18 +32,12 @@ export const getBettingData = async (
   const normalizedFilms: NormalizedFilms = {};
   films.forEach((f) => (normalizedFilms[f.id] = f));
 
-  const bets = await getBets(nominations.map((n) => n.bets).flat());
-  const normalizedBets: NormalizedBets = {};
-  bets.forEach((b) => (normalizedBets[b.id] = b));
-
   const normalizedNominations: NormalizedNominations = {};
   nominations.forEach(
     (n) =>
       (normalizedNominations[n.id] = {
         ...n,
-        bets: n.bets
-          ? n.bets.filter((b) => normalizedBets[b].player === playerId)
-          : []
+        bets: []
       })
   );
 

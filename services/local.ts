@@ -20,6 +20,21 @@ export const createBet = async (
   return apiResult<Bet>(url, options);
 };
 
+export const getBetsForPlayer = async (
+  playerId: string
+): Promise<string[]> => {
+  const url = `/api/players/${playerId}/bets`;
+  const options: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  };
+
+  return apiResult<string[]>(url, options);
+};
+
 export const updateBet = async (
   betId: string,
   nominationId: string
