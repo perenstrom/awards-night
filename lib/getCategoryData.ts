@@ -3,7 +3,8 @@ import {
   getCategories,
   getFilms,
   getNominations,
-  getPlayers
+  getPlayers,
+  setFilmPoster
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
@@ -11,7 +12,7 @@ import {
   NormalizedBets,
   NormalizedCategories,
   NormalizedFilms,
-  NormalizedNominations,
+  NormalizedNominations
 } from 'types/nominations';
 import { calculateWinnings } from 'utils/nominations';
 
@@ -27,9 +28,12 @@ export const getCategoryData = async (): Promise<CategoryData> => {
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
 
   const films = await getFilms(nominations.map((n) => n.film));
-  films.forEach(async (f) => {
-    const poster = await getPoster(f.imdbId);
-    f.poster = poster;
+  films.forEach(async (f, i) => {
+    if (!f.poster) {
+      const poster = await getPoster(f.imdbId);
+      await setFilmPoster(f.id, poster);
+      f.poster = poster;
+    }
   });
   const normalizedFilms: NormalizedFilms = {};
   films.forEach((f) => (normalizedFilms[f.id] = f));
@@ -66,5 +70,5 @@ export const refreshNominations = async (): Promise<NormalizedNominations> => {
   const normalizedNominations: NormalizedNominations = {};
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
 
-  return normalizedNominations
-}; 
+  return normalizedNominations;
+};

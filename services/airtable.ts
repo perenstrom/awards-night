@@ -9,6 +9,14 @@ const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
 
+export interface FilmRecord {
+  imdb_id: string;
+  name: string;
+  nominations: string[];
+  bets: string[];
+  poster_url: string;
+}
+
 export interface BetRecord {
   player: string[];
   nomination: string[];
@@ -102,11 +110,36 @@ export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
   return films;
 };
 
+export const updateFilm = async (
+  filmId: string,
+  film: Partial<FilmRecord>
+): Promise<Film> => {
+  console.log(
+    `Updating film:\n${JSON.stringify({ filmId, ...film }, null, 2)}`
+  );
+  return new Promise((resolve, reject) => {
+    filmsBase
+      .update(filmId, film)
+      .then((result) => resolve(formatFilm(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
+};
+
+export const setFilmPoster = async (
+  filmId: string,
+  poster: string
+): Promise<Film> => {
+  return updateFilm(filmId, { poster_url: poster });
+};
+
 const formatFilm = (filmResponse: Record): Film => ({
   id: filmResponse.id,
   imdbId: filmResponse.get('imdb_id'),
   name: filmResponse.get('name'),
-  poster: null
+  poster: filmResponse.get('poster_url') ?? null
 });
 
 export const getBets = async (betIds: string[]): Promise<Bet[]> => {

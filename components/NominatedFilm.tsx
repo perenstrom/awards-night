@@ -62,7 +62,7 @@ export const NominatedFilm: React.FC<Props> = memo(
 
     const poster =
       film.poster ??
-      `https://via.placeholder.com/500x700.png?text=${film.name}`;
+      `https://via.placeholder.com/342x513.png?text=${film.name}`;
 
     return (
       <Wrapper winner={nomination.won}>
