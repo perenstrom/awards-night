@@ -71,6 +71,7 @@ const CategoryPage: NextPage<Props> = ({
                     category={category}
                     nominationId={nomination.id}
                     filmName={films[nomination.film].name}
+                    poster={films[nomination.film].poster}
                     nominee={nomination.nominee}
                     activeBet={nomination.bets.length > 0}
                     updateBet={updateBet}
