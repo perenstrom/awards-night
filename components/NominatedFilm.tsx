@@ -7,7 +7,10 @@ import {
 } from 'types/nominations';
 import styled from 'styled-components';
 
-const Wrapper = styled.li`
+interface WrapperProps {
+  readonly winner: boolean;
+}
+const Wrapper = styled.li<WrapperProps>`
   list-style: none;
   flex-grow: 1;
   flex-basis: 0;
@@ -52,16 +55,14 @@ export const NominatedFilm: React.FC<Props> = memo(
     const bettingPlayers = nomination.bets
       ? nomination.bets.map((bet) => (
           <BetList key={bet}>
-            <BettingPlayer>
-              {players[bets[bet].player].name}
-            </BettingPlayer>
+            <BettingPlayer>{players[bets[bet].player].name}</BettingPlayer>
           </BetList>
         ))
       : null;
 
     const poster =
       film.poster ??
-      `https://via.placeholder.com/500x700.png?text=${film.name}`;
+      `https://via.placeholder.com/342x513.png?text=${film.name}`;
 
     return (
       <Wrapper winner={nomination.won}>

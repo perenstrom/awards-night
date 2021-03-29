@@ -15,7 +15,6 @@ export interface Category {
   slug: string;
   name: string;
   nominations: string[];
-  bets: string[];
   previousCategory: string;
   nextCategory: string;
 }
@@ -43,9 +42,14 @@ export interface Player {
   id: string;
   name: string;
   correct: number;
+  bets: string[]
 }
 
 export type NormalizedPlayers = Record<string, Player>;
+
+export interface Status {
+  completedCategories: number;
+}
 
 export interface CategoryData {
   categories: NormalizedCategories;
@@ -56,6 +60,9 @@ export interface CategoryData {
   status: Status;
 }
 
-export interface Status {
-  completedCategories: number;
+export interface BettingData {
+  player: Player;
+  categories: Category[];
+  nominations: NormalizedNominations;
+  films: NormalizedFilms;
 }

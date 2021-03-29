@@ -1,5 +1,5 @@
 import Airtable from 'airtable';
-import Record from 'airtable/lib/record';
+import AirtableRecord from 'airtable/lib/record';
 import { Bet, Category, Film, Nomination, Player } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
@@ -8,6 +8,19 @@ const nominationsBase = base('nominations');
 const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
+
+export interface FilmRecord {
+  imdb_id: string;
+  name: string;
+  nominations: string[];
+  bets: string[];
+  poster_url: string;
+}
+
+export interface BetRecord {
+  player: string[];
+  nomination: string[];
+}
 
 export const getCategories = async (): Promise<Category[]> => {
   const categories: Category[] = [];
@@ -36,7 +49,7 @@ export const getCategory = async (slug: string): Promise<Category> => {
 };
 
 const formatCategory = (
-  categoryResponse: Record,
+  categoryResponse: AirtableRecord,
   previousCategory: string,
   nextCategory: string
 ): Category => ({
@@ -44,7 +57,6 @@ const formatCategory = (
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
   nominations: categoryResponse.get('nominations') ?? null,
-  bets: categoryResponse.get('bets') ?? null,
   previousCategory: previousCategory,
   nextCategory: nextCategory
 });
@@ -71,7 +83,7 @@ export const getNominations = async (
   return nominations;
 };
 
-const formatNomination = (nominationResponse: Record): Nomination => ({
+const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   id: nominationResponse.id,
   year: nominationResponse.get('year'),
   category: nominationResponse.get('category')[0],
@@ -98,11 +110,36 @@ export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
   return films;
 };
 
-const formatFilm = (filmResponse: Record): Film => ({
+export const updateFilm = async (
+  filmId: string,
+  film: Partial<FilmRecord>
+): Promise<Film> => {
+  console.log(
+    `Updating film:\n${JSON.stringify({ filmId, ...film }, null, 2)}`
+  );
+  return new Promise((resolve, reject) => {
+    filmsBase
+      .update(filmId, film)
+      .then((result) => resolve(formatFilm(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
+};
+
+export const setFilmPoster = async (
+  filmId: string,
+  poster: string
+): Promise<Film> => {
+  return updateFilm(filmId, { poster_url: poster });
+};
+
+const formatFilm = (filmResponse: AirtableRecord): Film => ({
   id: filmResponse.id,
   imdbId: filmResponse.get('imdb_id'),
   name: filmResponse.get('name'),
-  poster: null
+  poster: filmResponse.get('poster_url') ?? null
 });
 
 export const getBets = async (betIds: string[]): Promise<Bet[]> => {
@@ -122,31 +159,78 @@ export const getBets = async (betIds: string[]): Promise<Bet[]> => {
   return bets;
 };
 
-const formatBet = (betResponse: Record): Bet => ({
+export const createBet = async (bet: BetRecord): Promise<Bet> => {
+  console.log(`Creating bet:\n${JSON.stringify(bet, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    betsBase
+      .create(bet)
+      .then((result) => resolve(formatBet(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
+};
+
+export const updateBet = async (
+  betId: string,
+  nominationId: string
+): Promise<Bet> => {
+  console.log(
+    `Updating bet:\n${JSON.stringify({ betId, nominationId }, null, 2)}`
+  );
+  console.log(JSON.stringify({ nomination: [nominationId] }));
+  return new Promise((resolve, reject) => {
+    betsBase
+      .update(betId, { nomination: [nominationId] })
+      .then((result) => resolve(formatBet(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
+};
+
+export const getBetsForPlayer = async (
+  playerId: string
+): Promise<Record<string, string>> => {
+  const player = await getPlayers([playerId]);
+  const bets = await getBets(player[0].bets);
+  const nominationBets: Record<string, string> = {};
+  bets.forEach((bet) => (nominationBets[bet.nomination] = bet.id));
+
+  return nominationBets;
+};
+
+const formatBet = (betResponse: AirtableRecord): Bet => ({
   id: betResponse.id,
   player: betResponse.get('player')[0],
   nomination: betResponse.get('nomination')[0]
 });
 
 export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
-  const query = `OR(${playerIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
-    `;
+  const params = playerIds
+    ? {
+        filterByFormula: `OR(${playerIds
+          .map((id) => `RECORD_ID() = '${id}'`)
+          .join(',')})`
+      }
+    : {};
   const players: Player[] = [];
-  await playersBase
-    .select({ filterByFormula: query })
-    .eachPage((playersResult, fetchNextPage) => {
-      playersResult.forEach((player) => {
-        players.push(formatPlayer(player));
-      });
-
-      fetchNextPage();
+  await playersBase.select(params).eachPage((playersResult, fetchNextPage) => {
+    playersResult.forEach((player) => {
+      players.push(formatPlayer(player));
     });
+
+    fetchNextPage();
+  });
 
   return players;
 };
 
-const formatPlayer = (playerResponse: Record): Player => ({
+const formatPlayer = (playerResponse: AirtableRecord): Player => ({
   id: playerResponse.id,
   name: playerResponse.get('name'),
-  correct: 0
+  correct: 0,
+  bets: playerResponse.get('bets') ?? null
 });
