@@ -191,11 +191,15 @@ export const updateBet = async (
   });
 };
 
-export const getBetsForPlayer = async (playerId: string): Promise<string[]> => {
+export const getBetsForPlayer = async (
+  playerId: string
+): Promise<Record<string, string>> => {
   const player = await getPlayers([playerId]);
   const bets = await getBets(player[0].bets);
+  const nominationBets: Record<string, string> = {};
+  bets.forEach((bet) => (nominationBets[bet.nomination] = bet.id));
 
-  return bets.map((bet) => bet.nomination);
+  return nominationBets;
 };
 
 const formatBet = (betResponse: AirtableRecord): Bet => ({

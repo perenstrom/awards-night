@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
-import { Bet, BettingData, Category } from 'types/nominations';
+import { BettingData, Category } from 'types/nominations';
 import { getBettingData } from 'lib/getBettingData';
 import {
   createBet,
@@ -47,7 +47,7 @@ const CategoryPage: NextPage<Props> = ({
   nominations,
   films
 }) => {
-  const [bets, setBets] = useState<string[]>([]);
+  const [bets, setBets] = useState<Record<string, string>>({});
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -60,17 +60,23 @@ const CategoryPage: NextPage<Props> = ({
 
   const updateBet = async (nominationId: string, category: Category) => {
     const nominationsWithExistingBets = category.nominations.filter(
-      (nomination) => nominations[nomination].bets.length > 0
+      (nominationId) => Object.keys(bets).includes(nominationId)
     );
+
     if (nominationsWithExistingBets.length > 1) {
       throw new Error('Multiple bets for one category');
     }
 
     if (nominationsWithExistingBets[0]) {
-      const existingBet = nominations[nominationsWithExistingBets[0]].bets[0];
+      const existingBet = bets[nominationsWithExistingBets[0]];
       const updatedBet = await updateBetApi(existingBet, nominationId);
+      const newBets = { ...bets };
+      newBets[nominationId] = updatedBet.id;
+      delete newBets[nominationsWithExistingBets[0]];
+      setBets(newBets);
     } else {
       const savedBet = await createBet(player.id, nominationId);
+      setBets({ ...bets, [nominationId]: savedBet.id });
     }
   };
 
@@ -98,7 +104,7 @@ const CategoryPage: NextPage<Props> = ({
                     filmName={films[nomination.film].name}
                     poster={films[nomination.film].poster}
                     nominee={nomination.nominee}
-                    activeBet={bets.includes(nomination.id)}
+                    activeBet={Object.keys(bets).includes(nomination.id)}
                     updateBet={updateBet}
                   />
                 );

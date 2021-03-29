@@ -15,6 +15,7 @@ const Wrapper = styled.li<WrapperProps>`
   margin-bottom: 0.5rem;
   border-radius: 3px;
   transition: background-color 300ms ease-out;
+  cursor: pointer;
 `;
 
 const InnerWrapper = styled.div`
