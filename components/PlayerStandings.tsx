@@ -29,13 +29,18 @@ const PlayerListItem = styled.li`
 interface Props {
   players: Player[];
   completedCategories: number;
+  bettingOpen: boolean;
 }
 
 export const PlayerStandings: React.FC<Props> = memo(
-  ({ players, completedCategories }) => {
+  ({ players, completedCategories, bettingOpen }) => {
     const playerStandings = players.map((p) => (
       <PlayerListItem key={p.id}>
-        <p>{`${p.name}: ${p.correct}/${completedCategories}`}</p>
+        {bettingOpen ? (
+          <p>{p.name}</p>
+        ) : (
+          <p>{`${p.name}: ${p.correct}/${completedCategories}`}</p>
+        )}
       </PlayerListItem>
     ));
 
