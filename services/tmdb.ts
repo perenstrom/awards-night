@@ -9,25 +9,3 @@ export const getPoster = (imdbId: string): Promise<string> => {
       return null;
     });
 };
-
-/* fetch('http://example.com/movies.json')
-  .then(response => response.json())
-  .then(data => console.log(data));
- */
-
-/* fetchMoviePoster(imdb) {
-  console.log("looking for poster for " + imdb);
-  axios
-    .get(
-      "https://api.themoviedb.org/3/movie/" +
-        imdb +
-        "?api_key=5774873a96411f985411b14d29388a9d&language=en-US"
-    )
-    .then(response => {
-      const poster_url =
-        "http://image.tmdb.org/t/p/w342" + response.data.poster_path;
-      let movies = { ...this.state.movies };
-      movies[imdb].poster_url = poster_url;
-
-      this.setState({ movies });
-    }); */

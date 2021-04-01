@@ -16,7 +16,9 @@ import {
 } from 'types/nominations';
 import { calculateWinnings } from 'utils/nominations';
 
-export const getCategoryData = async (): Promise<CategoryData> => {
+export const getCategoryData = async (
+  bettingOpen: boolean
+): Promise<CategoryData> => {
   const categories = await getCategories();
   const normalizedCategories: NormalizedCategories = {};
   categories.forEach((c) => (normalizedCategories[c.slug] = c));
@@ -25,7 +27,9 @@ export const getCategoryData = async (): Promise<CategoryData> => {
     categories.map((c) => c.nominations).flat()
   );
   const normalizedNominations: NormalizedNominations = {};
-  nominations.forEach((n) => (normalizedNominations[n.id] = n));
+  nominations.forEach(
+    (n) => (normalizedNominations[n.id] = bettingOpen ? { ...n, bets: [] } : n)
+  );
 
   const films = await getFilms(nominations.map((n) => n.film));
   films.forEach(async (f, i) => {
@@ -40,9 +44,11 @@ export const getCategoryData = async (): Promise<CategoryData> => {
 
   const bets = await getBets(nominations.map((n) => n.bets).flat());
   const normalizedBets: NormalizedBets = {};
-  bets.forEach((b) => (normalizedBets[b.id] = b));
+  if (!bettingOpen) {
+    bets.forEach((b) => (normalizedBets[b.id] = b));
+  }
 
-  const players = await getPlayers(bets.map((b) => b.player));
+  const players = await getPlayers(bettingOpen ? null : bets.map((b) => b.player));
 
   const { players: normalizedPlayers, status } = calculateWinnings(
     categories,

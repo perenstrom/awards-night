@@ -37,6 +37,7 @@ interface Props {
   bets: NormalizedBets;
   players: NormalizedPlayers;
   status: Status;
+  bettingOpen: boolean;
 }
 
 interface Params extends ParsedUrlQuery {
@@ -49,7 +50,8 @@ const CategoryPage: NextPage<Props> = ({
   films,
   bets,
   players: initialPlayers,
-  status: initialStatus
+  status: initialStatus,
+  bettingOpen
 }) => {
   const router = useRouter();
   const { category: slug } = router.query;
@@ -66,9 +68,11 @@ const CategoryPage: NextPage<Props> = ({
   );
 
   useEffect(() => {
-    const interval = setInterval(refreshNominations, 10000);
+    if (!bettingOpen) {
+      const interval = setInterval(refreshNominations, 10000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }
   }, []);
 
   const refreshNominations = () => {
@@ -110,6 +114,7 @@ const CategoryPage: NextPage<Props> = ({
           players={Object.entries(players ?? initialPlayers)
             .map((p) => p[1])
             .sort((a, b) => a.correct - b.correct)}
+          bettingOpen={bettingOpen}
         />
       </GridContainer>
     </div>
@@ -117,7 +122,7 @@ const CategoryPage: NextPage<Props> = ({
 };
 
 export const getStaticProps: GetStaticProps<Props, Params> = async () => {
-  const categoryData = await getCategoryData();
+  const categoryData = await getCategoryData(process.env.BETTING_OPEN === 'true');
   const {
     categories,
     nominations,
@@ -134,7 +139,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async () => {
       films,
       bets,
       players,
-      status
+      status,
+      bettingOpen: process.env.BETTING_OPEN === 'true'
     }
   };
 };
