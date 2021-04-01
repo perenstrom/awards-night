@@ -90,7 +90,8 @@ const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   film: nominationResponse.get('film')[0],
   nominee: nominationResponse.get('nominee') ?? null,
   won: !!nominationResponse.get('won'),
-  bets: nominationResponse.get('bets') ?? null
+  bets: nominationResponse.get('bets') ?? null,
+  decided: null
 });
 
 export const getFilms = async (filmIds: string[]): Promise<Film[]> => {

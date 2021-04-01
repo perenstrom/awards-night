@@ -1,11 +1,12 @@
 export interface Nomination {
   id: string;
   year: number;
-  category: Category;
+  category: string;
   won: boolean;
   film: string;
   nominee: string;
   bets: string[];
+  decided: boolean;
 }
 
 export type NormalizedNominations = Record<string, Nomination>

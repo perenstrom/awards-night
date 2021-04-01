@@ -33,7 +33,7 @@ const CategoryHeading = styled.h2`
   padding-top: 2rem;
 `;
 
-type Props = BettingData;
+type Props = BettingData & { bettingOpen: boolean };
 
 interface Params extends ParsedUrlQuery {
   player: string;
@@ -41,11 +41,12 @@ interface Params extends ParsedUrlQuery {
 
 type State = 'idle' | 'loading';
 
-const CategoryPage: NextPage<Props> = ({
+const PlayerBettingPage: NextPage<Props> = ({
   player,
   categories,
   nominations,
-  films
+  films,
+  bettingOpen
 }) => {
   const [bets, setBets] = useState<Record<string, string>>({});
   const [state, setState] = useState<State>('loading');
@@ -90,6 +91,7 @@ const CategoryPage: NextPage<Props> = ({
           Betting for {player.name}
           {state !== 'idle' && <Loading> loading...</Loading>}
         </h1>
+        {!bettingOpen && <p>Betting is closed</p>}
         {categories.map((category) => (
           <div key={category.id}>
             <CategoryHeading>{category.name}</CategoryHeading>
@@ -101,10 +103,13 @@ const CategoryPage: NextPage<Props> = ({
                     key={nomination.id}
                     category={category}
                     nominationId={nomination.id}
+                    won={nomination.won}
+                    decided={nomination.decided}
                     filmName={films[nomination.film].name}
                     poster={films[nomination.film].poster}
                     nominee={nomination.nominee}
                     activeBet={Object.keys(bets).includes(nomination.id)}
+                    bettingOpen={bettingOpen}
                     updateBet={updateBet}
                   />
                 );
@@ -123,7 +128,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   const bettingData = await getBettingData(context.params.player);
 
   return {
-    props: bettingData
+    props: { ...bettingData, bettingOpen: process.env.BETTING_OPEN === 'true' }
   };
 };
 
@@ -140,4 +145,4 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export default CategoryPage;
+export default PlayerBettingPage;
