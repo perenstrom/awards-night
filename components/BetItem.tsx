@@ -2,20 +2,46 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { Category } from 'types/nominations';
 
+const getBackgroundColor = (
+  activeBet: boolean,
+  won: boolean,
+  decided: boolean
+): string => {
+  if (activeBet && won) {
+    // Green
+    return 'rgb(135, 218, 161)';
+  } else if (activeBet && decided && !won) {
+    // Red
+    return 'rgb(223, 121, 113)';
+  } else if (activeBet && !decided && !won) {
+    // Light blue
+    return 'rgb(147, 161, 209)';
+  } else if (!activeBet && won) {
+    // Yellow
+    return 'rgb(187, 162, 103)';
+  } else if (!activeBet && !won) {
+    // White
+    return 'rgb(238, 238, 238)';
+  }
+};
+
 interface WrapperProps {
   readonly activeBet: boolean;
+  readonly won: boolean;
+  readonly decided: boolean;
+  readonly bettingOpen: boolean;
 }
 const Wrapper = styled.li<WrapperProps>`
   display: flex;
   width: 100%;
-  background-color: ${({ activeBet }) =>
-    activeBet ? 'rgb(147, 161, 209)' : 'rgb(238, 238, 238)'};
+  background-color: ${({ activeBet, won, decided }) =>
+    getBackgroundColor(activeBet, won, decided)};
   list-style: none;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: 3px;
   transition: background-color 300ms ease-out;
-  cursor: pointer;
+  cursor: ${({ bettingOpen }) => bettingOpen && 'pointer'};
 `;
 
 const InnerWrapper = styled.div`
@@ -64,10 +90,13 @@ const NominationHeader = styled.h3`
 interface Props {
   category: Category;
   nominationId: string;
+  won: boolean;
+  decided: boolean;
   filmName: string;
   poster: string;
   nominee: string;
   activeBet: boolean;
+  bettingOpen: boolean;
   updateBet: (string, Category) => void;
 }
 
@@ -75,17 +104,25 @@ export const BetItem: React.FC<Props> = memo(
   ({
     category,
     nominationId,
+    won,
+    decided,
     filmName,
     poster,
     nominee,
     activeBet,
+    bettingOpen,
     updateBet
   }) => {
     return (
       <Wrapper
         key={nominationId}
         activeBet={activeBet}
-        onClick={() => updateBet(nominationId, category)}
+        won={won}
+        decided={decided}
+        bettingOpen={bettingOpen}
+        onClick={
+          bettingOpen ? () => updateBet(nominationId, category) : () => null
+        }
       >
         <PosterWrapper>
           <div>

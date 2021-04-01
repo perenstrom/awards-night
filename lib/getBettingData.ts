@@ -1,5 +1,4 @@
 import {
-  getBets,
   getCategories,
   getFilms,
   getNominations,
@@ -7,7 +6,6 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
-  Bet,
   BettingData,
   NormalizedFilms,
   NormalizedNominations
@@ -24,6 +22,13 @@ export const getBettingData = async (
     categories.map((c) => c.nominations).flat()
   );
 
+  const decidedCategories: string[] = [];
+  nominations.forEach((nomination) => {
+    if (nomination.won) {
+      decidedCategories.push(nomination.category);
+    }
+  });
+
   const films = await getFilms(nominations.map((n) => n.film));
   films.forEach(async (f) => {
     const poster = await getPoster(f.imdbId);
@@ -37,7 +42,8 @@ export const getBettingData = async (
     (n) =>
       (normalizedNominations[n.id] = {
         ...n,
-        bets: []
+        bets: [],
+        decided: decidedCategories.includes(n.category)
       })
   );
 
