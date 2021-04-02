@@ -98,7 +98,7 @@ const PlayerBettingPage: NextPage<Props> = ({
                     nominee={nomination.nominee}
                     activeBet={Object.keys(bets).includes(nomination.id)}
                     bettingOpen={bettingOpen}
-                    updateBet={updateBet}
+                    onClick={updateBet}
                   />
                 );
               })}

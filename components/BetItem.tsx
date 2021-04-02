@@ -95,9 +95,9 @@ interface Props {
   filmName: string;
   poster: string;
   nominee: string;
-  activeBet: boolean;
-  bettingOpen: boolean;
-  updateBet: (string, Category) => void;
+  activeBet?: boolean;
+  bettingOpen?: boolean;
+  onClick: (string, Category) => void;
 }
 
 export const BetItem: React.FC<Props> = memo(
@@ -109,9 +109,9 @@ export const BetItem: React.FC<Props> = memo(
     filmName,
     poster,
     nominee,
-    activeBet,
-    bettingOpen,
-    updateBet
+    activeBet = false,
+    bettingOpen = true,
+    onClick
   }) => {
     return (
       <Wrapper
@@ -121,7 +121,7 @@ export const BetItem: React.FC<Props> = memo(
         decided={decided}
         bettingOpen={bettingOpen}
         onClick={
-          bettingOpen ? () => updateBet(nominationId, category) : () => null
+          bettingOpen ? () => onClick(nominationId, category) : () => null
         }
       >
         <PosterWrapper>

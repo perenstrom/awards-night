@@ -1,8 +1,14 @@
-import { Bet } from 'types/nominations';
+import {
+  Bet,
+  BetId,
+  Nomination,
+  NominationId,
+  PlayerId
+} from 'types/nominations';
 
 export const createBet = async (
-  playerId: string,
-  nominationId: string
+  playerId: PlayerId,
+  nominationId: NominationId
 ): Promise<Bet> => {
   const url = '/api/bets';
   const options: RequestInit = {
@@ -21,7 +27,7 @@ export const createBet = async (
 };
 
 export const getBetsForPlayer = async (
-  playerId: string
+  playerId: PlayerId
 ): Promise<Record<string, string>> => {
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
@@ -36,8 +42,8 @@ export const getBetsForPlayer = async (
 };
 
 export const updateBet = async (
-  betId: string,
-  nominationId: string
+  betId: BetId,
+  nominationId: NominationId
 ): Promise<Bet> => {
   const url = '/api/bets';
   const options: RequestInit = {
@@ -53,6 +59,26 @@ export const updateBet = async (
   };
 
   return apiResult<Bet>(url, options);
+};
+
+export const updateNomination = async (
+  nominationId: NominationId,
+  nomination: Partial<Nomination>
+): Promise<Nomination> => {
+  const url = '/api/nominations';
+  const options: RequestInit = {
+    method: 'PATCH',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      nominationId,
+      nomination
+    })
+  };
+
+  return apiResult<Nomination>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
