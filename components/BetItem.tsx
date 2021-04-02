@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { Category } from 'types/nominations';
+import { Category, NominationId } from 'types/nominations';
 
 const getBackgroundColor = (
   activeBet: boolean,
@@ -97,7 +97,7 @@ interface Props {
   nominee: string;
   activeBet?: boolean;
   bettingOpen?: boolean;
-  onClick: (string, Category) => void;
+  onClick: (nominationId: NominationId, category: Category) => void;
 }
 
 export const BetItem: React.FC<Props> = memo(
