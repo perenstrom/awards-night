@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
-import { BettingData, Category } from 'types/nominations';
-import { getBettingData } from 'lib/getBettingData';
+import { NominationData, Category, Player } from 'types/nominations';
+import { getNominationData } from 'lib/getNominationData';
 import {
   createBet,
   getBetsForPlayer,
@@ -12,28 +12,16 @@ import {
 } from 'services/local';
 import styled from 'styled-components';
 import { BetItem } from 'components/BetItem';
+import { CategoryBets } from 'components/CategoryBets';
+import { CategoryHeading } from 'components/CategoryHeading';
+import { NominationListWrapper } from 'components/NominationListWrapper';
 
 const Loading = styled.span`
   font-size: 1rem;
   font-weight: normal;
 `;
 
-const Wrapper = styled.div`
-  padding: 2rem;
-  max-width: 50rem;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const CategoryBets = styled.ul`
-  padding: 0;
-`;
-
-const CategoryHeading = styled.h2`
-  padding-top: 2rem;
-`;
-
-type Props = BettingData & { bettingOpen: boolean };
+type Props = NominationData & { bettingOpen: boolean } & { player: Player };
 
 interface Params extends ParsedUrlQuery {
   player: string;
@@ -86,7 +74,7 @@ const PlayerBettingPage: NextPage<Props> = ({
       <Head>
         <title>Bets</title>
       </Head>
-      <Wrapper>
+      <NominationListWrapper>
         <h1>
           Betting for {player.name}
           {state !== 'idle' && <Loading> loading...</Loading>}
@@ -117,7 +105,7 @@ const PlayerBettingPage: NextPage<Props> = ({
             </CategoryBets>
           </div>
         ))}
-      </Wrapper>
+      </NominationListWrapper>
     </div>
   );
 };
@@ -125,10 +113,15 @@ const PlayerBettingPage: NextPage<Props> = ({
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
-  const bettingData = await getBettingData(context.params.player);
+  const bettingData = await getNominationData();
+  const player = await getPlayers([context.params.player]);
 
   return {
-    props: { ...bettingData, bettingOpen: process.env.BETTING_OPEN === 'true' }
+    props: {
+      ...bettingData,
+      player: player[0],
+      bettingOpen: process.env.BETTING_OPEN === 'true'
+    }
   };
 };
 

@@ -66,8 +66,7 @@ export interface CategoryData {
   status: Status;
 }
 
-export interface BettingData {
-  player: Player;
+export interface NominationData {
   categories: Category[];
   nominations: NormalizedNominations;
   films: NormalizedFilms;
