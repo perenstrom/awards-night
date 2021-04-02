@@ -1,6 +1,17 @@
 import Airtable from 'airtable';
 import AirtableRecord from 'airtable/lib/record';
-import { Bet, Category, Film, Nomination, Player } from 'types/nominations';
+import {
+  Bet,
+  BetId,
+  Category,
+  CategoryId,
+  Film,
+  FilmId,
+  Nomination,
+  NominationId,
+  Player,
+  PlayerId
+} from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
 const categoriesBase = base('categories');
@@ -9,17 +20,25 @@ const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
 
+export interface NominationRecord {
+  year: number;
+  category: CategoryId[];
+  film: FilmId[];
+  nominee: string;
+  won: boolean;
+}
+
 export interface FilmRecord {
   imdb_id: string;
   name: string;
-  nominations: string[];
-  bets: string[];
+  nominations: NominationId[];
+  bets: BetId[];
   poster_url: string;
 }
 
 export interface BetRecord {
-  player: string[];
-  nomination: string[];
+  player: PlayerId[];
+  nomination: NominationId[];
 }
 
 export const getCategories = async (): Promise<Category[]> => {
@@ -81,6 +100,29 @@ export const getNominations = async (
     });
 
   return nominations;
+};
+
+export const updateNomination = async (
+  nominationId: NominationId,
+  nomination: Partial<NominationRecord>
+): Promise<Nomination> => {
+  console.log(
+    `Updating nomination:\n${JSON.stringify(
+      { nominationId, ...nomination },
+      null,
+      2
+    )}`
+  );
+
+  return new Promise((resolve, reject) => {
+    nominationsBase
+      .update(nominationId, nomination)
+      .then((result) => resolve(formatNomination(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({

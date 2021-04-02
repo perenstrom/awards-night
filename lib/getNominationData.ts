@@ -6,16 +6,12 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
-  BettingData,
+  NominationData,
   NormalizedFilms,
   NormalizedNominations
 } from 'types/nominations';
 
-export const getBettingData = async (
-  playerId: string
-): Promise<BettingData> => {
-  const player = await getPlayers([playerId]);
-
+export const getNominationData = async (): Promise<NominationData> => {
   const categories = await getCategories();
 
   const nominations = await getNominations(
@@ -48,7 +44,6 @@ export const getBettingData = async (
   );
 
   return {
-    player: player[0],
     categories: categories,
     nominations: normalizedNominations,
     films: normalizedFilms

@@ -1,4 +1,4 @@
-type NominationId = string;
+export type NominationId = string;
 export interface Nomination {
   id: NominationId;
   year: number;
@@ -12,7 +12,7 @@ export interface Nomination {
 
 export type NormalizedNominations = Record<string, Nomination>
 
-type CategoryId = string;
+export type CategoryId = string;
 export interface Category {
   id: CategoryId;
   slug: string;
@@ -24,7 +24,7 @@ export interface Category {
 
 export type NormalizedCategories = Record<string, Category>
 
-type FilmId = string;
+export type FilmId = string;
 export interface Film {
   id: FilmId;
   imdbId: string;
@@ -34,7 +34,7 @@ export interface Film {
 
 export type NormalizedFilms = Record<string, Film>;
 
-type BetId = string;
+export type BetId = string;
 export interface Bet {
   id: BetId;
   player: string;
@@ -43,7 +43,7 @@ export interface Bet {
 
 export type NormalizedBets = Record<string, Bet>;
 
-type PlayerId = string;
+export type PlayerId = string;
 export interface Player {
   id: PlayerId;
   name: string;
@@ -66,8 +66,7 @@ export interface CategoryData {
   status: Status;
 }
 
-export interface BettingData {
-  player: Player;
+export interface NominationData {
   categories: Category[];
   nominations: NormalizedNominations;
   films: NormalizedFilms;
