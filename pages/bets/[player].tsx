@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
-import { NominationData, Category, Player } from 'types/nominations';
+import { NominationData, Category, Player, NominationId, BetId, PlayerId } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
 import {
   createBet,
@@ -36,7 +36,7 @@ const PlayerBettingPage: NextPage<Props> = ({
   films,
   bettingOpen
 }) => {
-  const [bets, setBets] = useState<Record<string, string>>({});
+  const [bets, setBets] = useState<Record<NominationId, BetId>>({});
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -47,7 +47,7 @@ const PlayerBettingPage: NextPage<Props> = ({
     fetchDataAsync();
   }, []);
 
-  const updateBet = async (nominationId: string, category: Category) => {
+  const updateBet = async (nominationId: NominationId, category: Category) => {
     setState('saving');
     const nominationsWithExistingBets = category.nominations.filter(
       (nominationId) => Object.keys(bets).includes(nominationId)
@@ -58,7 +58,7 @@ const PlayerBettingPage: NextPage<Props> = ({
     }
 
     if (nominationsWithExistingBets[0]) {
-      const existingBet = bets[nominationsWithExistingBets[0]];
+      const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
       const updatedBet = await updateBetApi(existingBet, nominationId);
       const newBets = { ...bets };
       newBets[nominationId] = updatedBet.id;
@@ -117,7 +117,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
   const bettingData = await getNominationData();
-  const player = await getPlayers([context.params.player]);
+  const player = await getPlayers([context.params.player as PlayerId]);
 
   return {
     props: {

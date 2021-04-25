@@ -89,7 +89,7 @@ const NominationHeader = styled.h3`
 
 interface Props {
   category: Category;
-  nominationId: string;
+  nominationId: NominationId;
   won: boolean;
   decided: boolean;
   filmName: string;

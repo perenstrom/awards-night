@@ -6,6 +6,7 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
+  CategoryId,
   NominationData,
   NormalizedFilms,
   NormalizedNominations
@@ -18,7 +19,7 @@ export const getNominationData = async (): Promise<NominationData> => {
     categories.map((c) => c.nominations).flat()
   );
 
-  const decidedCategories: string[] = [];
+  const decidedCategories: CategoryId[] = [];
   nominations.forEach((nomination) => {
     if (nomination.won) {
       decidedCategories.push(nomination.category);

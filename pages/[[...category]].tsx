@@ -5,12 +5,16 @@ import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { getCategories } from 'services/airtable';
 import {
+  Category,
+  CategoryId,
   Nomination,
   NormalizedBets,
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
   NormalizedPlayers,
+  Player,
+  PlayerId,
   Status
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
@@ -38,10 +42,6 @@ interface Props {
   players: NormalizedPlayers;
   status: Status;
   bettingOpen: boolean;
-}
-
-interface Params extends ParsedUrlQuery {
-  category: string;
 }
 
 const CategoryPage: NextPage<Props> = ({
@@ -83,10 +83,10 @@ const CategoryPage: NextPage<Props> = ({
 
   const prepareNewNominationData = (nominations: NormalizedNominations) => {
     const { players: normalizedPlayers, status } = calculateWinnings(
-      Object.entries(categories).map((p) => p[1]),
+      (Object.entries(categories) as [CategoryId, Category][]).map((c) => c[1]),
       nominations,
       bets,
-      Object.entries(players).map((p) => p[1])
+      (Object.entries(players) as [PlayerId, Player][]).map((p) => p[1])
     );
     setNominations(nominations);
     setPlayers(normalizedPlayers);
@@ -111,9 +111,11 @@ const CategoryPage: NextPage<Props> = ({
           completedCategories={
             status?.completedCategories ?? initialStatus.completedCategories
           }
-          players={Object.entries(players ?? initialPlayers)
-            .map((p) => p[1])
-            .sort((a, b) => a.correct - b.correct)}
+          players={
+            (Object.entries(players ?? initialPlayers) as [PlayerId, Player][])
+              .map((p) => p[1])
+              .sort((a, b) => a.correct - b.correct) as Player[]
+          }
           bettingOpen={bettingOpen}
         />
       </GridContainer>
@@ -121,8 +123,13 @@ const CategoryPage: NextPage<Props> = ({
   );
 };
 
+interface Params extends ParsedUrlQuery {
+  category: string;
+}
 export const getStaticProps: GetStaticProps<Props, Params> = async () => {
-  const categoryData = await getCategoryData(process.env.BETTING_OPEN === 'true');
+  const categoryData = await getCategoryData(
+    process.env.BETTING_OPEN === 'true'
+  );
   const {
     categories,
     nominations,

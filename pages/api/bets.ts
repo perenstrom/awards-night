@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { BetRecord, createBet, updateBet } from 'services/airtable';
+import { BetId, NominationId, PlayerId } from 'types/nominations';
 
 interface PostRequestBody {
   playerId: string;
@@ -20,8 +21,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         resolve('');
       } else {
         const newBet: BetRecord = {
-          player: [playerId],
-          nomination: [nominationId]
+          player: [playerId as PlayerId],
+          nomination: [nominationId as NominationId]
         };
         createBet(newBet)
           .then((bet) => {
@@ -41,7 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both betId and nominationId must be provided');
         resolve('');
       } else {
-        updateBet(betId, nominationId)
+        updateBet(betId as BetId, nominationId as NominationId)
           .then((bet) => {
             res.status(200).end(JSON.stringify(bet));
             resolve('');

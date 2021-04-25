@@ -72,7 +72,7 @@ const formatCategory = (
   previousCategory: string,
   nextCategory: string
 ): Category => ({
-  id: categoryResponse.id,
+  id: categoryResponse.id as CategoryId,
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
   nominations: categoryResponse.get('nominations') ?? null,
@@ -81,7 +81,7 @@ const formatCategory = (
 });
 
 export const getNominations = async (
-  nominationIds: string[]
+  nominationIds: NominationId[]
 ): Promise<Nomination[]> => {
   const query = `OR(${nominationIds
     .map((id) => `RECORD_ID() = '${id}'`)
@@ -126,7 +126,7 @@ export const updateNomination = async (
 };
 
 const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
-  id: nominationResponse.id,
+  id: nominationResponse.id as NominationId,
   year: nominationResponse.get('year'),
   category: nominationResponse.get('category')[0],
   film: nominationResponse.get('film')[0],
@@ -136,7 +136,7 @@ const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   decided: null
 });
 
-export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
+export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
   const query = `OR(${filmIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
   const films: Film[] = [];
@@ -154,7 +154,7 @@ export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
 };
 
 export const updateFilm = async (
-  filmId: string,
+  filmId: FilmId,
   film: Partial<FilmRecord>
 ): Promise<Film> => {
   console.log(
@@ -172,20 +172,20 @@ export const updateFilm = async (
 };
 
 export const setFilmPoster = async (
-  filmId: string,
+  filmId: FilmId,
   poster: string
 ): Promise<Film> => {
   return updateFilm(filmId, { poster_url: poster });
 };
 
 const formatFilm = (filmResponse: AirtableRecord): Film => ({
-  id: filmResponse.id,
+  id: filmResponse.id as FilmId,
   imdbId: filmResponse.get('imdb_id'),
   name: filmResponse.get('name'),
   poster: filmResponse.get('poster_url') ?? null
 });
 
-export const getBets = async (betIds: string[]): Promise<Bet[]> => {
+export const getBets = async (betIds: BetId[]): Promise<Bet[]> => {
   const query = `OR(${betIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
   const bets: Bet[] = [];
@@ -216,8 +216,8 @@ export const createBet = async (bet: BetRecord): Promise<Bet> => {
 };
 
 export const updateBet = async (
-  betId: string,
-  nominationId: string
+  betId: BetId,
+  nominationId: NominationId
 ): Promise<Bet> => {
   console.log(
     `Updating bet:\n${JSON.stringify({ betId, nominationId }, null, 2)}`
@@ -234,12 +234,12 @@ export const updateBet = async (
 };
 
 export const getBetsForPlayer = async (
-  playerId: string
-): Promise<Record<string, string>> => {
+  playerId: PlayerId
+): Promise<Record<NominationId, BetId>> => {
   try {
     const player = await getPlayers([playerId]);
     const bets = await getBets(player[0].bets ?? []);
-    const nominationBets: Record<string, string> = {};
+    const nominationBets: Record<NominationId, BetId> = {};
     bets.forEach((bet) => (nominationBets[bet.nomination] = bet.id));
 
     return nominationBets;
@@ -250,12 +250,12 @@ export const getBetsForPlayer = async (
 };
 
 const formatBet = (betResponse: AirtableRecord): Bet => ({
-  id: betResponse.id,
+  id: betResponse.id as BetId,
   player: betResponse.get('player')[0],
   nomination: betResponse.get('nomination')[0]
 });
 
-export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
+export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
   const params = playerIds
     ? {
         filterByFormula: `OR(${playerIds
@@ -276,7 +276,7 @@ export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
 };
 
 const formatPlayer = (playerResponse: AirtableRecord): Player => ({
-  id: playerResponse.id,
+  id: playerResponse.id as PlayerId,
   name: playerResponse.get('name'),
   correct: 0,
   bets: playerResponse.get('bets') ?? null

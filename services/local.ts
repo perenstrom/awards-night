@@ -28,7 +28,7 @@ export const createBet = async (
 
 export const getBetsForPlayer = async (
   playerId: PlayerId
-): Promise<Record<string, string>> => {
+): Promise<Record<NominationId, BetId>> => {
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
     method: 'GET',
@@ -38,7 +38,7 @@ export const getBetsForPlayer = async (
     }
   };
 
-  return apiResult<Record<string, string>>(url, options);
+  return apiResult<Record<NominationId, BetId>>(url, options);
 };
 
 export const updateBet = async (

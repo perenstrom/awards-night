@@ -4,6 +4,7 @@ import { GetStaticProps, NextPage } from 'next';
 import {
   Category,
   NominationData,
+  NominationId,
   NormalizedNominations
 } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
@@ -24,7 +25,7 @@ const AdminPage: NextPage<Props> = ({
     initialNominations
   );
 
-  const updateNomination = async (nominationId: string, category: Category) => {
+  const updateNomination = async (nominationId: NominationId, category: Category) => {
     const winningNominationsInCategory = category.nominations.filter(
       (nominationId) => nominations[nominationId].won
     );
