@@ -1,30 +1,14 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Alpha (non public) web app companion for social competition in predicting Academy Award winners. Each player can enter their predictions for each category, and during the ceremony you can view the current category and see who predicted what, winners, and current standings among players.
 
-## Getting Started
+## Prediction entering
+![Screenshot 2021-04-06 at 16 08 06](https://user-images.githubusercontent.com/765759/113726125-40e70280-96f4-11eb-836f-0d0a8b49170e.png)
 
-First, run the development server:
+Each player has their own page for entering their predictions. When the ceremony is over and the winners decided the player can see which predictions were right, and which were wrong.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Oscar night
+![Screenshot 2021-04-06 at 16 02 33](https://user-images.githubusercontent.com/765759/113726730-c4085880-96f4-11eb-97fc-c592f7e29a0f.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Each category is displayed on its own, and updated every few seconds to check winners. The page shows all player predictions and overall standing (correct out of decided categories).
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Technology
+Oscar Night uses AirTable as a backend for a NextJS frontend application. Movie posters are fetched from The Movie DB API.
