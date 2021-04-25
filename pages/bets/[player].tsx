@@ -27,7 +27,7 @@ interface Params extends ParsedUrlQuery {
   player: string;
 }
 
-type State = 'idle' | 'loading';
+type State = 'idle' | 'loading' | 'saving';
 
 const PlayerBettingPage: NextPage<Props> = ({
   player,
@@ -48,6 +48,7 @@ const PlayerBettingPage: NextPage<Props> = ({
   }, []);
 
   const updateBet = async (nominationId: string, category: Category) => {
+    setState('saving');
     const nominationsWithExistingBets = category.nominations.filter(
       (nominationId) => Object.keys(bets).includes(nominationId)
     );
@@ -67,6 +68,8 @@ const PlayerBettingPage: NextPage<Props> = ({
       const savedBet = await createBet(player.id, nominationId);
       setBets({ ...bets, [nominationId]: savedBet.id });
     }
+
+    setState('idle');
   };
 
   return (
@@ -98,7 +101,7 @@ const PlayerBettingPage: NextPage<Props> = ({
                     nominee={nomination.nominee}
                     activeBet={Object.keys(bets).includes(nomination.id)}
                     bettingOpen={bettingOpen}
-                    onClick={updateBet}
+                    onClick={state === 'idle' ? updateBet : () => null}
                   />
                 );
               })}
