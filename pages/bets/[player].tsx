@@ -3,10 +3,18 @@ import Head from 'next/head';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { getPlayers } from 'services/airtable';
-import { NominationData, Category, Player, NominationId, BetId, PlayerId } from 'types/nominations';
+import {
+  NominationData,
+  Category,
+  Player,
+  NominationId,
+  BetId,
+  PlayerId
+} from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
 import {
   createBet,
+  deleteBet,
   getBetsForPlayer,
   updateBet as updateBetApi
 } from 'services/local';
@@ -57,7 +65,19 @@ const PlayerBettingPage: NextPage<Props> = ({
       throw new Error('Multiple bets for one category');
     }
 
-    if (nominationsWithExistingBets[0]) {
+    if (
+      nominationsWithExistingBets[0] === nominationId
+    ) {
+      // Removing bet
+      const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
+      await deleteBet(existingBet);
+      const newBets = { ...bets };
+      delete newBets[nominationsWithExistingBets[0]];
+      setBets(newBets);
+    } else if (
+      nominationsWithExistingBets.length > 0
+    ) {
+      // Updating bet in category
       const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
       const updatedBet = await updateBetApi(existingBet, nominationId);
       const newBets = { ...bets };
@@ -65,6 +85,7 @@ const PlayerBettingPage: NextPage<Props> = ({
       delete newBets[nominationsWithExistingBets[0]];
       setBets(newBets);
     } else {
+      // First bet in category
       const savedBet = await createBet(player.id, nominationId);
       setBets({ ...bets, [nominationId]: savedBet.id });
     }

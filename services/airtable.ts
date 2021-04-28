@@ -233,6 +233,19 @@ export const updateBet = async (
   });
 };
 
+export const deleteBet = async (betId: BetId): Promise<BetId> => {
+  console.log(`Updating bet:\n${JSON.stringify({ betId }, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    betsBase
+      .destroy(betId)
+      .then((result) => resolve(result.id as BetId))
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
+};
+
 export const getBetsForPlayer = async (
   playerId: PlayerId
 ): Promise<Record<NominationId, BetId>> => {

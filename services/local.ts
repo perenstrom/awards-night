@@ -61,6 +61,22 @@ export const updateBet = async (
   return apiResult<Bet>(url, options);
 };
 
+export const deleteBet = async (betId: BetId): Promise<BetId> => {
+  const url = '/api/bets';
+  const options: RequestInit = {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      betId
+    })
+  };
+
+  return apiResult<BetId>(url, options);
+};
+
 export const updateNomination = async (
   nominationId: NominationId,
   nomination: Partial<Nomination>
