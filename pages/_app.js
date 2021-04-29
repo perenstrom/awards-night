@@ -1,5 +1,6 @@
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
+import { useRouter } from 'next/router';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -21,7 +22,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <GlobalStyle />
-      <Component {...pageProps} />
+      <Component {...pageProps} key={router.asPath}/>
     </>
   );
 }
