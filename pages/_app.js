@@ -1,4 +1,5 @@
 import React from 'react';
+import { RecoilRoot } from 'recoil';
 import { createGlobalStyle } from 'styled-components';
 import { useRouter } from 'next/router';
 
@@ -19,11 +20,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter()
   return (
-    <>
+    <RecoilRoot>
       <GlobalStyle />
       <Component {...pageProps} key={router.asPath}/>
-    </>
+    </RecoilRoot>
   );
 }
 
