@@ -22,7 +22,14 @@ import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
 import { getCategoryData } from 'lib/getCategoryData';
 import { PlayerStandings } from 'components/PlayerStandings';
-import { calculateWinnings } from 'utils/nominations';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  betsState,
+  categoriesState,
+  nominationsState,
+  normalizedCategoriesState,
+  statusState
+} from 'states/state';
 
 const GridContainer = styled.div`
   display: grid;
@@ -45,27 +52,53 @@ interface Props {
 }
 
 const CategoryPage: NextPage<Props> = ({
-  categories,
+  categories: initialCategories,
   nominations: initialNominations,
   films,
-  bets,
+  bets: initialBets,
   players: initialPlayers,
   status: initialStatus,
   bettingOpen
 }) => {
   const router = useRouter();
   const { category: slug } = router.query;
-  const category = categories[(slug as string) ?? Object.keys(categories)[0]];
 
-  const [nominations, setNominations] = useState<NormalizedNominations>(
-    initialNominations
+  const [nominations, setNominations] = useRecoilState(nominationsState);
+  const [bets, setBets] = useRecoilState(betsState);
+  const [normalizedCategories, setNormalizedCategories] = useRecoilState(
+    normalizedCategoriesState
   );
+  const categories = useRecoilValue(categoriesState);
+  const status = useRecoilValue(statusState);
   const [players, setPlayers] = useState<NormalizedPlayers>(initialPlayers);
-  const [status, setStatus] = useState<Status>(initialStatus);
-
+  const currentSlug =
+    (slug as string) ?? categories[0]?.slug ?? Object.keys(initialCategories)[0];
+  const category: Category = normalizedCategories
+    ? normalizedCategories[currentSlug]
+    : initialCategories[currentSlug];
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     nominations ? nominations[n] : initialNominations[n]
   );
+
+  useEffect(() => {
+    initState(
+      initialNominations,
+      initialBets,
+      initialPlayers,
+      initialCategories
+    );
+  }, []);
+  const initState = (
+    nominations: NormalizedNominations,
+    bets: NormalizedBets,
+    players: NormalizedPlayers,
+    categories: NormalizedCategories
+  ) => {
+    setNominations(nominations);
+    setBets(bets);
+    setPlayers(players);
+    setNormalizedCategories(categories);
+  };
 
   useEffect(() => {
     if (!bettingOpen) {
@@ -74,24 +107,10 @@ const CategoryPage: NextPage<Props> = ({
       return () => clearInterval(interval);
     }
   }, []);
-
   const refreshNominations = () => {
     fetch('/api/nominations')
       .then((result) => result.json())
-      .then(prepareNewNominationData);
-  };
-
-  const prepareNewNominationData = (nominations: NormalizedNominations) => {
-    const { players: normalizedPlayers, status } = calculateWinnings(
-      (Object.entries(categories) as [CategoryId, Category][]).map((c) => c[1]),
-      nominations,
-      bets,
-      (Object.entries(players) as [PlayerId, Player][]).map((p) => p[1])
-    );
-    setNominations(nominations);
-    setPlayers(normalizedPlayers);
-    setStatus(status);
-    console.log('updated');
+      .then(setNominations);
   };
 
   return (
@@ -104,7 +123,7 @@ const CategoryPage: NextPage<Props> = ({
         <CategoryComponent
           nominations={categoryNominations}
           films={films}
-          bets={bets}
+          bets={bets ?? initialBets}
           players={players ?? initialPlayers}
         />
         <PlayerStandings

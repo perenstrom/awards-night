@@ -2,6 +2,7 @@ import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { createGlobalStyle } from 'styled-components';
 import { useRouter } from 'next/router';
+// import { DebugObserver } from 'components/DebugObserver';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -20,11 +21,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function MyApp({ Component, pageProps }) {
-  const router = useRouter()
+  const router = useRouter();
   return (
     <RecoilRoot>
       <GlobalStyle />
-      <Component {...pageProps} key={router.asPath}/>
+      {/* <DebugObserver /> */}
+      <Component {...pageProps} key={router.asPath} />
     </RecoilRoot>
   );
 }
