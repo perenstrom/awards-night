@@ -28,6 +28,7 @@ import {
   categoriesState,
   nominationsState,
   normalizedCategoriesState,
+  playerState,
   statusState
 } from 'states/state';
 
@@ -70,9 +71,11 @@ const CategoryPage: NextPage<Props> = ({
   );
   const categories = useRecoilValue(categoriesState);
   const status = useRecoilValue(statusState);
-  const [players, setPlayers] = useState<NormalizedPlayers>(initialPlayers);
+  const [players, setPlayers] = useRecoilState<NormalizedPlayers>(playerState);
   const currentSlug =
-    (slug as string) ?? categories[0]?.slug ?? Object.keys(initialCategories)[0];
+    (slug as string) ??
+    categories[0]?.slug ??
+    Object.keys(initialCategories)[0];
   const category: Category = normalizedCategories
     ? normalizedCategories[currentSlug]
     : initialCategories[currentSlug];
@@ -89,15 +92,23 @@ const CategoryPage: NextPage<Props> = ({
     );
   }, []);
   const initState = (
-    nominations: NormalizedNominations,
-    bets: NormalizedBets,
-    players: NormalizedPlayers,
-    categories: NormalizedCategories
+    initialNominations: NormalizedNominations,
+    initialBets: NormalizedBets,
+    initialPlayers: NormalizedPlayers,
+    initialCategories: NormalizedCategories
   ) => {
-    setNominations(nominations);
-    setBets(bets);
-    setPlayers(players);
-    setNormalizedCategories(categories);
+    if (!nominations) {
+      setNominations(initialNominations);
+    }
+    if (!bets) {
+      setBets(initialBets);
+    }
+    if (!players) {
+      setPlayers(initialPlayers);
+    }
+    if (!normalizedCategories) {
+      setNormalizedCategories(initialCategories);
+    }
   };
 
   useEffect(() => {

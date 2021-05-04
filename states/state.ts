@@ -56,32 +56,40 @@ export const statusState = selector<Status>({
 
 const rawPlayersState = atom<NormalizedPlayers>({
   key: 'rawPlayersState',
-  default: null
+  default: null,
+  dangerouslyAllowMutability: true
 });
 
 export const playerState = selector<NormalizedPlayers>({
   key: 'normalizedPlayersState',
   get: ({ get }) => {
-    const normalizedPlayersState = get(rawPlayersState);
+    const normalizedPlayers = get(rawPlayersState);
     const categories = get(categoriesState);
     const nominations = get(nominationsState);
     const bets = get(betsState);
 
-    const newPlayers: NormalizedPlayers = {};
-    categories.forEach((category) => {
-      category.nominations.forEach((n) => {
-        if (nominations[n].won) {
-          const winningBets = (nominations[n].bets ?? []) as BetId[];
-          winningBets.forEach((bet) => {
-            newPlayers[bets[bet].player].correct
-              ? newPlayers[bets[bet].player].correct++
-              : (newPlayers[bets[bet].player].correct = 0);
-          });
-        }
+    if (normalizedPlayers) {
+      const newPlayers: NormalizedPlayers = {};
+      Object.keys(normalizedPlayers).forEach((playerId) => {
+        newPlayers[playerId] = { ...normalizedPlayers[playerId], correct: 0 };
       });
-    });
+      categories.forEach((category) => {
+        category.nominations.forEach((n) => {
+          if (nominations[n].won) {
+            const winningBets = (nominations[n].bets ?? []) as BetId[];
+            winningBets.forEach((bet) => {
+              newPlayers[bets[bet].player].correct !== undefined
+                ? newPlayers[bets[bet].player].correct++
+                : (newPlayers[bets[bet].player].correct = 0);
+            });
+          }
+        });
+      });
 
-    return newPlayers;
+      return newPlayers;
+    } else {
+      normalizedPlayers;
+    }
   },
   set: ({ set }, newValue) => {
     set(rawPlayersState, newValue);
