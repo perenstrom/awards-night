@@ -1,14 +1,22 @@
-import { assert } from 'console';
 import {
+  Bet,
+  BetId,
   Category,
   CategoryId,
   FilmId,
   Nomination,
   NominationId,
+  NormalizedBets,
   NormalizedCategories,
-  NormalizedNominations
+  NormalizedNominations,
+  NormalizedPlayers,
+  Player,
+  PlayerId
 } from 'types/nominations';
-import { calculateCompletedCategories } from './nominations';
+import {
+  calculateCompletedCategories,
+  calculatePlayersWinnings
+} from './nominations';
 
 const categories: Category[] = [
   {
@@ -38,8 +46,9 @@ const categories: Category[] = [
 ];
 
 const nominations: NormalizedNominations = {
+  // Cat a
   noma: {
-    bets: [],
+    bets: ['bet-a', 'bet-b'],
     category: 'a' as CategoryId,
     decided: null,
     film: 'a' as FilmId,
@@ -58,8 +67,9 @@ const nominations: NormalizedNominations = {
     won: false,
     year: 2021
   },
+  // Cat b
   nomc: {
-    bets: [],
+    bets: ['bet-c'],
     category: 'b' as CategoryId,
     decided: null,
     film: 'c' as FilmId,
@@ -69,7 +79,7 @@ const nominations: NormalizedNominations = {
     year: 2021
   },
   nomd: {
-    bets: [],
+    bets: ['bet-d'],
     category: 'b' as CategoryId,
     decided: null,
     film: 'd' as FilmId,
@@ -78,6 +88,7 @@ const nominations: NormalizedNominations = {
     won: true,
     year: 2021
   },
+  // Cat c
   nome: {
     bets: [],
     category: 'c' as CategoryId,
@@ -100,6 +111,44 @@ const nominations: NormalizedNominations = {
   }
 };
 
+const players: NormalizedPlayers = {
+  'player-a': {
+    id: 'player-a' as PlayerId,
+    bets: ['bet-a', 'bet-c'],
+    correct: 0,
+    name: 'Player A'
+  },
+  'player-b': {
+    id: 'player-b' as PlayerId,
+    bets: ['bet-b', 'bet-d'],
+    correct: 0,
+    name: 'Player B'
+  }
+};
+
+const bets: NormalizedBets = {
+  'bet-a': {
+    id: 'bet-a' as BetId,
+    nomination: 'noma' as NominationId,
+    player: 'player-a' as PlayerId
+  },
+  'bet-b': {
+    id: 'bet-b' as BetId,
+    nomination: 'noma' as NominationId,
+    player: 'player-b' as PlayerId
+  },
+  'bet-c': {
+    id: 'bet-c' as BetId,
+    nomination: 'nomc' as NominationId,
+    player: 'player-a' as PlayerId
+  },
+  'bet-d': {
+    id: 'bet-d' as BetId,
+    nomination: 'nomd' as NominationId,
+    player: 'player-b' as PlayerId
+  }
+};
+
 describe('calculateCompletedCategories', () => {
   it('returns correct number of completed categories', async () => {
     const completedCategories = calculateCompletedCategories(
@@ -107,5 +156,32 @@ describe('calculateCompletedCategories', () => {
       nominations
     );
     expect(completedCategories).toEqual(2);
+  });
+});
+
+describe('calculatePlayerWinnings', () => {
+  it('returns the expected players object', async () => {
+    const expectedPlayers: NormalizedPlayers = {
+      'player-a': {
+        id: 'player-a' as PlayerId,
+        bets: ['bet-a', 'bet-c'],
+        correct: 1,
+        name: 'Player A'
+      },
+      'player-b': {
+        id: 'player-b' as PlayerId,
+        bets: ['bet-b', 'bet-d'],
+        correct: 2,
+        name: 'Player B'
+      }
+    };
+
+    const enhancedPlayers: NormalizedPlayers = calculatePlayersWinnings(
+      categories,
+      nominations,
+      bets,
+      players
+    );
+    expect(enhancedPlayers).toEqual(expectedPlayers);
   });
 });

@@ -139,7 +139,9 @@ const CategoryPage: NextPage<Props> = ({
         />
         <PlayerStandings
           completedCategories={
-            status?.completedCategories ?? initialStatus.completedCategories
+            status
+              ? status.completedCategories
+              : initialStatus.completedCategories
           }
           players={
             (Object.entries(players ?? initialPlayers) as [PlayerId, Player][])

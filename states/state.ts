@@ -50,9 +50,13 @@ export const statusState = selector<Status>({
       nominations
     );
 
-    return {
-      completedCategories: completedCategories
-    };
+    if (categories.length === 0) {
+      return null;
+    } else {
+      return {
+        completedCategories: completedCategories
+      };
+    }
   }
 });
 
