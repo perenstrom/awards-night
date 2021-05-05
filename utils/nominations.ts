@@ -12,7 +12,7 @@ export const calculateWinnings = (
   nominations: NormalizedNominations,
   bets: NormalizedBets,
   players: Player[]
-): { players: NormalizedPlayers; status: Status } => {
+): NormalizedPlayers => {
   const newPlayers: NormalizedPlayers = {};
   players.forEach((p) => (newPlayers[p.id] = { ...p, correct: 0 }));
 
@@ -28,12 +28,7 @@ export const calculateWinnings = (
     });
   });
 
-  return {
-    players: newPlayers,
-    status: {
-      completedCategories: calculateCompletedCategories(categories, nominations)
-    }
-  };
+  return newPlayers;
 };
 
 export const calculateCompletedCategories = (

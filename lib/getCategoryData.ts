@@ -14,7 +14,10 @@ import {
   NormalizedFilms,
   NormalizedNominations
 } from 'types/nominations';
-import { calculateWinnings } from 'utils/nominations';
+import {
+  calculateCompletedCategories,
+  calculateWinnings
+} from 'utils/nominations';
 
 export const getCategoryData = async (
   bettingOpen: boolean
@@ -48,14 +51,19 @@ export const getCategoryData = async (
     bets.forEach((b) => (normalizedBets[b.id] = b));
   }
 
-  const players = await getPlayers(bettingOpen ? null : bets.map((b) => b.player));
+  const players = await getPlayers(
+    bettingOpen ? null : bets.map((b) => b.player)
+  );
 
-  const { players: normalizedPlayers, status } = calculateWinnings(
+  const normalizedPlayers = calculateWinnings(
     categories,
     normalizedNominations,
     normalizedBets,
     players
   );
+  const status = {
+    completedCategories: calculateCompletedCategories(categories, normalizedNominations)
+  };
 
   return {
     categories: normalizedCategories,
