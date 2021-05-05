@@ -1,6 +1,5 @@
 import { atom, selector } from 'recoil';
 import {
-  BetId,
   Category,
   CategoryId,
   NormalizedBets,
@@ -9,7 +8,10 @@ import {
   NormalizedPlayers,
   Status
 } from 'types/nominations';
-import { calculateCompletedCategories } from 'utils/nominations';
+import {
+  calculateCompletedCategories,
+  calculatePlayersWinnings
+} from 'utils/nominations';
 
 export const betsState = atom<NormalizedBets>({
   key: 'betsState',
@@ -63,32 +65,15 @@ const rawPlayersState = atom<NormalizedPlayers>({
 export const playerState = selector<NormalizedPlayers>({
   key: 'normalizedPlayersState',
   get: ({ get }) => {
-    const normalizedPlayers = get(rawPlayersState);
+    const players = get(rawPlayersState);
     const categories = get(categoriesState);
     const nominations = get(nominationsState);
     const bets = get(betsState);
 
-    if (normalizedPlayers) {
-      const newPlayers: NormalizedPlayers = {};
-      Object.keys(normalizedPlayers).forEach((playerId) => {
-        newPlayers[playerId] = { ...normalizedPlayers[playerId], correct: 0 };
-      });
-      categories.forEach((category) => {
-        category.nominations.forEach((n) => {
-          if (nominations[n].won) {
-            const winningBets = (nominations[n].bets ?? []) as BetId[];
-            winningBets.forEach((bet) => {
-              newPlayers[bets[bet].player].correct !== undefined
-                ? newPlayers[bets[bet].player].correct++
-                : (newPlayers[bets[bet].player].correct = 0);
-            });
-          }
-        });
-      });
-
-      return newPlayers;
+    if (players) {
+      return calculatePlayersWinnings(categories, nominations, bets, players);
     } else {
-      normalizedPlayers;
+      players;
     }
   },
   set: ({ set }, newValue) => {
