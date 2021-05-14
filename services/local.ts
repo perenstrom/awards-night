@@ -3,6 +3,7 @@ import {
   BetId,
   Nomination,
   NominationId,
+  Player,
   PlayerId
 } from 'types/nominations';
 
@@ -24,6 +25,19 @@ export const createBet = async (
   };
 
   return apiResult<Bet>(url, options);
+};
+
+export const getLoggedInPlayer = async (): Promise<Player> => {
+  const url = `/api/players/me`;
+  const options: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  };
+
+  return apiResult<Player>(url, options);
 };
 
 export const getBetsForPlayer = async (

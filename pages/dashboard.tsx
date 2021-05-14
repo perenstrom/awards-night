@@ -1,54 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import Head from 'next/head';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-import { getPlayers } from 'services/airtable';
-import {
-  NominationData,
-  Category,
-  Player,
-  NominationId,
-  BetId,
-  PlayerId
-} from 'types/nominations';
+import { GetStaticProps, NextPage } from 'next';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { getNominationData } from 'lib/getNominationData';
+import {
+  BetId,
+  Category,
+  NominationData,
+  NominationId,
+  Player
+} from 'types/nominations';
+import React, { useState, useEffect } from 'react';
 import {
   createBet,
   deleteBet,
-  getBetsForPlayer,
-  updateBet as updateBetApi
+  getLoggedInPlayer,
+  updateBet as updateBetApi,
+  getBetsForPlayer
 } from 'services/local';
-import styled from 'styled-components';
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import { CategoryHeading } from 'components/CategoryHeading';
 import { NominationListWrapper } from 'components/NominationListWrapper';
+import Head from 'next/head';
+import styled from 'styled-components';
 
 const Loading = styled.span`
   font-size: 1rem;
   font-weight: normal;
 `;
 
-type Props = NominationData & { bettingOpen: boolean } & { player: Player };
-
-interface Params extends ParsedUrlQuery {
-  player: string;
-}
-
+type Props = NominationData & { bettingOpen: boolean };
 type State = 'idle' | 'loading' | 'saving';
 
-const PlayerBettingPage: NextPage<Props> = ({
-  player,
+const DashboardPage: NextPage<Props> = ({
   categories,
   nominations,
   films,
   bettingOpen
 }) => {
   const [bets, setBets] = useState<Record<NominationId, BetId>>({});
+  const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
     const fetchDataAsync = async () => {
+      const player = await getLoggedInPlayer();
       const bets = await getBetsForPlayer(player.id);
+      setPlayer(player);
       setBets(bets);
       setState('idle');
     };
@@ -65,18 +61,14 @@ const PlayerBettingPage: NextPage<Props> = ({
       throw new Error('Multiple bets for one category');
     }
 
-    if (
-      nominationsWithExistingBets[0] === nominationId
-    ) {
+    if (nominationsWithExistingBets[0] === nominationId) {
       // Removing bet
       const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
       await deleteBet(existingBet);
       const newBets = { ...bets };
       delete newBets[nominationsWithExistingBets[0]];
       setBets(newBets);
-    } else if (
-      nominationsWithExistingBets.length > 0
-    ) {
+    } else if (nominationsWithExistingBets.length > 0) {
       // Updating bet in category
       const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
       const updatedBet = await updateBetApi(existingBet, nominationId);
@@ -100,7 +92,7 @@ const PlayerBettingPage: NextPage<Props> = ({
       </Head>
       <NominationListWrapper>
         <h1>
-          Betting for {player.name}
+          {player && `Betting for ${player.name}`}
           {state !== 'idle' && <Loading> loading...</Loading>}
         </h1>
         {!bettingOpen && <p>Betting is closed</p>}
@@ -134,32 +126,15 @@ const PlayerBettingPage: NextPage<Props> = ({
   );
 };
 
-export const getStaticProps: GetStaticProps<Props, Params> = async (
-  context
-) => {
+export const getStaticProps: GetStaticProps<Props> = async (context) => {
   const bettingData = await getNominationData();
-  const player = await getPlayers([context.params.player as PlayerId]);
 
   return {
     props: {
       ...bettingData,
-      player: player[0],
       bettingOpen: process.env.BETTING_OPEN === 'true'
     }
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const players = await getPlayers(null);
-
-  const paths = players.map((player) => ({
-    params: { player: player.id }
-  }));
-
-  return {
-    paths: paths,
-    fallback: false
-  };
-};
-
-export default PlayerBettingPage;
+export default withPageAuthRequired(DashboardPage);
