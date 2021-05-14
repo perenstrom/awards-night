@@ -2,6 +2,7 @@ import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { createGlobalStyle } from 'styled-components';
 import { useRouter } from 'next/router';
+import { UserProvider } from '@auth0/nextjs-auth0';
 // import { DebugObserver } from 'components/DebugObserver';
 
 const GlobalStyle = createGlobalStyle`
@@ -24,9 +25,11 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
   return (
     <RecoilRoot>
-      <GlobalStyle />
-      {/* <DebugObserver /> */}
-      <Component {...pageProps} key={router.asPath} />
+      <UserProvider>
+        <GlobalStyle />
+        {/* <DebugObserver /> */}
+        <Component {...pageProps} key={router.asPath} />
+      </UserProvider>
     </RecoilRoot>
   );
 }

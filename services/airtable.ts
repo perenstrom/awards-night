@@ -288,6 +288,27 @@ export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
   return players;
 };
 
+export const getPlayerByAuth0Id = async (auth0Id: string): Promise<Player> => {
+  const players: Player[] = [];
+  await playersBase
+    .select({ filterByFormula: `auth0_user_id = '${auth0Id}'` })
+    .eachPage((playersResult, fetchNextPage) => {
+      playersResult.forEach((player) => {
+        players.push(formatPlayer(player));
+      });
+
+      fetchNextPage();
+    });
+
+  if (players.length > 1) {
+    throw new Error(`Multiple records with id ${auth0Id} found.`);
+  } else if (players.length === 0) {
+    return null;
+  } else {
+    return players[0];
+  }
+};
+
 const formatPlayer = (playerResponse: AirtableRecord): Player => ({
   id: playerResponse.id as PlayerId,
   name: playerResponse.get('name'),
