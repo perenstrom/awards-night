@@ -10,10 +10,13 @@ import {
   Nomination,
   NominationId,
   Player,
-  PlayerId
+  PlayerId,
+  Year,
+  YearId
 } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
+const yearsBase = base('years');
 const categoriesBase = base('categories');
 const nominationsBase = base('nominations');
 const filmsBase = base('films');
@@ -41,30 +44,82 @@ export interface BetRecord {
   nomination: NominationId[];
 }
 
-export const getCategories = async (): Promise<Category[]> => {
-  const categories: Category[] = [];
-  await categoriesBase.select().eachPage((categoriesResult, fetchNextPage) => {
-    categoriesResult.forEach((category, index) => {
-      const previousCategory =
-        index === 0 ? null : categoriesResult[index - 1].get('slug');
-      const nextCategory =
-        index === categoriesResult.length - 1
-          ? null
-          : categoriesResult[index + 1].get('slug');
-      categories.push(formatCategory(category, previousCategory, nextCategory));
+export const getYear = async (year: number): Promise<Year> => {
+  const years: Year[] = [];
+  await yearsBase
+    .select({ filterByFormula: `year = '${year}'` })
+    .eachPage((yearsResult, fetchNextPage) => {
+      yearsResult.forEach((year) => {
+        years.push(formatYear(year));
+      });
+
+      fetchNextPage();
+    });
+
+  if (years.length > 1) {
+    throw new Error(`Multiple records with year ${year} found.`);
+  } else if (years.length === 0) {
+    return null;
+  } else {
+    return years[0];
+  }
+};
+
+export const getYears = async (): Promise<Year[]> => {
+  const years: Year[] = [];
+  await yearsBase.select().eachPage((yearsResult, fetchNextPage) => {
+    yearsResult.forEach((year) => {
+      years.push(formatYear(year));
     });
 
     fetchNextPage();
   });
 
-  return categories;
+  return years;
 };
 
-export const getCategory = async (slug: string): Promise<Category> => {
-  const categories = await getCategories();
-  const category = categories.find((category) => category.slug === slug);
+const formatYear = (yearResponse: AirtableRecord): Year => ({
+  id: yearResponse.id as YearId,
+  year: yearResponse.get('year'),
+  name: yearResponse.get('name'),
+  date: yearResponse.get('date'),
+  bettingOpen: !!yearResponse.get('betting_open'),
+  categories: yearResponse.get('categories') ?? [],
+  nominations: yearResponse.get('nominations') ?? []
+});
 
-  return { ...category };
+export const getCategories = async (
+  categoryIds?: CategoryId[]
+): Promise<Category[]> => {
+  const query = categoryIds
+    ? {
+        filterByFormula: `OR(${categoryIds
+          .map((id) => `RECORD_ID() = '${id}'`)
+          .join(',')})
+    `
+      }
+    : {};
+
+  const categories: Category[] = [];
+  await categoriesBase
+    .select(query)
+    .eachPage((categoriesResult, fetchNextPage) => {
+      categoriesResult.forEach((category, index) => {
+        const previousCategory =
+          index === 0 ? null : categoriesResult[index - 1].get('slug');
+        const nextCategory =
+          index === categoriesResult.length - 1
+            ? null
+            : categoriesResult[index + 1].get('slug');
+        categories.push(
+          formatCategory(category, previousCategory, nextCategory)
+        );
+      });
+
+      fetchNextPage();
+    });
+
+  return categories;
 };
 
 const formatCategory = (
@@ -75,7 +130,7 @@ const formatCategory = (
   id: categoryResponse.id as CategoryId,
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
-  nominations: categoryResponse.get('nominations') ?? null,
+  nominations: [],
   previousCategory: previousCategory,
   nextCategory: nextCategory
 });

@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { getCategories } from 'services/airtable';
+import { getCategories, getYear, getYears } from 'services/airtable';
 import {
   Category,
-  CategoryId,
   Nomination,
   NormalizedBets,
   NormalizedCategories,
@@ -15,12 +14,13 @@ import {
   NormalizedPlayers,
   Player,
   PlayerId,
-  Status
+  Status,
+  Year
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
-import { getCategoryData } from 'lib/getCategoryData';
+import { getYearData } from 'lib/getYearData';
 import { PlayerStandings } from 'components/PlayerStandings';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -43,6 +43,7 @@ const GridContainer = styled.div`
 `;
 
 interface Props {
+  year: Year;
   categories: NormalizedCategories;
   nominations: NormalizedNominations;
   films: NormalizedFilms;
@@ -53,6 +54,7 @@ interface Props {
 }
 
 const CategoryPage: NextPage<Props> = ({
+  year,
   categories: initialCategories,
   nominations: initialNominations,
   films,
@@ -119,7 +121,7 @@ const CategoryPage: NextPage<Props> = ({
     }
   }, []);
   const refreshNominations = () => {
-    fetch('/api/nominations')
+    fetch(`/api/nominations?year=${year.year}`)
       .then((result) => result.json())
       .then(setNominations);
   };
@@ -130,7 +132,7 @@ const CategoryPage: NextPage<Props> = ({
         <title>{category.name}</title>
       </Head>
       <GridContainer>
-        <CategoryMenu category={category} />
+        <CategoryMenu category={category} year={year} />
         <CategoryComponent
           nominations={categoryNominations}
           films={films}
@@ -156,12 +158,14 @@ const CategoryPage: NextPage<Props> = ({
 };
 
 interface Params extends ParsedUrlQuery {
+  year: string;
   category: string;
 }
-export const getStaticProps: GetStaticProps<Props, Params> = async () => {
-  const categoryData = await getCategoryData(
-    process.env.BETTING_OPEN === 'true'
-  );
+export const getStaticProps: GetStaticProps<Props, Params> = async (
+  context
+) => {
+  const year = await getYear(parseInt(context.params.year, 10));
+  const categoryData = await getYearData(year);
   const {
     categories,
     nominations,
@@ -173,29 +177,33 @@ export const getStaticProps: GetStaticProps<Props, Params> = async () => {
 
   return {
     props: {
+      year,
       categories,
       nominations,
       films,
       bets,
       players,
       status,
-      bettingOpen: process.env.BETTING_OPEN === 'true'
+      bettingOpen: year.bettingOpen
     }
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const categories = await getCategories();
+  const years = await getYears();
 
-  const indexPath = {
-    params: { category: [] }
-  };
-  const paths = categories.map((category) => ({
-    params: { category: [category.slug] }
-  }));
+  const paths = [];
+  for (const year of years) {
+    const categories = await getCategories(year.categories);
+    paths.push(
+      categories.map((category) => ({
+        params: { year: year.year.toString(), category: category.slug }
+      }))
+    );
+  }
 
   return {
-    paths: [...paths, indexPath],
+    paths: paths.flat(),
     fallback: false
   };
 };

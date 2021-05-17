@@ -8,32 +8,36 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
-  CategoryData,
+  YearData,
   NormalizedBets,
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  NormalizedPlayers
+  NormalizedPlayers,
+  Year,
+  CategoryId,
+  Category
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
   calculatePlayersWinnings
 } from 'utils/nominations';
 
-export const getCategoryData = async (
-  bettingOpen: boolean
-): Promise<CategoryData> => {
-  const categories = await getCategories();
+export const getYearData = async (year: Year): Promise<YearData> => {
+  const categories = await getCategories(year.categories);
   const normalizedCategories: NormalizedCategories = {};
-  categories.forEach((c) => (normalizedCategories[c.slug] = c));
+  const categoryIdToSlug: Record<CategoryId, string> = {};
+  categories.forEach((c) => {
+    normalizedCategories[c.slug] = c;
+    categoryIdToSlug[c.id] = c.slug;
+  });
 
-  const nominations = await getNominations(
-    categories.map((c) => c.nominations).flat()
-  );
+  const nominations = await getNominations(year.nominations);
   const normalizedNominations: NormalizedNominations = {};
-  nominations.forEach(
-    (n) => (normalizedNominations[n.id] = bettingOpen ? { ...n, bets: [] } : n)
-  );
+  nominations.forEach((n) => {
+    normalizedNominations[n.id] = year.bettingOpen ? { ...n, bets: [] } : n;
+    normalizedCategories[categoryIdToSlug[n.category]].nominations.push(n.id);
+  });
 
   const films = await getFilms(nominations.map((n) => n.film));
   films.forEach(async (f, i) => {
@@ -48,12 +52,12 @@ export const getCategoryData = async (
 
   const bets = await getBets(nominations.map((n) => n.bets).flat());
   const normalizedBets: NormalizedBets = {};
-  if (!bettingOpen) {
+  if (!year.bettingOpen) {
     bets.forEach((b) => (normalizedBets[b.id] = b));
   }
 
   const players = await getPlayers(
-    bettingOpen ? null : bets.map((b) => b.player)
+    year.bettingOpen ? null : bets.map((b) => b.player)
   );
 
   const rawNormalizedPlayers: NormalizedPlayers = {};
@@ -62,14 +66,14 @@ export const getCategoryData = async (
   });
 
   const normalizedPlayers = calculatePlayersWinnings(
-    categories,
+    Object.values(normalizedCategories),
     normalizedNominations,
     normalizedBets,
     rawNormalizedPlayers
   );
   const status = {
     completedCategories: calculateCompletedCategories(
-      categories,
+      Object.values(normalizedCategories),
       normalizedNominations
     )
   };
@@ -84,11 +88,10 @@ export const getCategoryData = async (
   };
 };
 
-export const refreshNominations = async (): Promise<NormalizedNominations> => {
-  const categories = await getCategories();
-  const nominations = await getNominations(
-    categories.map((c) => c.nominations).flat()
-  );
+export const refreshNominations = async (
+  year: Year
+): Promise<NormalizedNominations> => {
+  const nominations = await getNominations(year.nominations);
 
   const normalizedNominations: NormalizedNominations = {};
   nominations.forEach((n) => (normalizedNominations[n.id] = n));
