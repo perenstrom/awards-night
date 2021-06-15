@@ -1,5 +1,4 @@
-import { setupServer } from 'msw/node';
-const server = setupServer();
+import { server } from './__mocks__/mswServer';
 
 export const mockRequests = () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
