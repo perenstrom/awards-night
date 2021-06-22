@@ -2,51 +2,76 @@ import {
   getCategories,
   getFilms,
   getNominations,
-  getPlayers
+  setFilmPoster
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
-  CategoryId,
-  NominationData,
+  YearData,
+  NormalizedCategories,
   NormalizedFilms,
-  NormalizedNominations
+  NormalizedNominations,
+  Year,
+  CategoryId,
+  NominationData
 } from 'types/nominations';
+import { calculateCompletedCategories } from 'utils/nominations';
 
-export const getNominationData = async (): Promise<NominationData> => {
-  const categories = await getCategories();
+export const getNominationData = async (
+  year: Year,
+  withBets: boolean
+): Promise<NominationData> => {
+  try {
+    const categories = await getCategories(year.categories);
+    const normalizedCategories: NormalizedCategories = {};
+    const categoryIdToSlug: Record<CategoryId, string> = {};
+    categories.forEach((c) => {
+      normalizedCategories[c.slug] = c;
+      categoryIdToSlug[c.id] = c.slug;
+    });
 
-  const nominations = await getNominations(
-    categories.map((c) => c.nominations).flat()
-  );
+    const nominations = await getNominations(year.nominations);
+    const normalizedNominations: NormalizedNominations = {};
+    nominations.forEach((n) => {
+      normalizedNominations[n.id] = withBets ? n : { ...n, bets: [] };
+      normalizedCategories[categoryIdToSlug[n.category]].nominations.push(n.id);
+    });
 
-  const decidedCategories: CategoryId[] = [];
-  nominations.forEach((nomination) => {
-    if (nomination.won) {
-      decidedCategories.push(nomination.category);
-    }
-  });
+    const films = await getFilms(nominations.map((n) => n.film));
+    films.forEach(async (f, i) => {
+      if (!f.poster) {
+        const poster = await getPoster(f.imdbId);
+        await setFilmPoster(f.id, poster);
+        f.poster = poster;
+      }
+    });
+    const normalizedFilms: NormalizedFilms = {};
+    films.forEach((f) => (normalizedFilms[f.id] = f));
 
-  const films = await getFilms(nominations.map((n) => n.film));
-  films.forEach(async (f) => {
-    const poster = await getPoster(f.imdbId);
-    f.poster = poster;
-  });
-  const normalizedFilms: NormalizedFilms = {};
-  films.forEach((f) => (normalizedFilms[f.id] = f));
+    const status = {
+      completedCategories: calculateCompletedCategories(
+        Object.values(normalizedCategories),
+        normalizedNominations
+      )
+    };
+
+    return {
+      categories: normalizedCategories,
+      films: normalizedFilms,
+      nominations: normalizedNominations,
+      status: status
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const refreshNominations = async (
+  year: Year
+): Promise<NormalizedNominations> => {
+  const nominations = await getNominations(year.nominations);
 
   const normalizedNominations: NormalizedNominations = {};
-  nominations.forEach(
-    (n) =>
-      (normalizedNominations[n.id] = {
-        ...n,
-        bets: [],
-        decided: decidedCategories.includes(n.category)
-      })
-  );
+  nominations.forEach((n) => (normalizedNominations[n.id] = n));
 
-  return {
-    categories: categories,
-    nominations: normalizedNominations,
-    films: normalizedFilms
-  };
+  return normalizedNominations;
 };

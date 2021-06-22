@@ -101,25 +101,29 @@ export const getCategories = async (
     : {};
 
   const categories: Category[] = [];
-  await categoriesBase
-    .select(query)
-    .eachPage((categoriesResult, fetchNextPage) => {
-      categoriesResult.forEach((category, index) => {
-        const previousCategory =
-          index === 0 ? null : categoriesResult[index - 1].get('slug');
-        const nextCategory =
-          index === categoriesResult.length - 1
-            ? null
-            : categoriesResult[index + 1].get('slug');
-        categories.push(
-          formatCategory(category, previousCategory, nextCategory)
-        );
+  try {
+    await categoriesBase
+      .select(query)
+      .eachPage((categoriesResult, fetchNextPage) => {
+        categoriesResult.forEach((category, index) => {
+          const previousCategory =
+            index === 0 ? null : categoriesResult[index - 1].get('slug');
+          const nextCategory =
+            index === categoriesResult.length - 1
+              ? null
+              : categoriesResult[index + 1].get('slug');
+          categories.push(
+            formatCategory(category, previousCategory, nextCategory)
+          );
+        });
+
+        fetchNextPage();
       });
 
-      fetchNextPage();
-    });
-
-  return categories;
+    return categories;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const formatCategory = (
