@@ -1,7 +1,7 @@
 import { rest } from 'msw';
-import { getCategoryResponse } from '__test__/__fixtures__/airtable/getCategoriesResponse';
+import { getCategoriesResponse } from '__test__/__fixtures__/airtable/getCategoriesResponse';
 
-export const mockGetCategories = () => {
+export const mockGetCategories = (categories?: string[]) => {
   return {
     handler: rest.get(
       'https://api.airtable.com/v0/fake-db/categories',
@@ -9,7 +9,7 @@ export const mockGetCategories = () => {
         return res(
           ctx.status(200),
 
-          ctx.json(getCategoryResponse())
+          ctx.json(getCategoriesResponse(categories))
         );
       }
     )

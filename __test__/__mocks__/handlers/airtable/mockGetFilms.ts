@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { getFilmsResponse } from '__test__/__fixtures__/airtable/getFilmsResponse';
 
-export const mockGetFilms = () => {
+export const mockGetFilms = (films?: string[]) => {
   return {
     handler: rest.get(
       'https://api.airtable.com/v0/fake-db/films',
@@ -9,7 +9,7 @@ export const mockGetFilms = () => {
         return res(
           ctx.status(200),
 
-          ctx.json(getFilmsResponse())
+          ctx.json(getFilmsResponse(films))
         );
       }
     )
