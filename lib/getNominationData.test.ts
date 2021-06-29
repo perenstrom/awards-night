@@ -131,6 +131,9 @@ describe('getNominationData', () => {
           name: 'Bridget Jones',
           poster: 'http://image.tmdb.org/t/p/w342/bridget-jones.jpg'
         }
+      },
+      meta: {
+        completedCategories: 0
       }
     };
 

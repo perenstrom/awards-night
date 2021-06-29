@@ -50,7 +50,7 @@ export const getNominationData = async (
     const normalizedFilms: NormalizedFilms = {};
     films.forEach((f) => (normalizedFilms[f.id] = f));
 
-    const status = {
+    const meta = {
       completedCategories: calculateCompletedCategories(
         Object.values(normalizedCategories),
         normalizedNominations
@@ -62,7 +62,7 @@ export const getNominationData = async (
       categories: normalizedCategories,
       films: normalizedFilms,
       nominations: normalizedNominations,
-      //status: status
+      meta: meta
     };
   } catch (error) {
     console.log(error);

@@ -72,7 +72,7 @@ export interface Player {
 
 export type NormalizedPlayers = Record<PlayerId, Player>;
 
-export interface Status {
+export interface NominationMeta {
   completedCategories: number;
 }
 
@@ -82,7 +82,7 @@ export interface YearData {
   films: NormalizedFilms;
   bets: NormalizedBets;
   players: NormalizedPlayers;
-  status: Status;
+  status: NominationMeta;
 }
 
 export interface NominationData {
@@ -90,5 +90,5 @@ export interface NominationData {
   categories: NormalizedCategories;
   nominations: NormalizedNominations;
   films: NormalizedFilms;
-  //status: Status;
+  meta: NominationMeta;
 }
