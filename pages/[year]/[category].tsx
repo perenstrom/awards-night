@@ -3,8 +3,14 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { getCategories, getYear, getYears } from 'services/airtable';
 import {
+  getBets,
+  getCategories,
+  getYears,
+  getPlayers as getPlayersFromAirtable
+} from 'services/airtable';
+import {
+  Bet,
   Category,
   Nomination,
   NormalizedBets,
@@ -14,13 +20,13 @@ import {
   NormalizedPlayers,
   Player,
   PlayerId,
-  Status,
-  Year
+  NominationMeta,
+  Year,
+  NominationData
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
-import { getYearData } from 'lib/getYearData';
 import { PlayerStandings } from 'components/PlayerStandings';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -29,8 +35,9 @@ import {
   nominationsState,
   normalizedCategoriesState,
   playerState,
-  statusState
+  metaState
 } from 'states/state';
+import { getNominationData } from 'lib/getNominationData';
 
 const GridContainer = styled.div`
   display: grid;
@@ -49,7 +56,7 @@ interface Props {
   films: NormalizedFilms;
   bets: NormalizedBets;
   players: NormalizedPlayers;
-  status: Status;
+  meta: NominationMeta;
   bettingOpen: boolean;
 }
 
@@ -60,7 +67,7 @@ const CategoryPage: NextPage<Props> = ({
   films,
   bets: initialBets,
   players: initialPlayers,
-  status: initialStatus,
+  meta: initialMeta,
   bettingOpen
 }) => {
   const router = useRouter();
@@ -72,7 +79,7 @@ const CategoryPage: NextPage<Props> = ({
     normalizedCategoriesState
   );
   const categories = useRecoilValue(categoriesState);
-  const status = useRecoilValue(statusState);
+  const meta = useRecoilValue(metaState);
   const [players, setPlayers] = useRecoilState<NormalizedPlayers>(playerState);
   const currentSlug =
     (slug as string) ??
@@ -141,9 +148,9 @@ const CategoryPage: NextPage<Props> = ({
         />
         <PlayerStandings
           completedCategories={
-            status
-              ? status.completedCategories
-              : initialStatus.completedCategories
+            meta
+              ? meta.completedCategories
+              : initialMeta.completedCategories
           }
           players={
             (Object.entries(players ?? initialPlayers) as [PlayerId, Player][])
@@ -157,6 +164,23 @@ const CategoryPage: NextPage<Props> = ({
   );
 };
 
+const getPlayers = async (
+  bets: Bet[],
+  bettingOpen: boolean
+): Promise<NormalizedPlayers> => {
+  if (!bettingOpen && bets.length > 0) {
+    const players = await getPlayersFromAirtable(bets.map((b) => b.player));
+
+    const rawNormalizedPlayers: NormalizedPlayers = {};
+    players.forEach((player) => {
+      rawNormalizedPlayers[player.id] = player;
+    });
+    return rawNormalizedPlayers;
+  } else {
+    return {};
+  }
+};
+
 interface Params extends ParsedUrlQuery {
   year: string;
   category: string;
@@ -164,16 +188,20 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
-  const year = await getYear(parseInt(context.params.year, 10));
-  const categoryData = await getYearData(year);
-  const {
-    categories,
-    nominations,
-    films,
-    bets,
-    players,
-    status
-  } = categoryData;
+  const nominationData: NominationData = await getNominationData(parseInt(context.params.year, 10));
+  const { year, categories, nominations, films, meta } = nominationData;
+
+  const bets = await getBets(
+    (Object.values(nominations) as Nomination[]).map((n) => n.bets).flat()
+  );
+  const normalizedBets: NormalizedBets = {};
+  if (!year.bettingOpen) {
+    bets.forEach((b) => {
+      normalizedBets[b.id] = b;
+      (nominations[b.nomination] as Nomination).bets.push(b.id);
+    });
+  }
+  const players = await getPlayers(bets, year.bettingOpen);
 
   return {
     props: {
@@ -181,9 +209,9 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
       categories,
       nominations,
       films,
-      bets,
+      bets: normalizedBets,
       players,
-      status,
+      meta,
       bettingOpen: year.bettingOpen
     }
   };

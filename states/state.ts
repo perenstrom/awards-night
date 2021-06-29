@@ -6,7 +6,7 @@ import {
   NormalizedCategories,
   NormalizedNominations,
   NormalizedPlayers,
-  Status
+  NominationMeta
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
@@ -40,8 +40,8 @@ export const categoriesState = selector<Category[]>({
   }
 });
 
-export const statusState = selector<Status>({
-  key: 'statusState',
+export const metaState = selector<NominationMeta>({
+  key: 'metaState',
   get: ({ get }) => {
     const categories = get(categoriesState);
     const nominations = get(nominationsState);

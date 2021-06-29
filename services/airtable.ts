@@ -82,7 +82,7 @@ const formatYear = (yearResponse: AirtableRecord): Year => ({
   id: yearResponse.id as YearId,
   year: yearResponse.get('year'),
   name: yearResponse.get('name'),
-  date: new Date(yearResponse.get('date')),
+  date: yearResponse.get('date'),
   bettingOpen: !!yearResponse.get('betting_open'),
   categories: yearResponse.get('categories') ?? [],
   nominations: yearResponse.get('nominations') ?? []
@@ -245,6 +245,10 @@ const formatFilm = (filmResponse: AirtableRecord): Film => ({
 });
 
 export const getBets = async (betIds: BetId[]): Promise<Bet[]> => {
+  if (betIds.length === 0) {
+    return [];
+  }
+  
   const query = `OR(${betIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
     `;
   const bets: Bet[] = [];

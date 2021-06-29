@@ -7,7 +7,6 @@ import {
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
 import {
-  YearData,
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
@@ -18,8 +17,7 @@ import {
 import { calculateCompletedCategories } from 'utils/nominations';
 
 export const getNominationData = async (
-  year: number,
-  withBets: boolean
+  year: number
 ): Promise<NominationData> => {
   try {
     const yearData = await getYear(year);
@@ -35,7 +33,7 @@ export const getNominationData = async (
     const nominations = await getNominations(yearData.nominations);
     const normalizedNominations: NormalizedNominations = {};
     nominations.forEach((n) => {
-      normalizedNominations[n.id] = withBets ? n : { ...n, bets: [] };
+      normalizedNominations[n.id] = !yearData.bettingOpen ? n : { ...n, bets: [] };
       normalizedCategories[categoryIdToSlug[n.category]].nominations.push(n.id);
     });
 

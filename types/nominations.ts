@@ -4,7 +4,7 @@ export interface Year {
   id: YearId;
   year: number;
   name: string;
-  date: Date;
+  date: string;
   bettingOpen: boolean;
   categories: CategoryId[];
   nominations: NominationId[];

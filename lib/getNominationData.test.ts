@@ -23,14 +23,14 @@ describe('getNominationData', () => {
         .handler
     );
     const year = 2020;
-    const nominationData = await getNominationData(year, false);
+    const nominationData = await getNominationData(year);
 
     const expectedNominationData = {
       year: {
         id: '2020-id' as YearId,
         name: '92rd Academy Awards',
         year: 2020,
-        date: new Date('2020-04-25T22:00:00.000Z'),
+        date: '2020-04-25T22:00:00.000Z',
         bettingOpen: true,
         categories: ['best-adapted-screenplay-id', 'best-picture-id'],
         nominations: [
