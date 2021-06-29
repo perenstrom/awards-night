@@ -1,26 +1,45 @@
-import { Year, YearId } from 'types/nominations';
+import { NominationData, YearId } from 'types/nominations';
+
 import { mockRequests } from '__test__/test-utils';
 import { getYear } from '__test__/__fixtures__/getYear';
 import { mockGetCategories } from '__test__/__mocks__/handlers/airtable/mockGetCategories';
 import { mockGetFilms } from '__test__/__mocks__/handlers/airtable/mockGetFilms';
 import { mockGetNominations } from '__test__/__mocks__/handlers/airtable/mockGetNominations';
+import { mockGetYears } from '__test__/__mocks__/handlers/airtable/mockGetYears';
 import { server } from '__test__/__mocks__/mswServer';
+
 import { getNominationData } from './getNominationData';
 
 describe('getNominationData', () => {
   mockRequests();
 
   it('returns correct nomination data for a year, without bets', async () => {
-    const year = getYear()[2020];
-    server.use(mockGetCategories(year.categories).handler);
-    server.use(mockGetNominations(year.nominations).handler);
+    const yearFixture = getYear(2020);
+    server.use(mockGetYears(['2020-id']).handler);
+    server.use(mockGetCategories(yearFixture.categories).handler);
+    server.use(mockGetNominations(yearFixture.nominations).handler);
     server.use(
       mockGetFilms(['citizen-kane', 'moana', 'the-matrix', 'bridget-jones'])
         .handler
     );
+    const year = 2020;
     const nominationData = await getNominationData(year, false);
 
     const expectedNominationData = {
+      year: {
+        id: '2020-id' as YearId,
+        name: '92rd Academy Awards',
+        year: 2020,
+        date: new Date('2020-04-25T22:00:00.000Z'),
+        bettingOpen: true,
+        categories: ['best-adapted-screenplay-id', 'best-picture-id'],
+        nominations: [
+          'nomination-2020-best-adapted-screenplay-1',
+          'nomination-2020-best-adapted-screenplay-2',
+          'nomination-2020-best-picture-1',
+          'nomination-2020-best-picture-2'
+        ]
+      },
       categories: {
         'best-adapted-screenplay': {
           id: 'best-adapted-screenplay-id',
@@ -115,12 +134,6 @@ describe('getNominationData', () => {
       }
     };
 
-    expect(nominationData.categories).toEqual(
-      expectedNominationData.categories
-    );
-    expect(nominationData.nominations).toEqual(
-      expectedNominationData.nominations
-    );
-    expect(nominationData.films).toEqual(expectedNominationData.films);
+    expect(nominationData).toEqual(expectedNominationData);
   });
 });

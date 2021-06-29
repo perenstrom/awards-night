@@ -86,8 +86,9 @@ export interface YearData {
 }
 
 export interface NominationData {
+  year: Year;
   categories: NormalizedCategories;
   nominations: NormalizedNominations;
   films: NormalizedFilms;
-  status: Status;
+  //status: Status;
 }

@@ -2,6 +2,7 @@ import {
   getCategories,
   getFilms,
   getNominations,
+  getYear,
   setFilmPoster
 } from 'services/airtable';
 import { getPoster } from 'services/tmdb';
@@ -17,11 +18,13 @@ import {
 import { calculateCompletedCategories } from 'utils/nominations';
 
 export const getNominationData = async (
-  year: Year,
+  year: number,
   withBets: boolean
 ): Promise<NominationData> => {
   try {
-    const categories = await getCategories(year.categories);
+    const yearData = await getYear(year);
+
+    const categories = await getCategories(yearData.categories);
     const normalizedCategories: NormalizedCategories = {};
     const categoryIdToSlug: Record<CategoryId, string> = {};
     categories.forEach((c) => {
@@ -29,7 +32,7 @@ export const getNominationData = async (
       categoryIdToSlug[c.id] = c.slug;
     });
 
-    const nominations = await getNominations(year.nominations);
+    const nominations = await getNominations(yearData.nominations);
     const normalizedNominations: NormalizedNominations = {};
     nominations.forEach((n) => {
       normalizedNominations[n.id] = withBets ? n : { ...n, bets: [] };
@@ -55,10 +58,11 @@ export const getNominationData = async (
     };
 
     return {
+      year: yearData,
       categories: normalizedCategories,
       films: normalizedFilms,
       nominations: normalizedNominations,
-      status: status
+      //status: status
     };
   } catch (error) {
     console.log(error);

@@ -82,7 +82,7 @@ const formatYear = (yearResponse: AirtableRecord): Year => ({
   id: yearResponse.id as YearId,
   year: yearResponse.get('year'),
   name: yearResponse.get('name'),
-  date: yearResponse.get('date'),
+  date: new Date(yearResponse.get('date')),
   bettingOpen: !!yearResponse.get('betting_open'),
   categories: yearResponse.get('categories') ?? [],
   nominations: yearResponse.get('nominations') ?? []
