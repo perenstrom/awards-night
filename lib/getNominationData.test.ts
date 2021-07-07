@@ -1,7 +1,8 @@
-import { NominationData, YearId } from 'types/nominations';
+import { YearId } from 'types/nominations';
 
 import { mockRequests } from '__test__/test-utils';
-import { getYear } from '__test__/__fixtures__/getYear';
+import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
+import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
 import { mockGetCategories } from '__test__/__mocks__/handlers/airtable/mockGetCategories';
 import { mockGetFilms } from '__test__/__mocks__/handlers/airtable/mockGetFilms';
 import { mockGetNominations } from '__test__/__mocks__/handlers/airtable/mockGetNominations';
@@ -14,7 +15,7 @@ describe('getNominationData', () => {
   mockRequests();
 
   it('returns correct nomination data for a year, without bets (betting open)', async () => {
-    const yearFixture = getYear(2020);
+    const yearFixture = getYearFixture(2020);
     server.use(mockGetYears(['2020-id']).handler);
     server.use(mockGetCategories(yearFixture.categories).handler);
     server.use(mockGetNominations(yearFixture.nominations).handler);
@@ -64,48 +65,12 @@ describe('getNominationData', () => {
           slug: 'best-picture'
         }
       },
-      nominations: {
-        'nomination-2020-best-adapted-screenplay-1': {
-          bets: [],
-          category: 'best-adapted-screenplay-id',
-          decided: null,
-          film: 'citizen-kane',
-          id: 'nomination-2020-best-adapted-screenplay-1',
-          nominee: null,
-          won: false,
-          year: ['2020-id']
-        },
-        'nomination-2020-best-adapted-screenplay-2': {
-          bets: [],
-          category: 'best-adapted-screenplay-id',
-          decided: null,
-          film: 'moana',
-          id: 'nomination-2020-best-adapted-screenplay-2',
-          nominee: null,
-          won: false,
-          year: ['2020-id']
-        },
-        'nomination-2020-best-picture-1': {
-          bets: [],
-          category: 'best-picture-id',
-          decided: null,
-          film: 'the-matrix',
-          id: 'nomination-2020-best-picture-1',
-          nominee: null,
-          won: false,
-          year: ['2020-id']
-        },
-        'nomination-2020-best-picture-2': {
-          bets: [],
-          category: 'best-picture-id',
-          decided: null,
-          film: 'bridget-jones',
-          id: 'nomination-2020-best-picture-2',
-          nominee: null,
-          won: false,
-          year: ['2020-id']
-        }
-      },
+      nominations: getNormalizedNominationsFixture([
+        'nomination-2020-best-adapted-screenplay-1',
+        'nomination-2020-best-adapted-screenplay-2',
+        'nomination-2020-best-picture-1',
+        'nomination-2020-best-picture-2'
+      ]),
       films: {
         'citizen-kane': {
           id: 'citizen-kane',
@@ -141,7 +106,7 @@ describe('getNominationData', () => {
   });
 
   it('returns correct nomination data for a year, with bets (betting closed)', async () => {
-    const yearFixture = getYear(2021);
+    const yearFixture = getYearFixture(2021);
     server.use(mockGetYears(['2021-id']).handler);
     server.use(mockGetCategories(yearFixture.categories).handler);
     server.use(mockGetNominations(yearFixture.nominations).handler);
@@ -195,48 +160,12 @@ describe('getNominationData', () => {
           slug: 'best-picture'
         }
       },
-      nominations: {
-        'nomination-2021-best-animated-short-1': {
-          bets: ['bet-3'],
-          category: 'best-animated-short-id',
-          decided: null,
-          film: 'failsafe',
-          id: 'nomination-2021-best-animated-short-1',
-          nominee: null,
-          won: false,
-          year: ['2021-id']
-        },
-        'nomination-2021-best-animated-short-2': {
-          bets: ['bet-4'],
-          category: 'best-animated-short-id',
-          decided: null,
-          film: 'twelve-angry-men',
-          id: 'nomination-2021-best-animated-short-2',
-          nominee: null,
-          won: false,
-          year: ['2021-id']
-        },
-        'nomination-2021-best-picture-1': {
-          bets: ['bet-5', 'bet-6'],
-          category: 'best-picture-id',
-          decided: null,
-          film: 'legally-blond',
-          id: 'nomination-2021-best-picture-1',
-          nominee: 'Vanessa Kirby',
-          won: false,
-          year: ['2021-id']
-        },
-        'nomination-2021-best-picture-2': {
-          bets: [],
-          category: 'best-picture-id',
-          decided: null,
-          film: 'legally-blond-2',
-          id: 'nomination-2021-best-picture-2',
-          nominee: 'Vanessa Kirby',
-          won: false,
-          year: ['2021-id']
-        }
-      },
+      nominations: getNormalizedNominationsFixture([
+        'nomination-2021-best-animated-short-1',
+        'nomination-2021-best-animated-short-2',
+        'nomination-2021-best-picture-1',
+        'nomination-2021-best-picture-2'
+      ]),
       films: {
         failsafe: {
           id: 'failsafe',

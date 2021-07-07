@@ -1,6 +1,6 @@
 import { CategoryId, NominationId, Year, YearId } from 'types/nominations';
 
-export const getYear = (year): Year =>
+export const getYearFixture = (year): Year =>
   ({
     2020: {
       id: '2020-id' as YearId,

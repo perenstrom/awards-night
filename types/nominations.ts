@@ -83,3 +83,8 @@ export interface NominationData {
   films: NormalizedFilms;
   meta: NominationMeta;
 }
+
+export interface BettingData {
+  bets: NormalizedBets;
+  players: NormalizedPlayers;
+}
