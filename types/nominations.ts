@@ -76,15 +76,6 @@ export interface NominationMeta {
   completedCategories: number;
 }
 
-export interface YearData {
-  categories: NormalizedCategories;
-  nominations: NormalizedNominations;
-  films: NormalizedFilms;
-  bets: NormalizedBets;
-  players: NormalizedPlayers;
-  status: NominationMeta;
-}
-
 export interface NominationData {
   year: Year;
   categories: NormalizedCategories;

@@ -1,4 +1,4 @@
-import { refreshNominations } from 'lib/getYearData';
+import { refreshNominations } from 'lib/refreshNominations';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getYear, NominationRecord, updateNomination } from 'services/airtable';
 import { Nomination, NominationId } from 'types/nominations';
