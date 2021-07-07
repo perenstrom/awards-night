@@ -7,7 +7,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['citizen-kane'],
           category: ['best-adapted-screenplay-id'],
           year: ['2020-id'],
-          id: 16
+          id: 16,
+          bets: ['bet-1', 'bet-2']
         },
         createdTime: '2021-03-15T15:36:17.000Z'
       },
@@ -27,7 +28,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['failsafe'],
           category: ['best-animated-short-id'],
           year: ['2021-id'],
-          id: 16
+          id: 16,
+          bets: ['bet-3']
         },
         createdTime: '2021-03-15T15:36:17.000Z'
       },
@@ -37,7 +39,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['twelve-angry-men'],
           category: ['best-animated-short-id'],
           year: ['2021-id'],
-          id: 8
+          id: 8,
+          bets: ['bet-4']
         },
         createdTime: '2021-03-15T15:32:59.000Z'
       },
@@ -68,7 +71,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['legally-blond'],
           category: ['best-picture-id'],
           year: ['2021-id'],
-          id: 113
+          id: 113,
+          bets: ['bet-5', 'bet-6']
         },
         createdTime: '2021-03-15T15:51:34.000Z'
       },

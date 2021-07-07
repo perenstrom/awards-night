@@ -23,7 +23,7 @@ export const getYearsResponse = (years?) => {
           name: '93rd Academy Awards',
           year: 2021,
           date: '2021-04-25T22:00:00.000Z',
-          betting_open: true,
+          betting_open: false,
           categories: ['best-animated-short-id', 'best-picture-id'],
           nominations: [
             'nomination-2021-best-animated-short-1',

@@ -13,7 +13,7 @@ import { getNominationData } from './getNominationData';
 describe('getNominationData', () => {
   mockRequests();
 
-  it('returns correct nomination data for a year, without bets', async () => {
+  it('returns correct nomination data for a year, without bets (betting open)', async () => {
     const yearFixture = getYear(2020);
     server.use(mockGetYears(['2020-id']).handler);
     server.use(mockGetCategories(yearFixture.categories).handler);
@@ -130,6 +130,137 @@ describe('getNominationData', () => {
           imdbId: 'imdb-bj',
           name: 'Bridget Jones',
           poster: 'http://image.tmdb.org/t/p/w342/bridget-jones.jpg'
+        }
+      },
+      meta: {
+        completedCategories: 0
+      }
+    };
+
+    expect(nominationData).toEqual(expectedNominationData);
+  });
+
+  it('returns correct nomination data for a year, with bets (betting closed)', async () => {
+    const yearFixture = getYear(2021);
+    server.use(mockGetYears(['2021-id']).handler);
+    server.use(mockGetCategories(yearFixture.categories).handler);
+    server.use(mockGetNominations(yearFixture.nominations).handler);
+    server.use(
+      mockGetFilms([
+        'failsafe',
+        'twelve-angry-men',
+        'legally-blond',
+        'legally-blond-2'
+      ]).handler
+    );
+    const year = 2021;
+    const nominationData = await getNominationData(year);
+
+    const expectedNominationData = {
+      year: {
+        id: '2021-id' as YearId,
+        name: '93rd Academy Awards',
+        year: 2021,
+        date: '2021-04-25T22:00:00.000Z',
+        bettingOpen: false,
+        categories: ['best-animated-short-id', 'best-picture-id'],
+        nominations: [
+          'nomination-2021-best-animated-short-1',
+          'nomination-2021-best-animated-short-2',
+          'nomination-2021-best-picture-1',
+          'nomination-2021-best-picture-2'
+        ]
+      },
+      categories: {
+        'best-animated-short': {
+          id: 'best-animated-short-id',
+          name: 'Best Animated Short',
+          nominations: [
+            'nomination-2021-best-animated-short-1',
+            'nomination-2021-best-animated-short-2'
+          ],
+          previousCategory: null,
+          nextCategory: 'best-picture',
+          slug: 'best-animated-short'
+        },
+        'best-picture': {
+          id: 'best-picture-id',
+          name: 'Best Picture',
+          nominations: [
+            'nomination-2021-best-picture-1',
+            'nomination-2021-best-picture-2'
+          ],
+          previousCategory: 'best-animated-short',
+          nextCategory: null,
+          slug: 'best-picture'
+        }
+      },
+      nominations: {
+        'nomination-2021-best-animated-short-1': {
+          bets: ['bet-3'],
+          category: 'best-animated-short-id',
+          decided: null,
+          film: 'failsafe',
+          id: 'nomination-2021-best-animated-short-1',
+          nominee: null,
+          won: false,
+          year: ['2021-id']
+        },
+        'nomination-2021-best-animated-short-2': {
+          bets: ['bet-4'],
+          category: 'best-animated-short-id',
+          decided: null,
+          film: 'twelve-angry-men',
+          id: 'nomination-2021-best-animated-short-2',
+          nominee: null,
+          won: false,
+          year: ['2021-id']
+        },
+        'nomination-2021-best-picture-1': {
+          bets: ['bet-5', 'bet-6'],
+          category: 'best-picture-id',
+          decided: null,
+          film: 'legally-blond',
+          id: 'nomination-2021-best-picture-1',
+          nominee: 'Vanessa Kirby',
+          won: false,
+          year: ['2021-id']
+        },
+        'nomination-2021-best-picture-2': {
+          bets: [],
+          category: 'best-picture-id',
+          decided: null,
+          film: 'legally-blond-2',
+          id: 'nomination-2021-best-picture-2',
+          nominee: 'Vanessa Kirby',
+          won: false,
+          year: ['2021-id']
+        }
+      },
+      films: {
+        failsafe: {
+          id: 'failsafe',
+          imdbId: 'imdb-fs',
+          name: 'Failsafe',
+          poster: 'http://image.tmdb.org/t/p/w342/failsafe.jpg'
+        },
+        'twelve-angry-men': {
+          id: 'twelve-angry-men',
+          imdbId: 'imdb-tam',
+          name: 'Twelve Angry Men',
+          poster: 'http://image.tmdb.org/t/p/w342/twelve-angry-men.jpg'
+        },
+        'legally-blond': {
+          id: 'legally-blond',
+          imdbId: 'imdb-lb',
+          name: 'Legally Blond',
+          poster: 'http://image.tmdb.org/t/p/w342/legally-blond.jpg'
+        },
+        'legally-blond-2': {
+          id: 'legally-blond-2',
+          imdbId: 'imdb-lb2',
+          name: 'Legally Blond 2',
+          poster: 'http://image.tmdb.org/t/p/w342/legally-blond-2.jpg'
         }
       },
       meta: {

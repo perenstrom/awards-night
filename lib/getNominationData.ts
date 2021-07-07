@@ -12,7 +12,8 @@ import {
   NormalizedNominations,
   Year,
   CategoryId,
-  NominationData
+  NominationData,
+  Nomination
 } from 'types/nominations';
 import { calculateCompletedCategories } from 'utils/nominations';
 
@@ -31,9 +32,18 @@ export const getNominationData = async (
     });
 
     const nominations = await getNominations(yearData.nominations);
+
+    const formatNomination = (bettingOpen: boolean, nomination: Nomination) => {
+      if (!bettingOpen) {
+        return { ...nomination, bets: nomination.bets ?? [] };
+      } else {
+        return { ...nomination, bets: [] } as Nomination;
+      }
+    };
+
     const normalizedNominations: NormalizedNominations = {};
     nominations.forEach((n) => {
-      normalizedNominations[n.id] = !yearData.bettingOpen ? n : { ...n, bets: [] };
+      normalizedNominations[n.id] = formatNomination(yearData.bettingOpen, n);
       normalizedCategories[categoryIdToSlug[n.category]].nominations.push(n.id);
     });
 

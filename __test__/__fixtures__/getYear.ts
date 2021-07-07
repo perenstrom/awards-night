@@ -24,7 +24,7 @@ export const getYear = (year): Year =>
       name: '93rd Academy Awards',
       year: 2021,
       date: new Date('2021-04-25T22:00:00.000Z'),
-      bettingOpen: true,
+      bettingOpen: false,
       categories: [
         'best-animated-short-id' as CategoryId,
         'best-picture-id' as CategoryId
