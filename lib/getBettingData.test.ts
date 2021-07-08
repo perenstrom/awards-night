@@ -3,6 +3,7 @@ import { mockRequests } from '__test__/test-utils';
 import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
 import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
 import { mockGetBets } from '__test__/__mocks__/handlers/airtable/mockGetBets';
+import { mockGetPlayers } from '__test__/__mocks__/handlers/airtable/mockGetPlayers';
 import { server } from '__test__/__mocks__/mswServer';
 import { getBettingData } from './getBettingData';
 
@@ -17,6 +18,7 @@ describe('getBettingData', () => {
       'nomination-2021-best-picture-2'
     ];
     server.use(mockGetBets(['bet-3', 'bet-4', 'bet-5', 'bet-6']).handler);
+    server.use(mockGetPlayers().handler);
 
     const bettingData = await getBettingData(
       getYearFixture(2021),
@@ -51,7 +53,7 @@ describe('getBettingData', () => {
           id: 'player-1',
           name: 'Player 1',
           correct: 0,
-          bets: ['bet-1', 'bet-5']
+          bets: ['bet-3', 'bet-5']
         },
         'player-2': {
           id: 'player-2',
@@ -62,7 +64,6 @@ describe('getBettingData', () => {
       }
     };
 
-    expect(bettingData.bets).toEqual(expectedBettingData.bets);
-    //expect(bettingData.players).toEqual(expectedBettingData.players);
+    expect(bettingData).toEqual(expectedBettingData);
   });
 });

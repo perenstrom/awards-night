@@ -15,6 +15,7 @@ export const getBettingData = async (
   const bets = await getBets(
     (Object.values(nominations) as Nomination[]).map((n) => n.bets).flat()
   );
+  const betIds = bets.map((bet) => bet.id);
 
   const normalizedBets: NormalizedBets = {};
   if (!year.bettingOpen) {
@@ -25,18 +26,21 @@ export const getBettingData = async (
   }
 
   let normalizedPlayers: NormalizedPlayers = {};
-/*   if (!year.bettingOpen && bets.length > 0) {
+  if (!year.bettingOpen && bets.length > 0) {
     const players = await getPlayers(bets.map((b) => b.player));
 
     const rawNormalizedPlayers: NormalizedPlayers = {};
     players.forEach((player) => {
-      rawNormalizedPlayers[player.id] = player;
+      rawNormalizedPlayers[player.id] = {
+        ...player,
+        bets: player.bets.filter((betId) => betIds.includes(betId))
+      };
     });
     normalizedPlayers = rawNormalizedPlayers;
-  } */
+  }
 
   return {
     bets: normalizedBets,
-    players: {}
+    players: normalizedPlayers
   };
 };
