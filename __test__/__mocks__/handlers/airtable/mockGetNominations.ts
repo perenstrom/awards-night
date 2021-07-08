@@ -4,7 +4,7 @@ import { getNominationsResponse } from '__test__/__fixtures__/airtable/getNomina
 export const mockGetNominations = (nominations?: string[]) => {
   return {
     handler: rest.get(
-      'https://api.airtable.com/v0/fake-db/nominations',
+      `https://api.airtable.com/v0/${process.env.AIRTABLE_DATABASE}/nominations`,
       (_, res, ctx) => {
         return res(
           ctx.status(200),

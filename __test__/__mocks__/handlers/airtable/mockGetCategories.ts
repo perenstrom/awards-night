@@ -4,7 +4,7 @@ import { getCategoriesResponse } from '__test__/__fixtures__/airtable/getCategor
 export const mockGetCategories = (categories?: string[]) => {
   return {
     handler: rest.get(
-      'https://api.airtable.com/v0/fake-db/categories',
+      `https://api.airtable.com/v0/${process.env.AIRTABLE_DATABASE}/categories`,
       (_, res, ctx) => {
         return res(
           ctx.status(200),

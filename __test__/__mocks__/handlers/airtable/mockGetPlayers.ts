@@ -4,7 +4,7 @@ import { getPlayersResponse } from '__test__/__fixtures__/airtable/getPlayersRes
 export const mockGetPlayers = (players?: string[]) => {
   return {
     handler: rest.get(
-      'https://api.airtable.com/v0/fake-db/players',
+      `https://api.airtable.com/v0/${process.env.AIRTABLE_DATABASE}/players`,
       (_, res, ctx) => {
         return res(
           ctx.status(200),

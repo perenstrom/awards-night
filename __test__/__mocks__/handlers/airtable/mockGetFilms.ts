@@ -4,7 +4,7 @@ import { getFilmsResponse } from '__test__/__fixtures__/airtable/getFilmsRespons
 export const mockGetFilms = (films?: string[]) => {
   return {
     handler: rest.get(
-      'https://api.airtable.com/v0/fake-db/films',
+      `https://api.airtable.com/v0/${process.env.AIRTABLE_DATABASE}/films`,
       (_, res, ctx) => {
         return res(
           ctx.status(200),
