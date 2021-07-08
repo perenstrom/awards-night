@@ -6,7 +6,7 @@ import {
   NormalizedPlayers
 } from 'types/nominations';
 
-export const calculatePlayersWinnings = (
+export const addPlayersWinnings = (
   categories: Category[],
   nominations: NormalizedNominations,
   bets: NormalizedBets,

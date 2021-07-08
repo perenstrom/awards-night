@@ -61,7 +61,7 @@ export const getNormalizedNominationsFixture = (
       film: 'twelve-angry-men',
       id: 'nomination-2021-best-animated-short-2',
       nominee: null,
-      won: false,
+      won: true,
       year: ['2021-id']
     },
     'nomination-2021-best-picture-1': {
@@ -71,7 +71,7 @@ export const getNormalizedNominationsFixture = (
       film: 'legally-blond',
       id: 'nomination-2021-best-picture-1',
       nominee: 'Vanessa Kirby',
-      won: false,
+      won: true,
       year: ['2021-id']
     },
     'nomination-2021-best-picture-2': {

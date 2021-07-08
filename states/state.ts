@@ -10,7 +10,7 @@ import {
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
-  calculatePlayersWinnings
+  addPlayersWinnings
 } from 'utils/nominations';
 
 export const betsState = atom<NormalizedBets>({
@@ -75,7 +75,7 @@ export const playerState = selector<NormalizedPlayers>({
     const bets = get(betsState);
 
     if (players) {
-      return calculatePlayersWinnings(categories, nominations, bets, players);
+      return addPlayersWinnings(categories, nominations, bets, players);
     } else {
       players;
     }

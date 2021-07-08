@@ -3,13 +3,16 @@ import {
   BettingData,
   Nomination,
   NormalizedBets,
+  NormalizedCategories,
   NormalizedNominations,
   NormalizedPlayers,
   Year
 } from 'types/nominations';
+import { addPlayersWinnings } from 'utils/nominations';
 
 export const getBettingData = async (
   year: Year,
+  categories: NormalizedCategories,
   nominations: NormalizedNominations
 ): Promise<BettingData> => {
   const bets = await getBets(
@@ -21,22 +24,28 @@ export const getBettingData = async (
   if (!year.bettingOpen) {
     bets.forEach((b) => {
       normalizedBets[b.id] = b;
-      (nominations[b.nomination] as Nomination).bets.push(b.id);
     });
   }
 
-  let normalizedPlayers: NormalizedPlayers = {};
-  if (!year.bettingOpen && bets.length > 0) {
-    const players = await getPlayers(bets.map((b) => b.player));
+  const players = await getPlayers(bets.map((b) => b.player));
+  const rawNormalizedPlayers: NormalizedPlayers = {};
+  players.forEach((player) => {
+    rawNormalizedPlayers[player.id] = {
+      ...player,
+      bets: !year.bettingOpen
+        ? player.bets.filter((betId) => betIds.includes(betId))
+        : []
+    };
+  });
 
-    const rawNormalizedPlayers: NormalizedPlayers = {};
-    players.forEach((player) => {
-      rawNormalizedPlayers[player.id] = {
-        ...player,
-        bets: player.bets.filter((betId) => betIds.includes(betId))
-      };
-    });
-    normalizedPlayers = rawNormalizedPlayers;
+  let normalizedPlayers: NormalizedPlayers = rawNormalizedPlayers;
+  if (!year.bettingOpen) {
+    normalizedPlayers = addPlayersWinnings(
+      Object.values(categories),
+      nominations,
+      normalizedBets,
+      rawNormalizedPlayers
+    );
   }
 
   return {

@@ -1,21 +1,17 @@
 import {
-  Bet,
   BetId,
   Category,
   CategoryId,
   FilmId,
-  Nomination,
   NominationId,
   NormalizedBets,
-  NormalizedCategories,
   NormalizedNominations,
   NormalizedPlayers,
-  Player,
   PlayerId
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
-  calculatePlayersWinnings
+  addPlayersWinnings
 } from './nominations';
 
 const categories: Category[] = [
@@ -176,7 +172,7 @@ describe('calculatePlayerWinnings', () => {
       }
     };
 
-    const enhancedPlayers: NormalizedPlayers = calculatePlayersWinnings(
+    const enhancedPlayers: NormalizedPlayers = addPlayersWinnings(
       categories,
       nominations,
       bets,

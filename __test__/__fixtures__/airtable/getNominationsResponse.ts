@@ -40,7 +40,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           category: ['best-animated-short-id'],
           year: ['2021-id'],
           id: 8,
-          bets: ['bet-4']
+          bets: ['bet-4'],
+          won: true
         },
         createdTime: '2021-03-15T15:32:59.000Z'
       },
@@ -50,7 +51,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['the-matrix'],
           category: ['best-picture-id'],
           year: ['2020-id'],
-          id: 16
+          id: 16,
+          bets: ['bet-7']
         },
         createdTime: '2021-03-15T15:36:17.000Z'
       },
@@ -60,7 +62,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           film: ['bridget-jones'],
           category: ['best-picture-id'],
           year: ['2020-id'],
-          id: 8
+          id: 8,
+          bets: ['bet-8']
         },
         createdTime: '2021-03-15T15:32:59.000Z'
       },
@@ -72,7 +75,8 @@ export const getNominationsResponse = (nominations?: string[]) => {
           category: ['best-picture-id'],
           year: ['2021-id'],
           id: 113,
-          bets: ['bet-5', 'bet-6']
+          bets: ['bet-5', 'bet-6'],
+          won: true
         },
         createdTime: '2021-03-15T15:51:34.000Z'
       },

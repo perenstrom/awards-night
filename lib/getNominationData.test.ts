@@ -1,6 +1,7 @@
 import { YearId } from 'types/nominations';
 
 import { mockRequests } from '__test__/test-utils';
+import { getNormalizedCategoriesFixture } from '__test__/__fixtures__/getNormalizedCategoriesFixture';
 import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
 import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
 import { mockGetCategories } from '__test__/__mocks__/handlers/airtable/mockGetCategories';
@@ -41,30 +42,7 @@ describe('getNominationData', () => {
           'nomination-2020-best-picture-2'
         ]
       },
-      categories: {
-        'best-adapted-screenplay': {
-          id: 'best-adapted-screenplay-id',
-          name: 'Best Adapted Screenplay',
-          nominations: [
-            'nomination-2020-best-adapted-screenplay-1',
-            'nomination-2020-best-adapted-screenplay-2'
-          ],
-          previousCategory: null,
-          nextCategory: 'best-picture',
-          slug: 'best-adapted-screenplay'
-        },
-        'best-picture': {
-          id: 'best-picture-id',
-          name: 'Best Picture',
-          nominations: [
-            'nomination-2020-best-picture-1',
-            'nomination-2020-best-picture-2'
-          ],
-          previousCategory: 'best-adapted-screenplay',
-          nextCategory: null,
-          slug: 'best-picture'
-        }
-      },
+      categories: getNormalizedCategoriesFixture(2020),
       nominations: getNormalizedNominationsFixture([
         'nomination-2020-best-adapted-screenplay-1',
         'nomination-2020-best-adapted-screenplay-2',
@@ -136,30 +114,7 @@ describe('getNominationData', () => {
           'nomination-2021-best-picture-2'
         ]
       },
-      categories: {
-        'best-animated-short': {
-          id: 'best-animated-short-id',
-          name: 'Best Animated Short',
-          nominations: [
-            'nomination-2021-best-animated-short-1',
-            'nomination-2021-best-animated-short-2'
-          ],
-          previousCategory: null,
-          nextCategory: 'best-picture',
-          slug: 'best-animated-short'
-        },
-        'best-picture': {
-          id: 'best-picture-id',
-          name: 'Best Picture',
-          nominations: [
-            'nomination-2021-best-picture-1',
-            'nomination-2021-best-picture-2'
-          ],
-          previousCategory: 'best-animated-short',
-          nextCategory: null,
-          slug: 'best-picture'
-        }
-      },
+      categories: getNormalizedCategoriesFixture(2021),
       nominations: getNormalizedNominationsFixture([
         'nomination-2021-best-animated-short-1',
         'nomination-2021-best-animated-short-2',
@@ -193,7 +148,7 @@ describe('getNominationData', () => {
         }
       },
       meta: {
-        completedCategories: 0
+        completedCategories: 2
       }
     };
 

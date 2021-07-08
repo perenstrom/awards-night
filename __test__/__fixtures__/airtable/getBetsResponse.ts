@@ -54,6 +54,24 @@ export const getBetsResponse = (bets?) => {
           nomination: ['nomination-2021-best-picture-1']
         },
         createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-7',
+        fields: {
+          id: 7,
+          player: ['player-1'],
+          nomination: ['nomination-2020-best-picture-1']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-8',
+        fields: {
+          id: 8,
+          player: ['player-2'],
+          nomination: ['nomination-2020-best-picture-2']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
       }
     ]
   };
