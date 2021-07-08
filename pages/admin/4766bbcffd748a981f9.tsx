@@ -21,7 +21,8 @@ const AdminPage: NextPage<Props> = ({
   nominations: initialNominations,
   films
 }) => {
-  const [nominations, setNominations] = useState<NormalizedNominations>(
+  return null;
+ /*  const [nominations, setNominations] = useState<NormalizedNominations>(
     initialNominations
   );
 
@@ -108,14 +109,14 @@ const AdminPage: NextPage<Props> = ({
         ))}
       </NominationListWrapper>
     </div>
-  );
+  ); */
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const bettingData = await getNominationData();
+export const getStaticProps: GetStaticProps<{}> = async () => {
+  //const nominationData = await getNominationData();
 
   return {
-    props: bettingData
+    props: {}
   };
 };
 

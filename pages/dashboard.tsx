@@ -37,7 +37,8 @@ const DashboardPage: NextPage<Props> = ({
   films,
   bettingOpen
 }) => {
-  const [bets, setBets] = useState<Record<NominationId, BetId>>({});
+  return null;
+  /* const [bets, setBets] = useState<Record<NominationId, BetId>>({});
   const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
@@ -123,18 +124,19 @@ const DashboardPage: NextPage<Props> = ({
         ))}
       </NominationListWrapper>
     </div>
-  );
+  ); */
 };
 
-export const getStaticProps: GetStaticProps<Props> = async (context) => {
-  const bettingData = await getNominationData();
+export const getStaticProps: GetStaticProps<{}> = async (context) => {
+  return { props: {} };
+  /* const bettingData = await getNominationData();
 
   return {
     props: {
       ...bettingData,
       bettingOpen: process.env.BETTING_OPEN === 'true'
     }
-  };
+  }; */
 };
 
 export default withPageAuthRequired(DashboardPage);
