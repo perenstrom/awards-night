@@ -38,6 +38,7 @@ import {
   metaState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
+import { getBettingData } from 'lib/getBettingData';
 
 const GridContainer = styled.div`
   display: grid;
@@ -148,9 +149,7 @@ const CategoryPage: NextPage<Props> = ({
         />
         <PlayerStandings
           completedCategories={
-            meta
-              ? meta.completedCategories
-              : initialMeta.completedCategories
+            meta ? meta.completedCategories : initialMeta.completedCategories
           }
           players={
             (Object.entries(players ?? initialPlayers) as [PlayerId, Player][])
@@ -164,23 +163,6 @@ const CategoryPage: NextPage<Props> = ({
   );
 };
 
-const getPlayers = async (
-  bets: Bet[],
-  bettingOpen: boolean
-): Promise<NormalizedPlayers> => {
-  if (!bettingOpen && bets.length > 0) {
-    const players = await getPlayersFromAirtable(bets.map((b) => b.player));
-
-    const rawNormalizedPlayers: NormalizedPlayers = {};
-    players.forEach((player) => {
-      rawNormalizedPlayers[player.id] = player;
-    });
-    return rawNormalizedPlayers;
-  } else {
-    return {};
-  }
-};
-
 interface Params extends ParsedUrlQuery {
   year: string;
   category: string;
@@ -188,20 +170,11 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
-  const nominationData: NominationData = await getNominationData(parseInt(context.params.year, 10));
-  const { year, categories, nominations, films, meta } = nominationData;
-
-  const bets = await getBets(
-    (Object.values(nominations) as Nomination[]).map((n) => n.bets).flat()
+  const nominationData: NominationData = await getNominationData(
+    parseInt(context.params.year, 10)
   );
-  const normalizedBets: NormalizedBets = {};
-  if (!year.bettingOpen) {
-    bets.forEach((b) => {
-      normalizedBets[b.id] = b;
-      (nominations[b.nomination] as Nomination).bets.push(b.id);
-    });
-  }
-  const players = await getPlayers(bets, year.bettingOpen);
+  const { year, categories, nominations, films, meta } = nominationData;
+  const { bets, players } = await getBettingData(year, categories, nominations);
 
   return {
     props: {
@@ -209,7 +182,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
       categories,
       nominations,
       films,
-      bets: normalizedBets,
+      bets,
       players,
       meta,
       bettingOpen: year.bettingOpen
