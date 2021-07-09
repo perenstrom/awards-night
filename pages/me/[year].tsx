@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage } from 'next';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { getNominationData } from 'lib/getNominationData';
 import {
@@ -22,23 +22,24 @@ import { CategoryHeading } from 'components/CategoryHeading';
 import { NominationListWrapper } from 'components/NominationListWrapper';
 import Head from 'next/head';
 import styled from 'styled-components';
+import { getYears } from 'services/airtable';
+import { ParsedUrlQuery } from 'querystring';
 
 const Loading = styled.span`
   font-size: 1rem;
   font-weight: normal;
 `;
 
-type Props = NominationData & { bettingOpen: boolean };
+type Props = NominationData;
 type State = 'idle' | 'loading' | 'saving';
 
 const DashboardPage: NextPage<Props> = ({
+  year,
   categories,
   nominations,
-  films,
-  bettingOpen
+  films
 }) => {
-  return null;
-  /* const [bets, setBets] = useState<Record<NominationId, BetId>>({});
+  const [bets, setBets] = useState<Record<NominationId, BetId>>({});
   const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
@@ -96,8 +97,8 @@ const DashboardPage: NextPage<Props> = ({
           {player && `Betting for ${player.name}`}
           {state !== 'idle' && <Loading> loading...</Loading>}
         </h1>
-        {!bettingOpen && <p>Betting is closed</p>}
-        {categories.map((category) => (
+        {!year.bettingOpen && <p>Betting is closed</p>}
+        {(Object.values(categories) as Category[]).map((category) => (
           <div key={category.id}>
             <CategoryHeading>{category.name}</CategoryHeading>
             <CategoryBets>
@@ -114,7 +115,7 @@ const DashboardPage: NextPage<Props> = ({
                     poster={films[nomination.film].poster}
                     nominee={nomination.nominee}
                     activeBet={Object.keys(bets).includes(nomination.id)}
-                    bettingOpen={bettingOpen}
+                    bettingOpen={year.bettingOpen}
                     onClick={state === 'idle' ? updateBet : () => null}
                   />
                 );
@@ -124,19 +125,35 @@ const DashboardPage: NextPage<Props> = ({
         ))}
       </NominationListWrapper>
     </div>
-  ); */
+  );
 };
 
-export const getStaticProps: GetStaticProps<{}> = async (context) => {
-  return { props: {} };
-  /* const bettingData = await getNominationData();
+interface Params extends ParsedUrlQuery {
+  year: string;
+}
+
+export const getStaticProps: GetStaticProps<Props, Params> = async (
+  context
+) => {
+  const nominationData = await getNominationData(
+    parseInt(context.params.year, 10)
+  );
 
   return {
-    props: {
-      ...bettingData,
-      bettingOpen: process.env.BETTING_OPEN === 'true'
-    }
-  }; */
+    props: nominationData
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const years = await getYears();
+  const paths = years.map((year) => ({
+    params: { year: year.year.toString() }
+  }));
+
+  return {
+    paths: paths,
+    fallback: false
+  };
 };
 
 export default withPageAuthRequired(DashboardPage);
