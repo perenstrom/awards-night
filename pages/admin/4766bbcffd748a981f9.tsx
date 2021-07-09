@@ -4,6 +4,7 @@ import { GetStaticProps, NextPage } from 'next';
 import {
   Category,
   NominationData,
+  NominationId,
   NormalizedNominations
 } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
@@ -20,11 +21,12 @@ const AdminPage: NextPage<Props> = ({
   nominations: initialNominations,
   films
 }) => {
-  const [nominations, setNominations] = useState<NormalizedNominations>(
+  return null;
+ /*  const [nominations, setNominations] = useState<NormalizedNominations>(
     initialNominations
   );
 
-  const updateNomination = async (nominationId: string, category: Category) => {
+  const updateNomination = async (nominationId: NominationId, category: Category) => {
     const winningNominationsInCategory = category.nominations.filter(
       (nominationId) => nominations[nominationId].won
     );
@@ -107,14 +109,14 @@ const AdminPage: NextPage<Props> = ({
         ))}
       </NominationListWrapper>
     </div>
-  );
+  ); */
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const bettingData = await getNominationData();
+export const getStaticProps: GetStaticProps<{}> = async () => {
+  //const nominationData = await getNominationData();
 
   return {
-    props: bettingData
+    props: {}
   };
 };
 

@@ -1,6 +1,6 @@
-import { refreshNominations } from 'lib/getCategoryData';
+import { refreshNominations } from 'lib/refreshNominations';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { NominationRecord, updateNomination } from 'services/airtable';
+import { getYear, NominationRecord, updateNomination } from 'services/airtable';
 import { Nomination, NominationId } from 'types/nominations';
 
 interface PatchRequestBody {
@@ -18,7 +18,10 @@ const mapNomination = (nomination: Nomination): NominationRecord => ({
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
-    const nominations = await refreshNominations();
+    const { year } = req.query;
+    const fullYear = await getYear(parseInt(year as string, 10));
+    const nominations = await refreshNominations(fullYear);
+
     res.end(JSON.stringify(nominations));
   } else if (req.method === 'PATCH') {
     return new Promise((resolve) => {

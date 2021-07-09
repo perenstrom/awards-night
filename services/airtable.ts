@@ -10,10 +10,13 @@ import {
   Nomination,
   NominationId,
   Player,
-  PlayerId
+  PlayerId,
+  Year,
+  YearId
 } from 'types/nominations';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
+const yearsBase = base('years');
 const categoriesBase = base('categories');
 const nominationsBase = base('nominations');
 const filmsBase = base('films');
@@ -41,30 +44,86 @@ export interface BetRecord {
   nomination: NominationId[];
 }
 
-export const getCategories = async (): Promise<Category[]> => {
-  const categories: Category[] = [];
-  await categoriesBase.select().eachPage((categoriesResult, fetchNextPage) => {
-    categoriesResult.forEach((category, index) => {
-      const previousCategory =
-        index === 0 ? null : categoriesResult[index - 1].get('slug');
-      const nextCategory =
-        index === categoriesResult.length - 1
-          ? null
-          : categoriesResult[index + 1].get('slug');
-      categories.push(formatCategory(category, previousCategory, nextCategory));
+export const getYear = async (year: number): Promise<Year> => {
+  const years: Year[] = [];
+  await yearsBase
+    .select({ filterByFormula: `year='${year}'` })
+    .eachPage((yearsResult, fetchNextPage) => {
+      yearsResult.forEach((year) => {
+        years.push(formatYear(year));
+      });
+
+      fetchNextPage();
+    });
+
+  if (years.length > 1) {
+    throw new Error(`Multiple records with year ${year} found.`);
+  } else if (years.length === 0) {
+    return null;
+  } else {
+    return years[0];
+  }
+};
+
+export const getYears = async (): Promise<Year[]> => {
+  const years: Year[] = [];
+  await yearsBase.select().eachPage((yearsResult, fetchNextPage) => {
+    yearsResult.forEach((year) => {
+      years.push(formatYear(year));
     });
 
     fetchNextPage();
   });
 
-  return categories;
+  return years;
 };
 
-export const getCategory = async (slug: string): Promise<Category> => {
-  const categories = await getCategories();
-  const category = categories.find((category) => category.slug === slug);
+const formatYear = (yearResponse: AirtableRecord): Year => ({
+  id: yearResponse.id as YearId,
+  year: yearResponse.get('year'),
+  name: yearResponse.get('name'),
+  date: yearResponse.get('date'),
+  bettingOpen: !!yearResponse.get('betting_open'),
+  categories: yearResponse.get('categories') ?? [],
+  nominations: yearResponse.get('nominations') ?? []
+});
 
-  return { ...category };
+export const getCategories = async (
+  categoryIds?: CategoryId[]
+): Promise<Category[]> => {
+  const query = categoryIds
+    ? {
+        filterByFormula: `OR(${categoryIds
+          .map((id) => `RECORD_ID()='${id}'`)
+          .join(',')})
+    `
+      }
+    : {};
+
+  const categories: Category[] = [];
+  try {
+    await categoriesBase
+      .select(query)
+      .eachPage((categoriesResult, fetchNextPage) => {
+        categoriesResult.forEach((category, index) => {
+          const previousCategory =
+            index === 0 ? null : categoriesResult[index - 1].get('slug');
+          const nextCategory =
+            index === categoriesResult.length - 1
+              ? null
+              : categoriesResult[index + 1].get('slug');
+          categories.push(
+            formatCategory(category, previousCategory, nextCategory)
+          );
+        });
+
+        fetchNextPage();
+      });
+
+    return categories;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const formatCategory = (
@@ -72,19 +131,19 @@ const formatCategory = (
   previousCategory: string,
   nextCategory: string
 ): Category => ({
-  id: categoryResponse.id,
+  id: categoryResponse.id as CategoryId,
   slug: categoryResponse.get('slug'),
   name: categoryResponse.get('name'),
-  nominations: categoryResponse.get('nominations') ?? null,
+  nominations: [],
   previousCategory: previousCategory,
   nextCategory: nextCategory
 });
 
 export const getNominations = async (
-  nominationIds: string[]
+  nominationIds: NominationId[]
 ): Promise<Nomination[]> => {
   const query = `OR(${nominationIds
-    .map((id) => `RECORD_ID() = '${id}'`)
+    .map((id) => `RECORD_ID()='${id}'`)
     .join(',')})
     `;
 
@@ -126,7 +185,7 @@ export const updateNomination = async (
 };
 
 const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
-  id: nominationResponse.id,
+  id: nominationResponse.id as NominationId,
   year: nominationResponse.get('year'),
   category: nominationResponse.get('category')[0],
   film: nominationResponse.get('film')[0],
@@ -136,8 +195,8 @@ const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   decided: null
 });
 
-export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
-  const query = `OR(${filmIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
+  const query = `OR(${filmIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
     `;
   const films: Film[] = [];
   await filmsBase
@@ -154,7 +213,7 @@ export const getFilms = async (filmIds: string[]): Promise<Film[]> => {
 };
 
 export const updateFilm = async (
-  filmId: string,
+  filmId: FilmId,
   film: Partial<FilmRecord>
 ): Promise<Film> => {
   console.log(
@@ -172,21 +231,25 @@ export const updateFilm = async (
 };
 
 export const setFilmPoster = async (
-  filmId: string,
+  filmId: FilmId,
   poster: string
 ): Promise<Film> => {
   return updateFilm(filmId, { poster_url: poster });
 };
 
 const formatFilm = (filmResponse: AirtableRecord): Film => ({
-  id: filmResponse.id,
+  id: filmResponse.id as FilmId,
   imdbId: filmResponse.get('imdb_id'),
   name: filmResponse.get('name'),
   poster: filmResponse.get('poster_url') ?? null
 });
 
-export const getBets = async (betIds: string[]): Promise<Bet[]> => {
-  const query = `OR(${betIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+export const getBets = async (betIds: BetId[]): Promise<Bet[]> => {
+  if (betIds.length === 0) {
+    return [];
+  }
+
+  const query = `OR(${betIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
     `;
   const bets: Bet[] = [];
   await betsBase
@@ -216,8 +279,8 @@ export const createBet = async (bet: BetRecord): Promise<Bet> => {
 };
 
 export const updateBet = async (
-  betId: string,
-  nominationId: string
+  betId: BetId,
+  nominationId: NominationId
 ): Promise<Bet> => {
   console.log(
     `Updating bet:\n${JSON.stringify({ betId, nominationId }, null, 2)}`
@@ -233,13 +296,26 @@ export const updateBet = async (
   });
 };
 
+export const deleteBet = async (betId: BetId): Promise<BetId> => {
+  console.log(`Updating bet:\n${JSON.stringify({ betId }, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    betsBase
+      .destroy(betId)
+      .then((result) => resolve(result.id as BetId))
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
+};
+
 export const getBetsForPlayer = async (
-  playerId: string
-): Promise<Record<string, string>> => {
+  playerId: PlayerId
+): Promise<Record<NominationId, BetId>> => {
   try {
     const player = await getPlayers([playerId]);
     const bets = await getBets(player[0].bets ?? []);
-    const nominationBets: Record<string, string> = {};
+    const nominationBets: Record<NominationId, BetId> = {};
     bets.forEach((bet) => (nominationBets[bet.nomination] = bet.id));
 
     return nominationBets;
@@ -250,16 +326,16 @@ export const getBetsForPlayer = async (
 };
 
 const formatBet = (betResponse: AirtableRecord): Bet => ({
-  id: betResponse.id,
+  id: betResponse.id as BetId,
   player: betResponse.get('player')[0],
   nomination: betResponse.get('nomination')[0]
 });
 
-export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
+export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
   const params = playerIds
     ? {
         filterByFormula: `OR(${playerIds
-          .map((id) => `RECORD_ID() = '${id}'`)
+          .map((id) => `RECORD_ID()='${id}'`)
           .join(',')})`
       }
     : {};
@@ -275,8 +351,29 @@ export const getPlayers = async (playerIds: string[]): Promise<Player[]> => {
   return players;
 };
 
+export const getPlayerByAuth0Id = async (auth0Id: string): Promise<Player> => {
+  const players: Player[] = [];
+  await playersBase
+    .select({ filterByFormula: `auth0_user_id='${auth0Id}'` })
+    .eachPage((playersResult, fetchNextPage) => {
+      playersResult.forEach((player) => {
+        players.push(formatPlayer(player));
+      });
+
+      fetchNextPage();
+    });
+
+  if (players.length > 1) {
+    throw new Error(`Multiple records with id ${auth0Id} found.`);
+  } else if (players.length === 0) {
+    return null;
+  } else {
+    return players[0];
+  }
+};
+
 const formatPlayer = (playerResponse: AirtableRecord): Player => ({
-  id: playerResponse.id,
+  id: playerResponse.id as PlayerId,
   name: playerResponse.get('name'),
   correct: 0,
   bets: playerResponse.get('bets') ?? null

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Category } from 'types/nominations';
+import { Category, Year } from 'types/nominations';
 import styled, { css } from 'styled-components';
 import Link from 'next/link';
 
@@ -40,13 +40,14 @@ const CategoryTitle = styled.h2`
 
 interface Props {
   category: Category;
+  year: Year;
 }
 
-export const CategoryMenu: React.FC<Props> = memo(({ category }) => {
+export const CategoryMenu: React.FC<Props> = memo(({ category, year }) => {
   return (
     <Header>
       {category.previousCategory ? (
-        <Link href={`/${category.previousCategory}`} passHref>
+        <Link href={`/${year.year}/${category.previousCategory}`} passHref>
           <CategoryLink>Previous</CategoryLink>
         </Link>
       ) : (
@@ -54,7 +55,7 @@ export const CategoryMenu: React.FC<Props> = memo(({ category }) => {
       )}
       <CategoryTitle>{category.name}</CategoryTitle>
       {category.nextCategory ? (
-        <Link href={`/${category.nextCategory}`} passHref>
+        <Link href={`/${year.year}/${category.nextCategory}`} passHref>
           <CategoryLink>Next</CategoryLink>
         </Link>
       ) : (

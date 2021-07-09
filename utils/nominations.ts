@@ -1,40 +1,47 @@
 import {
+  BetId,
   Category,
   NormalizedBets,
   NormalizedNominations,
-  NormalizedPlayers,
-  Player,
-  Status
+  NormalizedPlayers
 } from 'types/nominations';
 
-export const calculateWinnings = (
+export const addPlayersWinnings = (
   categories: Category[],
   nominations: NormalizedNominations,
   bets: NormalizedBets,
-  players: Player[]
-) => {
+  normalizedPlayers: NormalizedPlayers
+): NormalizedPlayers => {
   const newPlayers: NormalizedPlayers = {};
-  players.forEach((p) => (newPlayers[p.id] = { ...p, correct: 0 }));
-
-  const status: Status = {
-    completedCategories: 0
-  };
+  Object.keys(normalizedPlayers).forEach((playerId) => {
+    newPlayers[playerId] = { ...normalizedPlayers[playerId], correct: 0 };
+  });
 
   categories.forEach((category) => {
-    const categoryNominations = category.nominations;
-    categoryNominations.forEach((n) => {
+    category.nominations.forEach((n) => {
       if (nominations[n].won) {
-        status.completedCategories++;
-        const winningBets = nominations[n].bets ?? [];
+        const winningBets = (nominations[n].bets ?? []) as BetId[];
         winningBets.forEach((bet) => {
-          newPlayers[bets[bet].player].correct++;
+          newPlayers[bets[bet].player].correct !== undefined
+            ? newPlayers[bets[bet].player].correct++
+            : (newPlayers[bets[bet].player].correct = 0);
         });
       }
     });
   });
 
-  return {
-    players: newPlayers,
-    status: status
-  };
+  return newPlayers;
+};
+
+export const calculateCompletedCategories = (
+  categories: Category[],
+  nominations: NormalizedNominations
+) => {
+  return categories.reduce(
+    (sum, category) =>
+      category.nominations.some((nominationId) => nominations[nominationId].won)
+        ? (sum += 1)
+        : sum,
+    0
+  );
 };

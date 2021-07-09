@@ -3,6 +3,7 @@ import {
   BetId,
   Nomination,
   NominationId,
+  Player,
   PlayerId
 } from 'types/nominations';
 
@@ -26,9 +27,22 @@ export const createBet = async (
   return apiResult<Bet>(url, options);
 };
 
+export const getLoggedInPlayer = async (): Promise<Player> => {
+  const url = `/api/players/me`;
+  const options: RequestInit = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  };
+
+  return apiResult<Player>(url, options);
+};
+
 export const getBetsForPlayer = async (
   playerId: PlayerId
-): Promise<Record<string, string>> => {
+): Promise<Record<NominationId, BetId>> => {
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
     method: 'GET',
@@ -38,7 +52,7 @@ export const getBetsForPlayer = async (
     }
   };
 
-  return apiResult<Record<string, string>>(url, options);
+  return apiResult<Record<NominationId, BetId>>(url, options);
 };
 
 export const updateBet = async (
@@ -59,6 +73,22 @@ export const updateBet = async (
   };
 
   return apiResult<Bet>(url, options);
+};
+
+export const deleteBet = async (betId: BetId): Promise<BetId> => {
+  const url = '/api/bets';
+  const options: RequestInit = {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      betId
+    })
+  };
+
+  return apiResult<BetId>(url, options);
 };
 
 export const updateNomination = async (
