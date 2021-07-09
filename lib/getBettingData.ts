@@ -1,7 +1,6 @@
-import { getBets, getPlayers } from 'services/airtable';
+import { getBets, getNominations, getPlayers } from 'services/airtable';
 import {
   BettingData,
-  Nomination,
   NormalizedBets,
   NormalizedCategories,
   NormalizedNominations,
@@ -15,9 +14,8 @@ export const getBettingData = async (
   categories: NormalizedCategories,
   nominations: NormalizedNominations
 ): Promise<BettingData> => {
-  const bets = await getBets(
-    (Object.values(nominations) as Nomination[]).map((n) => n.bets).flat()
-  );
+  const nominationsWithBets = await getNominations(year.nominations);
+  const bets = await getBets(nominationsWithBets.map((n) => n.bets).flat());
   const betIds = bets.map((bet) => bet.id);
 
   const normalizedBets: NormalizedBets = {};

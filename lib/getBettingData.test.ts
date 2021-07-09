@@ -3,9 +3,6 @@ import { mockRequests } from '__test__/test-utils';
 import { getNormalizedCategoriesFixture } from '__test__/__fixtures__/getNormalizedCategoriesFixture';
 import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
 import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
-import { mockGetBets } from '__test__/__mocks__/handlers/airtable/mockGetBets';
-import { mockGetPlayers } from '__test__/__mocks__/handlers/airtable/mockGetPlayers';
-import { server } from '__test__/__mocks__/mswServer';
 import { getBettingData } from './getBettingData';
 
 describe('getBettingData', () => {
@@ -18,8 +15,6 @@ describe('getBettingData', () => {
       'nomination-2020-best-picture-1',
       'nomination-2020-best-picture-2'
     ];
-    server.use(mockGetBets(['bet-1', 'bet-2']).handler);
-    server.use(mockGetPlayers().handler);
 
     const bettingData = await getBettingData(
       getYearFixture(2020),
@@ -55,8 +50,6 @@ describe('getBettingData', () => {
       'nomination-2021-best-picture-1',
       'nomination-2021-best-picture-2'
     ];
-    server.use(mockGetBets(['bet-3', 'bet-4', 'bet-5', 'bet-6']).handler);
-    server.use(mockGetPlayers().handler);
 
     const bettingData = await getBettingData(
       getYearFixture(2021),

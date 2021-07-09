@@ -3,12 +3,6 @@ import { YearId } from 'types/nominations';
 import { mockRequests } from '__test__/test-utils';
 import { getNormalizedCategoriesFixture } from '__test__/__fixtures__/getNormalizedCategoriesFixture';
 import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
-import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
-import { mockGetCategories } from '__test__/__mocks__/handlers/airtable/mockGetCategories';
-import { mockGetFilms } from '__test__/__mocks__/handlers/airtable/mockGetFilms';
-import { mockGetNominations } from '__test__/__mocks__/handlers/airtable/mockGetNominations';
-import { mockGetYears } from '__test__/__mocks__/handlers/airtable/mockGetYears';
-import { server } from '__test__/__mocks__/mswServer';
 
 import { getNominationData } from './getNominationData';
 
@@ -16,14 +10,6 @@ describe('getNominationData', () => {
   mockRequests();
 
   it('returns correct nomination data for a year, without bets (betting open)', async () => {
-    const yearFixture = getYearFixture(2020);
-    server.use(mockGetYears(['2020-id']).handler);
-    server.use(mockGetCategories(yearFixture.categories).handler);
-    server.use(mockGetNominations(yearFixture.nominations).handler);
-    server.use(
-      mockGetFilms(['citizen-kane', 'moana', 'the-matrix', 'bridget-jones'])
-        .handler
-    );
     const year = 2020;
     const nominationData = await getNominationData(year);
 
@@ -84,18 +70,6 @@ describe('getNominationData', () => {
   });
 
   it('returns correct nomination data for a year, with bets (betting closed)', async () => {
-    const yearFixture = getYearFixture(2021);
-    server.use(mockGetYears(['2021-id']).handler);
-    server.use(mockGetCategories(yearFixture.categories).handler);
-    server.use(mockGetNominations(yearFixture.nominations).handler);
-    server.use(
-      mockGetFilms([
-        'failsafe',
-        'twelve-angry-men',
-        'legally-blond',
-        'legally-blond-2'
-      ]).handler
-    );
     const year = 2021;
     const nominationData = await getNominationData(year);
 

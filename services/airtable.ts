@@ -47,7 +47,7 @@ export interface BetRecord {
 export const getYear = async (year: number): Promise<Year> => {
   const years: Year[] = [];
   await yearsBase
-    .select({ filterByFormula: `year = '${year}'` })
+    .select({ filterByFormula: `year='${year}'` })
     .eachPage((yearsResult, fetchNextPage) => {
       yearsResult.forEach((year) => {
         years.push(formatYear(year));
@@ -94,7 +94,7 @@ export const getCategories = async (
   const query = categoryIds
     ? {
         filterByFormula: `OR(${categoryIds
-          .map((id) => `RECORD_ID() = '${id}'`)
+          .map((id) => `RECORD_ID()='${id}'`)
           .join(',')})
     `
       }
@@ -143,7 +143,7 @@ export const getNominations = async (
   nominationIds: NominationId[]
 ): Promise<Nomination[]> => {
   const query = `OR(${nominationIds
-    .map((id) => `RECORD_ID() = '${id}'`)
+    .map((id) => `RECORD_ID()='${id}'`)
     .join(',')})
     `;
 
@@ -196,7 +196,7 @@ const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
 });
 
 export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
-  const query = `OR(${filmIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+  const query = `OR(${filmIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
     `;
   const films: Film[] = [];
   await filmsBase
@@ -248,8 +248,8 @@ export const getBets = async (betIds: BetId[]): Promise<Bet[]> => {
   if (betIds.length === 0) {
     return [];
   }
-  
-  const query = `OR(${betIds.map((id) => `RECORD_ID() = '${id}'`).join(',')})
+
+  const query = `OR(${betIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
     `;
   const bets: Bet[] = [];
   await betsBase
@@ -335,7 +335,7 @@ export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
   const params = playerIds
     ? {
         filterByFormula: `OR(${playerIds
-          .map((id) => `RECORD_ID() = '${id}'`)
+          .map((id) => `RECORD_ID()='${id}'`)
           .join(',')})`
       }
     : {};
@@ -354,7 +354,7 @@ export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
 export const getPlayerByAuth0Id = async (auth0Id: string): Promise<Player> => {
   const players: Player[] = [];
   await playersBase
-    .select({ filterByFormula: `auth0_user_id = '${auth0Id}'` })
+    .select({ filterByFormula: `auth0_user_id='${auth0Id}'` })
     .eachPage((playersResult, fetchNextPage) => {
       playersResult.forEach((player) => {
         players.push(formatPlayer(player));

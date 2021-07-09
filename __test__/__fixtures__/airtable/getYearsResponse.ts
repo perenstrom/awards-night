@@ -38,7 +38,9 @@ export const getYearsResponse = (years?) => {
 
   if (years) {
     return {
-      records: response.records.filter((record) => years.includes(record.id))
+      records: response.records.filter((record) =>
+        years.includes(record.fields.year.toString())
+      )
     };
   } else {
     return response;
