@@ -18,12 +18,12 @@ import {
 } from 'services/local';
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
-import { CategoryHeading } from 'components/CategoryHeading';
-import { NominationListWrapper } from 'components/NominationListWrapper';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
+import { Typography } from '@material-ui/core';
+import { MainContainer } from 'components/MainContainer';
 
 const Loading = styled.span`
   font-size: 1rem;
@@ -92,15 +92,15 @@ const DashboardPage: NextPage<Props> = ({
       <Head>
         <title>Bets</title>
       </Head>
-      <NominationListWrapper>
-        <h1>
+      <MainContainer>
+        <Typography variant="h1">
           {player && `Betting for ${player.name}`}
           {state !== 'idle' && <Loading> loading...</Loading>}
-        </h1>
+        </Typography>
         {!year.bettingOpen && <p>Betting is closed</p>}
         {(Object.values(categories) as Category[]).map((category) => (
           <div key={category.id}>
-            <CategoryHeading>{category.name}</CategoryHeading>
+            <Typography variant="h2">{category.name}</Typography>
             <CategoryBets>
               {category.nominations.map((nominationId) => {
                 const nomination = nominations[nominationId];
@@ -123,7 +123,7 @@ const DashboardPage: NextPage<Props> = ({
             </CategoryBets>
           </div>
         ))}
-      </NominationListWrapper>
+      </MainContainer>
     </div>
   );
 };

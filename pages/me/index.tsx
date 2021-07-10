@@ -2,10 +2,10 @@ import { GetStaticProps, NextPage } from 'next';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Year } from 'types/nominations';
 import React from 'react';
-import { NominationListWrapper } from 'components/NominationListWrapper';
 import Head from 'next/head';
 import { getYears } from 'services/airtable';
 import Link from 'next/link';
+import { MainContainer } from 'components/MainContainer';
 
 type Props = {
   years: Year[];
@@ -17,7 +17,7 @@ const DashboardPage: NextPage<Props> = ({ years }) => {
       <Head>
         <title>Bets</title>
       </Head>
-      <NominationListWrapper>
+      <MainContainer>
         <table>
           <thead>
             <tr>
@@ -38,7 +38,7 @@ const DashboardPage: NextPage<Props> = ({ years }) => {
             ))}
           </tbody>
         </table>
-      </NominationListWrapper>
+      </MainContainer>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
+import { Typography } from '@material-ui/core';
 import { Category, NominationId } from 'types/nominations';
 
 const getBackgroundColor = (
@@ -57,6 +58,10 @@ const PosterWrapper = styled.div`
   overflow: hidden;
 `;
 
+const PosterInnerWrapper = styled.div`
+  position: relative;
+`;
+
 const Poster = styled.img`
   display: block;
   border-radius: 4px;
@@ -81,10 +86,6 @@ const Frame = styled.span`
   background-repeat: no-repeat;
   background-clip: padding-box;
   background-size: 100% 1px;
-`;
-
-const NominationHeader = styled.h3`
-  margin: 0;
 `;
 
 interface Props {
@@ -125,14 +126,14 @@ export const BetItem: React.FC<Props> = memo(
         }
       >
         <PosterWrapper>
-          <div>
+          <PosterInnerWrapper>
             <Poster src={poster} width="48" height="72" />
             <Frame></Frame>
-          </div>
+          </PosterInnerWrapper>
         </PosterWrapper>
         <InnerWrapper>
-          <NominationHeader>{filmName}</NominationHeader>
-          {nominee && <p>{nominee}</p>}
+          <Typography variant="h3">{filmName}</Typography>
+          {nominee && <Typography>{nominee}</Typography>}
         </InnerWrapper>
       </Wrapper>
     );
