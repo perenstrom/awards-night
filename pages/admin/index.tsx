@@ -1,4 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import getRawBody from 'raw-body';
 import {
   Typography,
   TextField,
@@ -7,17 +10,12 @@ import {
   makeStyles,
   Paper
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
+import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/withAdminRequired';
-import { useRouter } from 'next/router';
-import { getFilm as getFilmFromTmdb } from 'services/tmdb';
-import { createFilm, getFilmByImdb } from 'services/airtable';
-import { Film } from 'types/nominations';
-import { PropsWithUser } from 'types/utilityTypes';
-import getRawBody from 'raw-body';
-import { Alert } from '@material-ui/lab';
-import Head from 'next/head';
+import { saveFilm } from 'lib/saveFilm';
 
 const useStyles = makeStyles(() => ({
   sectionHeading: {
@@ -27,10 +25,7 @@ const useStyles = makeStyles(() => ({
 
 type Props = {
   statusMessages?: {
-    addFilms: {
-      severity: 'error' | 'warning' | 'info' | 'success';
-      message: string;
-    };
+    addFilms: StatusMessage;
   };
 };
 
@@ -61,8 +56,8 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
                     variant="outlined"
                     size="small"
                     inputProps={{
-                      minlength: '9',
-                      maxlength: '9',
+                      minLength: '9',
+                      maxLength: '9',
                       pattern: 'tt[0-9]{7}'
                     }}
                   />
@@ -101,107 +96,14 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     const body = await getRawBody(req);
     const parsedBody = qs.parse(body.toString('utf-8'));
 
-    let film: Film;
-    try {
-      film = await getFilmByImdb(parsedBody.imdbId);
-    } catch (error) {
-      // Airtable error
-      console.error(error);
-      return {
-        props: {
-          statusMessages: {
-            addFilms: {
-              severity: 'error',
-              message: `Something went wrong, please try again`
-            }
-          }
+    const saveFilmResult = await saveFilm(parsedBody.imdbId);
+    return {
+      props: {
+        statusMessages: {
+          addFilms: saveFilmResult
         }
-      };
-    }
-
-    if (!film) {
-      // Film is not already in the system
-      let filmDetails = null;
-      try {
-        filmDetails = await getFilmFromTmdb(parsedBody.imdbId);
-      } catch (error) {
-        // TMDb error
-        console.error(error);
-        return {
-          props: {
-            statusMessages: {
-              addFilms: {
-                severity: 'error',
-                message: `Something went wrong, please try again`
-              }
-            }
-          }
-        };
       }
-
-      if (!filmDetails) {
-        // Couldn't fetch info from TMDb
-        return {
-          props: {
-            statusMessages: {
-              addFilms: {
-                severity: 'error',
-                message: `Couldn't get movie details from TMDb for ${parsedBody.imdbId}`
-              }
-            }
-          }
-        };
-      }
-
-      let savedFilm = null;
-      try {
-        savedFilm = await createFilm({
-          imdb_id: filmDetails.imdbId,
-          name: filmDetails.name,
-          poster_url: filmDetails.poster,
-          nominations: null
-        });
-      } catch (error) {
-        // Error in airtable call
-        console.error(error);
-        return {
-          props: {
-            statusMessages: {
-              addFilms: {
-                severity: 'error',
-                message: `Something went wrong, please try again`
-              }
-            }
-          }
-        };
-      }
-
-      if (savedFilm) {
-        // Film successfully saved
-        return {
-          props: {
-            statusMessages: {
-              addFilms: {
-                severity: 'success',
-                message: `${savedFilm.name} added.`
-              }
-            }
-          }
-        };
-      }
-    } else {
-      // Film is already in the system
-      return {
-        props: {
-          statusMessages: {
-            addFilms: {
-              severity: 'info',
-              message: `${film.name} is already added`
-            }
-          }
-        }
-      };
-    }
+    };
   }
 
   return { props: {} };

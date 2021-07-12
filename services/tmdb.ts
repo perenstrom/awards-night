@@ -20,6 +20,7 @@ export const getFilm = (imdbId: string): Promise<Omit<Film, 'id'>> => {
     .then((response) => response.json())
     .then((data) => {
       if (data.success === false) {
+        console.warn(data);
         return null;
       } else {
         return formatTmdbFilm(data);
