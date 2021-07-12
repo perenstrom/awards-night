@@ -206,18 +206,12 @@ export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
         });
 
         fetchNextPage();
-      },
-      (error) => {
-        if (error) {
-          throw error;
-        }
       }
     );
   } catch (error) {
     console.log(error);
     return Promise.reject(error);
   }
-
   return films;
 };
 
