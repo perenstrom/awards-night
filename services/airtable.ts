@@ -35,7 +35,6 @@ export interface FilmRecord {
   imdb_id: string;
   name: string;
   nominations: NominationId[];
-  bets: BetId[];
   poster_url: string;
 }
 
@@ -199,6 +198,33 @@ export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
   const query = `OR(${filmIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
     `;
   const films: Film[] = [];
+  try {
+    await filmsBase.select({ filterByFormula: query }).eachPage(
+      (filmsResult, fetchNextPage) => {
+        filmsResult.forEach((film) => {
+          films.push(formatFilm(film));
+        });
+
+        fetchNextPage();
+      },
+      (error) => {
+        if (error) {
+          throw error;
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return Promise.reject(error);
+  }
+
+  return films;
+};
+
+export const getFilmByImdb = async (imdbId: string): Promise<Film> => {
+  const query = `imdb_id='${imdbId}'`;
+  const films: Film[] = [];
+
   await filmsBase
     .select({ filterByFormula: query })
     .eachPage((filmsResult, fetchNextPage) => {
@@ -209,7 +235,26 @@ export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
       fetchNextPage();
     });
 
-  return films;
+  if (films.length > 1) {
+    throw new Error(`Multiple records with imdb id ${imdbId} found.`);
+  } else if (films.length === 0) {
+    return null;
+  } else {
+    return films[0];
+  }
+};
+
+export const createFilm = async (film: FilmRecord): Promise<Film> => {
+  console.log(`Creating film:\n${JSON.stringify(film, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    filmsBase
+      .create(film)
+      .then((result) => resolve(formatFilm(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 export const updateFilm = async (

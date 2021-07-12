@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import { theme } from 'styles/theme';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -17,14 +18,22 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <RecoilRoot>
-      <UserProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Component {...pageProps} key={router.asPath} />
-        </ThemeProvider>
-      </UserProvider>
-    </RecoilRoot>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+        />
+      </Head>
+      <RecoilRoot>
+        <UserProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} key={router.asPath} />
+          </ThemeProvider>
+        </UserProvider>
+      </RecoilRoot>
+    </>
   );
 }
 

@@ -37,6 +37,9 @@ export const theme = createTheme({
     },
     body2: {
       fontSize: '1rem'
+    },
+    button: {
+      textTransform: 'none'
     }
   }
 });
