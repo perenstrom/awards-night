@@ -1,8 +1,10 @@
+import { FormEvent, useRef, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import getRawBody from 'raw-body';
 import {
+  CircularProgress,
   Typography,
   TextField,
   Box,
@@ -16,6 +18,7 @@ import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/withAdminRequired';
 import { saveFilm } from 'lib/saveFilm';
+import { createFilm } from 'services/local';
 
 const useStyles = makeStyles(() => ({
   sectionHeading: {
@@ -31,8 +34,30 @@ type Props = {
 
 const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
   const { sectionHeading } = useStyles(props);
-  const { statusMessages } = props;
+  const { statusMessages: initialStatusMessages } = props;
   const router = useRouter();
+  const imdbIdInputElement = useRef<HTMLInputElement>(null);
+
+  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
+    'idle'
+  );
+  const [statusMessages, setStatusMessages] = useState(initialStatusMessages);
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setAddFilmStatus('loading');
+    setStatusMessages({ ...statusMessages, addFilms: null });
+    const imdbId = imdbIdInputElement.current.value;
+
+    if (imdbId) {
+      const saveFilmResult = await createFilm(imdbId);
+      setStatusMessages({ ...statusMessages, addFilms: saveFilmResult });
+      if (saveFilmResult.severity !== 'error') {
+        imdbIdInputElement.current.value = '';
+        imdbIdInputElement.current.focus();
+      }
+    }
+    setAddFilmStatus('idle');
+  };
 
   return (
     <>
@@ -48,7 +73,11 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
                 Add film
               </Typography>
               <Box mt={2}>
-                <form action={router.pathname} method="POST">
+                <form
+                  action={router.pathname}
+                  method="POST"
+                  onSubmit={onSubmit}
+                >
                   <TextField
                     id="imdb-id"
                     name="imdbId"
@@ -60,6 +89,7 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
                       maxLength: '9',
                       pattern: 'tt[0-9]{7}'
                     }}
+                    inputRef={imdbIdInputElement}
                   />
                   <Box ml={1} display="inline">
                     <Button
@@ -68,11 +98,17 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
                       variant="contained"
                       color="primary"
                       type="submit"
+                      disabled={addFilmStatus === 'loading'}
                       disableElevation
                     >
                       Add
                     </Button>
                   </Box>
+                  {addFilmStatus === 'loading' && (
+                    <Box mt={2.5}>
+                      <CircularProgress size={'2rem'} />
+                    </Box>
+                  )}
                 </form>
                 {statusMessages?.addFilms && (
                   <Box mt={2}>
@@ -91,6 +127,7 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
 };
 
 const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
+  // POST:
   if (req.method == 'POST') {
     const qs = require('qs');
     const body = await getRawBody(req);
@@ -106,6 +143,7 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     };
   }
 
+  // GET:
   return { props: {} };
 };
 

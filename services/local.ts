@@ -6,6 +6,7 @@ import {
   Player,
   PlayerId
 } from 'types/nominations';
+import { StatusMessage } from 'types/utilityTypes';
 
 export const createBet = async (
   playerId: PlayerId,
@@ -109,6 +110,22 @@ export const updateNomination = async (
   };
 
   return apiResult<Nomination>(url, options);
+};
+
+export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
+  const url = '/api/films';
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      imdbId
+    })
+  };
+
+  return apiResult<StatusMessage>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
