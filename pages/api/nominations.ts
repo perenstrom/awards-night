@@ -1,5 +1,4 @@
 import { refreshNominations } from 'lib/refreshNominations';
-import { saveFilm } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
