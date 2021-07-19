@@ -1,6 +1,8 @@
 import {
   Bet,
   BetId,
+  CategoryId,
+  FilmId,
   Nomination,
   NominationId,
   Player,
@@ -90,6 +92,25 @@ export const deleteBet = async (betId: BetId): Promise<BetId> => {
   };
 
   return apiResult<BetId>(url, options);
+};
+
+export const createNominations = async (data: {
+  category: CategoryId;
+  year: number;
+  films: FilmId[];
+  nominees: string[];
+}): Promise<StatusMessage> => {
+  const url = '/api/nominations';
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify(data)
+  };
+
+  return apiResult<StatusMessage>(url, options);
 };
 
 export const updateNomination = async (

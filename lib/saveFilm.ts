@@ -1,21 +1,8 @@
 import { Film } from 'types/nominations';
-import { Severity, StatusMessage } from 'types/utilityTypes';
+import { StatusMessage } from 'types/utilityTypes';
 import { getFilmByImdb, createFilm } from 'services/airtable';
 import { getFilm as getFilmFromTmdb } from 'services/tmdb';
-
-const getStatusMessage = (
-  severity: Severity,
-  message: string
-): StatusMessage => {
-  return {
-    severity,
-    message
-  };
-};
-
-const getGenericErrorMessage = () => {
-  return getStatusMessage('error', 'Something went wrong, please try again.');
-};
+import { getGenericErrorMessage, getStatusMessage } from 'utils/statusMessages';
 
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
   let film: Film;
