@@ -4,6 +4,7 @@
 ### Admin interface
 * Admin HOC to restrict access
 * Form for adding a movie via IMDb ID
+* Form for adding nominations
 
 ## 3.2.0
 ### Support for different years.

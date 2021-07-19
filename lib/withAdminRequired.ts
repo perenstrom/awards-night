@@ -1,5 +1,5 @@
 import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next';
 
 export const isAdminKey = `${process.env.AUTH0_METADATA_NAMESPACE}/is_admin`;
 
@@ -24,4 +24,10 @@ export const withAdminRequired = (params: {
       }
     }
   });
+};
+
+export const isAdmin = (req: NextApiRequest, res: NextApiResponse) => {
+  const session = getSession(req, res);
+  const user = session?.user ?? null;
+  return !!user?.[isAdminKey];
 };

@@ -1,6 +1,7 @@
 import { refreshNominations } from 'lib/refreshNominations';
 import { saveFilm } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
+import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getYear, NominationRecord, updateNomination } from 'services/airtable';
 import {
@@ -40,6 +41,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.end(JSON.stringify(nominations));
   } else if (req.method === 'PATCH') {
     return new Promise((resolve) => {
+      if (!isAdmin(req, res)) {
+        res.status(401).end('Admin privileges required.');
+        resolve('');
+      }
+
       const { nominationId, nomination }: PatchRequestBody = req.body;
       if (!nominationId || !nomination) {
         res
@@ -60,6 +66,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   } else if (req.method === 'POST') {
     return new Promise((resolve) => {
+      if (!isAdmin(req, res)) {
+        res.status(401).end('Admin privileges required.');
+        resolve('');
+      }
+
       const { category, year, films, nominees }: PostRequestBody = req.body;
       if (!category || !year || !films || !nominees) {
         res
