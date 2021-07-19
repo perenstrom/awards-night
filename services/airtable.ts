@@ -175,7 +175,10 @@ export const getNominations = async (
 ): Promise<Nomination[]> => {
   const query = nominationIds
     ? {
-        filterByFormula: `AND()`
+        filterByFormula: `OR(${nominationIds
+          .map((id) => `RECORD_ID()='${id}'`)
+          .join(',')})
+          `
       }
     : {};
 

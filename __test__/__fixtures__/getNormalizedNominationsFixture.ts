@@ -12,7 +12,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2020-best-adapted-screenplay-1',
       nominee: null,
       won: false,
-      year: ['2020-id']
+      year: '2020-id'
     },
     'nomination-2020-best-adapted-screenplay-2': {
       bets: [],
@@ -22,7 +22,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2020-best-adapted-screenplay-2',
       nominee: null,
       won: false,
-      year: ['2020-id']
+      year: '2020-id'
     },
     'nomination-2020-best-picture-1': {
       bets: [],
@@ -32,7 +32,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2020-best-picture-1',
       nominee: null,
       won: false,
-      year: ['2020-id']
+      year: '2020-id'
     },
     'nomination-2020-best-picture-2': {
       bets: [],
@@ -42,7 +42,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2020-best-picture-2',
       nominee: null,
       won: false,
-      year: ['2020-id']
+      year: '2020-id'
     },
     'nomination-2021-best-animated-short-1': {
       bets: ['bet-3'],
@@ -52,7 +52,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2021-best-animated-short-1',
       nominee: null,
       won: false,
-      year: ['2021-id']
+      year: '2021-id'
     },
     'nomination-2021-best-animated-short-2': {
       bets: ['bet-4'],
@@ -62,7 +62,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2021-best-animated-short-2',
       nominee: null,
       won: true,
-      year: ['2021-id']
+      year: '2021-id'
     },
     'nomination-2021-best-picture-1': {
       bets: ['bet-5', 'bet-6'],
@@ -72,7 +72,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2021-best-picture-1',
       nominee: 'Vanessa Kirby',
       won: true,
-      year: ['2021-id']
+      year: '2021-id'
     },
     'nomination-2021-best-picture-2': {
       bets: [],
@@ -82,7 +82,7 @@ export const getNormalizedNominationsFixture = (
       id: 'nomination-2021-best-picture-2',
       nominee: 'Vanessa Kirby',
       won: false,
-      year: ['2021-id']
+      year: '2021-id'
     }
   };
 
