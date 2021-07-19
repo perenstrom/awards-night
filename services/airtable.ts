@@ -24,6 +24,15 @@ const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
 
+export interface YearRecord {
+  year: number;
+  name: string;
+  date: string;
+  betting_open: boolean;
+  categories: CategoryId[];
+  nominations: NominationId[];
+}
+
 export interface NominationRecord {
   year: YearId[];
   category: CategoryId[];
@@ -76,6 +85,24 @@ export const getYears = async (): Promise<Year[]> => {
   });
 
   return years;
+};
+
+export const updateYear = async (
+  yearId: YearId,
+  year: Partial<YearRecord>
+): Promise<Year> => {
+  console.log(
+    `Updating film:\n${JSON.stringify({ yearId, ...year }, null, 2)}`
+  );
+  return new Promise((resolve, reject) => {
+    yearsBase
+      .update(yearId, year)
+      .then((result) => resolve(formatYear(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 const formatYear = (yearResponse: AirtableRecord): Year => ({

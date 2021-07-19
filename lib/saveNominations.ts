@@ -3,7 +3,8 @@ import {
   getCategories,
   getNominationsByCategoryAndYear,
   createNominations,
-  NominationRecord
+  NominationRecord,
+  updateYear
 } from 'services/airtable';
 import { CategoryId, FilmId } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
@@ -43,6 +44,15 @@ export const saveNominations = async (data: {
       severity: 'error',
       message: `The same film and nominee cannot be nominated twice.`
     };
+  }
+
+  const categorySavedOnYear = fullYear.categories.includes(fullCategory.id);
+  if (!categorySavedOnYear) {
+    await updateYear(fullYear.id, {
+      categories: fullYear.categories.concat([fullCategory.id])
+    }).catch(() => {
+      getGenericErrorMessage();
+    });
   }
 
   let savedNominations = null;
