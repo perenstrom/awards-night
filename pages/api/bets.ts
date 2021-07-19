@@ -1,6 +1,13 @@
 import AirtableError from 'airtable/lib/airtable_error';
+import { isAuthorized } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { BetRecord, createBet, deleteBet, updateBet } from 'services/airtable';
+import {
+  BetRecord,
+  createBet,
+  deleteBet,
+  getBets,
+  updateBet
+} from 'services/airtable';
 import { BetId, NominationId, PlayerId } from 'types/nominations';
 
 interface PostRequestBody {
@@ -21,6 +28,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     return new Promise((resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
+
+      if (!isAuthorized(req, res, playerId as PlayerId)) {
+        res.status(401).end('Unauthorized.');
+        resolve('');
+      }
+
       if (!playerId || !nominationId) {
         res.status(400).end('Both playerId and nominationId must be provided');
         resolve('');
@@ -41,12 +54,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
   } else if (req.method === 'PATCH') {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const { betId, nominationId }: PatchRequestBody = req.body;
       if (!betId || !nominationId) {
         res.status(400).end('Both betId and nominationId must be provided');
         resolve('');
       } else {
+        const fullBetResult = await getBets([betId as BetId]);
+        const fullBet = fullBetResult[0];
+
+        if (!isAuthorized(req, res, fullBet.player)) {
+          res.status(401).end('Unauthorized.');
+          resolve('');
+        }
+
         updateBet(betId as BetId, nominationId as NominationId)
           .then((bet) => {
             res.status(200).end(JSON.stringify(bet));
@@ -59,12 +80,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
   } else if (req.method === 'DELETE') {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const { betId }: DeleteRequestBody = req.body;
       if (!betId) {
         res.status(400).end('BetId must be provided');
         resolve('');
       } else {
+        const fullBetResult = await getBets([betId as BetId]);
+        const fullBet = fullBetResult[0];
+
+        if (!isAuthorized(req, res, fullBet.player)) {
+          res.status(401).end('Unauthorized.');
+          resolve('');
+        }
+
         deleteBet(betId as BetId)
           .then((bet) => {
             res.status(200).end(JSON.stringify(bet));
