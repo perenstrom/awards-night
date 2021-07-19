@@ -36,6 +36,7 @@ const getPlayer = async (
           if (error instanceof AirtableError) {
             res.status(500).end(error.message);
           } else {
+            console.log(error);
             res.status(500).end('Internal server error');
           }
           return resolve();
