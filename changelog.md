@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.3.2
+Bug-fix with imdb-id in Admin interface.
+
 ## 3.3.1
 Admin actions now trigger deploy.
 
