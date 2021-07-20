@@ -14,6 +14,7 @@ import {
   Year,
   YearId
 } from 'types/nominations';
+import { arrayChunk } from 'utils/arrayChunk';
 
 const base = new Airtable().base(process.env.AIRTABLE_DATABASE);
 const yearsBase = base('years');
@@ -23,8 +24,17 @@ const filmsBase = base('films');
 const betsBase = base('bets');
 const playersBase = base('players');
 
-export interface NominationRecord {
+export interface YearRecord {
   year: number;
+  name: string;
+  date: string;
+  betting_open: boolean;
+  categories: CategoryId[];
+  nominations: NominationId[];
+}
+
+export interface NominationRecord {
+  year: YearId[];
   category: CategoryId[];
   film: FilmId[];
   nominee: string;
@@ -35,7 +45,6 @@ export interface FilmRecord {
   imdb_id: string;
   name: string;
   nominations: NominationId[];
-  bets: BetId[];
   poster_url: string;
 }
 
@@ -76,6 +85,24 @@ export const getYears = async (): Promise<Year[]> => {
   });
 
   return years;
+};
+
+export const updateYear = async (
+  yearId: YearId,
+  year: Partial<YearRecord>
+): Promise<Year> => {
+  console.log(
+    `Updating film:\n${JSON.stringify({ yearId, ...year }, null, 2)}`
+  );
+  return new Promise((resolve, reject) => {
+    yearsBase
+      .update(yearId, year)
+      .then((result) => resolve(formatYear(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 const formatYear = (yearResponse: AirtableRecord): Year => ({
@@ -123,6 +150,7 @@ export const getCategories = async (
     return categories;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
@@ -139,17 +167,73 @@ const formatCategory = (
   nextCategory: nextCategory
 });
 
-export const getNominations = async (
-  nominationIds: NominationId[]
+export const createNominations = async (
+  nominations: NominationRecord[]
 ): Promise<Nomination[]> => {
-  const query = `OR(${nominationIds
-    .map((id) => `RECORD_ID()='${id}'`)
-    .join(',')})
-    `;
+  console.log(`Creating nominations:\n${JSON.stringify(nominations, null, 2)}`);
+  const nominationsToAdd = nominations.map((nomination) => ({
+    fields: nomination
+  }));
+  const nominationsChunks = arrayChunk(nominationsToAdd, 10);
+  return Promise.all<Nomination[]>(
+    nominationsChunks.map(
+      (nominations) =>
+        new Promise((resolve, reject) => {
+          nominationsBase
+            .create(nominations)
+            .then((result) =>
+              resolve(
+                result.map((nominationResult) =>
+                  formatNomination(nominationResult)
+                )
+              )
+            )
+            .catch((error) => {
+              reject(error);
+              console.error(error);
+            });
+        })
+    )
+  ).then((result) => result.flat());
+};
+
+export const getNominations = async (
+  nominationIds?: NominationId[]
+): Promise<Nomination[]> => {
+  const query = nominationIds
+    ? {
+        filterByFormula: `OR(${nominationIds
+          .map((id) => `RECORD_ID()='${id}'`)
+          .join(',')})
+          `
+      }
+    : {};
 
   const nominations: Nomination[] = [];
   await nominationsBase
-    .select({ filterByFormula: query })
+    .select(query)
+    .eachPage((nominationsResult, fetchNextPage) => {
+      nominationsResult.forEach((nomination, index) => {
+        nominations.push(formatNomination(nomination));
+      });
+
+      fetchNextPage();
+    });
+
+  return nominations;
+};
+
+export const getNominationsByCategoryAndYear = async (
+  categorySlug: string,
+  year: number
+): Promise<Nomination[]> => {
+  const query = {
+    filterByFormula: `AND(FIND('${year}',ARRAYJOIN(year)),FIND('${categorySlug}',ARRAYJOIN(category)))`
+  };
+
+  const nominations: Nomination[] = [];
+  await nominationsBase
+    .select(query)
     .eachPage((nominationsResult, fetchNextPage) => {
       nominationsResult.forEach((nomination, index) => {
         nominations.push(formatNomination(nomination));
@@ -186,7 +270,7 @@ export const updateNomination = async (
 
 const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   id: nominationResponse.id as NominationId,
-  year: nominationResponse.get('year'),
+  year: nominationResponse.get('year')[0],
   category: nominationResponse.get('category')[0],
   film: nominationResponse.get('film')[0],
   nominee: nominationResponse.get('nominee') ?? null,
@@ -195,10 +279,36 @@ const formatNomination = (nominationResponse: AirtableRecord): Nomination => ({
   decided: null
 });
 
-export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
-  const query = `OR(${filmIds.map((id) => `RECORD_ID()='${id}'`).join(',')})
-    `;
+export const getFilms = async (filmIds?: FilmId[]): Promise<Film[]> => {
+  const query = filmIds
+    ? {
+        filterByFormula: `OR(${filmIds
+          .map((id) => `RECORD_ID()='${id}'`)
+          .join(',')})`
+      }
+    : {};
   const films: Film[] = [];
+  try {
+    await filmsBase
+      .select({ ...query, sort: [{ field: 'name', direction: 'asc' }] })
+      .eachPage((filmsResult, fetchNextPage) => {
+        filmsResult.forEach((film) => {
+          films.push(formatFilm(film));
+        });
+
+        fetchNextPage();
+      });
+  } catch (error) {
+    console.log(error);
+    return Promise.reject(error);
+  }
+  return films;
+};
+
+export const getFilmByImdb = async (imdbId: string): Promise<Film> => {
+  const query = `imdb_id='${imdbId}'`;
+  const films: Film[] = [];
+
   await filmsBase
     .select({ filterByFormula: query })
     .eachPage((filmsResult, fetchNextPage) => {
@@ -209,7 +319,26 @@ export const getFilms = async (filmIds: FilmId[]): Promise<Film[]> => {
       fetchNextPage();
     });
 
-  return films;
+  if (films.length > 1) {
+    throw new Error(`Multiple records with imdb id ${imdbId} found.`);
+  } else if (films.length === 0) {
+    return null;
+  } else {
+    return films[0];
+  }
+};
+
+export const createFilm = async (film: FilmRecord): Promise<Film> => {
+  console.log(`Creating film:\n${JSON.stringify(film, null, 2)}`);
+  return new Promise((resolve, reject) => {
+    filmsBase
+      .create(film)
+      .then((result) => resolve(formatFilm(result)))
+      .catch((error) => {
+        reject(error);
+        console.error(error);
+      });
+  });
 };
 
 export const updateFilm = async (

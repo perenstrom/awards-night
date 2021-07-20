@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+### Admin interface
+* Admin HOC to restrict access
+* Form for adding a movie via IMDb ID
+* Form for adding nominations
+
 ## 3.2.0
 ### Support for different years.
 Both presentation mode and user betting now has an added level, years. Betting can be done on `/me/:year`, and a list of available years can be found on `/me`. Presentation mode for the years can be found at `/:year`.

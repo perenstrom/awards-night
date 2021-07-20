@@ -16,6 +16,7 @@ const linkStyle = css`
   text-align: center;
   text-decoration: none;
   color: white;
+  margin: 0;
 `;
 
 const CategoryLink = styled.a`

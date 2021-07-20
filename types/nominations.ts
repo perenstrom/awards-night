@@ -16,7 +16,7 @@ const NOMINATION_TYPE = Symbol();
 export type NominationId = string & { TYPE: typeof NOMINATION_TYPE };
 export interface Nomination {
   id: NominationId;
-  year: number;
+  year: YearId;
   category: CategoryId;
   won: boolean;
   film: FilmId;

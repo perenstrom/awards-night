@@ -67,7 +67,7 @@ export const NominatedFilm: React.FC<Props> = memo(
     return (
       <Wrapper winner={nomination.won}>
         <Poster alt={film.name} src={poster} />
-        <p>{nomination.nominee}</p>
+        {nomination.nominee && <p>{nomination.nominee}</p>}
         {bettingPlayers}
       </Wrapper>
     );

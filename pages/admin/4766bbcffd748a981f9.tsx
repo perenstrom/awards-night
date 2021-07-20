@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/* import React, { useState } from 'react';
 import Head from 'next/head';
 import { GetStaticProps, NextPage } from 'next';
 import {
@@ -12,7 +12,11 @@ import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import { CategoryHeading } from 'components/CategoryHeading';
 import { NominationListWrapper } from 'components/NominationListWrapper';
-import { updateNomination as updateNominationApi } from 'services/local';
+import { updateNomination as updateNominationApi } from 'services/local'; */
+
+// TEMP IMPORTS
+import { NextPage, GetStaticProps } from "next";
+import { NominationData } from "types/nominations";
 
 type Props = NominationData;
 

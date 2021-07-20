@@ -1,11 +1,7 @@
 import { memo } from 'react';
 import { Player } from 'types/nominations';
 import styled from 'styled-components';
-
-const Footer = styled.div`
-  background-color: rgb(238, 238, 238);
-  padding: 0.5em;
-`;
+import { makeStyles, Typography } from '@material-ui/core';
 
 const PlayerList = styled.ul`
   background-color: rgb(238, 238, 238);
@@ -26,6 +22,10 @@ const PlayerListItem = styled.li`
   font-size: 1.3em;
 `;
 
+const useStyles = makeStyles(() => ({
+  standingsText: { fontSize: '1.5rem' }
+}));
+
 interface Props {
   players: Player[];
   completedCategories: number;
@@ -34,12 +34,16 @@ interface Props {
 
 export const PlayerStandings: React.FC<Props> = memo(
   ({ players, completedCategories, bettingOpen }) => {
+    const { standingsText } = useStyles();
+
     const playerStandings = players.map((p) => (
       <PlayerListItem key={p.id}>
         {bettingOpen ? (
-          <p>{p.name}</p>
+          <Typography className={standingsText}>{p.name}</Typography>
         ) : (
-          <p>{`${p.name}: ${p.correct}/${completedCategories}`}</p>
+          <Typography
+            className={standingsText}
+          >{`${p.name}: ${p.correct}/${completedCategories}`}</Typography>
         )}
       </PlayerListItem>
     ));

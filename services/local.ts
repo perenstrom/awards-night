@@ -1,11 +1,14 @@
 import {
   Bet,
   BetId,
+  CategoryId,
+  FilmId,
   Nomination,
   NominationId,
   Player,
   PlayerId
 } from 'types/nominations';
+import { StatusMessage } from 'types/utilityTypes';
 
 export const createBet = async (
   playerId: PlayerId,
@@ -91,6 +94,25 @@ export const deleteBet = async (betId: BetId): Promise<BetId> => {
   return apiResult<BetId>(url, options);
 };
 
+export const createNominations = async (data: {
+  category: CategoryId;
+  year: number;
+  films: FilmId[];
+  nominees: string[];
+}): Promise<StatusMessage> => {
+  const url = '/api/nominations';
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify(data)
+  };
+
+  return apiResult<StatusMessage>(url, options);
+};
+
 export const updateNomination = async (
   nominationId: NominationId,
   nomination: Partial<Nomination>
@@ -109,6 +131,22 @@ export const updateNomination = async (
   };
 
   return apiResult<Nomination>(url, options);
+};
+
+export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
+  const url = '/api/films';
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    body: JSON.stringify({
+      imdbId
+    })
+  };
+
+  return apiResult<StatusMessage>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
