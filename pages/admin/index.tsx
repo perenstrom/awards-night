@@ -169,8 +169,8 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
                     size="small"
                     inputProps={{
                       minLength: '9',
-                      maxLength: '9',
-                      pattern: 'tt[0-9]{7}'
+                      maxLength: '10',
+                      pattern: 'tt[0-9]{7-8}'
                     }}
                     inputRef={imdbIdInputElement}
                   />
