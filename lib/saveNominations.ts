@@ -9,6 +9,7 @@ import {
 import { CategoryId, FilmId } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 import { getGenericErrorMessage } from 'utils/statusMessages';
+import { triggerDeploy } from 'utils/triggerDeploy';
 
 export const saveNominations = async (data: {
   category: CategoryId;
@@ -72,6 +73,7 @@ export const saveNominations = async (data: {
   }
 
   if (savedNominations) {
+    await triggerDeploy();
     return {
       severity: 'success',
       message: 'Nominations added.'

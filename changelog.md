@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.3.1
+Admin actions now trigger deploy.
+
 ## 3.3.0
 ### Admin interface
 * Admin HOC to restrict access
