@@ -1,6 +1,6 @@
 # Changelog
 
-## WIP 3.3.0
+## 3.3.0
 ### Admin interface
 * Admin HOC to restrict access
 * Form for adding a movie via IMDb ID
