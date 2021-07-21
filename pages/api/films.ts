@@ -1,9 +1,6 @@
-import { getSession } from '@auth0/nextjs-auth0';
 import { saveFilm } from 'lib/saveFilm';
-import { isAdmin, isAdminKey } from 'lib/withAdminRequired';
+import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { BetRecord, createBet } from 'services/airtable';
-import { PlayerId, NominationId } from 'types/nominations';
 
 interface PostRequestBody {
   imdbId: string;

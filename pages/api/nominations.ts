@@ -2,7 +2,8 @@ import { refreshNominations } from 'lib/refreshNominations';
 import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getYear, NominationRecord, updateNomination } from 'services/airtable';
+import { getYear, updateNomination } from 'services/airtable';
+import { NominationRecord } from 'services/airtable.types';
 import {
   CategoryId,
   FilmId,

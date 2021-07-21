@@ -2,7 +2,6 @@ import AirtableError from 'airtable/lib/airtable_error';
 import { isAuthorized } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
-  BetRecord,
   createBet,
   deleteBet,
   getBets,
@@ -38,11 +37,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both playerId and nominationId must be provided');
         resolve('');
       } else {
-        const newBet: BetRecord = {
-          player: [playerId as PlayerId],
-          nomination: [nominationId as NominationId]
-        };
-        createBet(newBet)
+        createBet({
+          player: playerId as PlayerId,
+          nomination: nominationId as NominationId
+        })
           .then((bet) => {
             res.status(200).end(JSON.stringify(bet));
             resolve('');
