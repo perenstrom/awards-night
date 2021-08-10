@@ -1,12 +1,7 @@
 import AirtableError from 'airtable/lib/airtable_error';
 import { isAuthorized } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  createBet,
-  deleteBet,
-  getBets,
-  updateBet
-} from 'services/airtable';
+import { createBet, deleteBet, getBets, updateBet } from 'services/airtable';
 import { BetId, NominationId, PlayerId } from 'types/nominations';
 
 interface PostRequestBody {
@@ -23,7 +18,7 @@ interface DeleteRequestBody {
   betId: string;
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const bets = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     return new Promise((resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
@@ -111,3 +106,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404).end();
   }
 };
+
+export default bets;

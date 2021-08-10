@@ -6,7 +6,7 @@ interface PostRequestBody {
   imdbId: string;
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const films = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     return new Promise((resolve) => {
       if (!isAdmin(req, res)) {
@@ -34,3 +34,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404).end();
   }
 };
+
+export default films;

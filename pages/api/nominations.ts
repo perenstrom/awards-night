@@ -3,7 +3,7 @@ import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getYear, updateNomination } from 'services/airtable';
-import { NominationRecord } from 'services/airtable.types';
+import { NominationRecord } from 'services/airtable/airtable.types';
 import {
   CategoryId,
   FilmId,
@@ -32,7 +32,7 @@ const mapNomination = (nomination: Nomination): NominationRecord => ({
   won: nomination.won
 });
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { year } = req.query;
     const fullYear = await getYear(parseInt(year as string, 10));
@@ -93,3 +93,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404);
   }
 };
+
+export default nominations;

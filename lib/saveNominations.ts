@@ -1,9 +1,8 @@
+import { getYear, updateYear } from 'services/airtable';
 import {
-  getYear,
   getCategories,
   getNominationsByCategoryAndYear,
   createNominations,
-  updateYear
 } from 'services/airtable';
 import { CategoryId, FilmId, Nomination } from 'types/nominations';
 import { PartialBy, StatusMessage } from 'types/utilityTypes';

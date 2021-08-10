@@ -23,20 +23,25 @@ interface Props {
   players: NormalizedPlayers;
 }
 
-export const Category: React.FC<Props> = memo(
-  ({ nominations, films, bets, players }) => {
-    return (
-      <FilmList>
-        {nominations.map((nomination) => (
-          <NominatedFilm
-            key={nomination.id}
-            nomination={nomination}
-            film={films[nomination.film]}
-            bets={bets}
-            players={players}
-          />
-        ))}
-      </FilmList>
-    );
-  }
-);
+const CategoryComponent: React.FC<Props> = ({
+  nominations,
+  films,
+  bets,
+  players
+}) => {
+  return (
+    <FilmList>
+      {nominations.map((nomination) => (
+        <NominatedFilm
+          key={nomination.id}
+          nomination={nomination}
+          film={films[nomination.film]}
+          bets={bets}
+          players={players}
+        />
+      ))}
+    </FilmList>
+  );
+};
+
+export const Category = memo(CategoryComponent);

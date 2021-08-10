@@ -4,7 +4,7 @@ import {
   FilmRecord,
   NominationRecord,
   YearRecord
-} from 'services/airtable.types';
+} from 'services/airtable/airtable.types';
 import {
   Bet,
   BetId,

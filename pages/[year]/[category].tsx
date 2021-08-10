@@ -4,13 +4,10 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import {
-  getBets,
   getCategories,
   getYears,
-  getPlayers as getPlayersFromAirtable
 } from 'services/airtable';
 import {
-  Bet,
   Category,
   Nomination,
   NormalizedBets,

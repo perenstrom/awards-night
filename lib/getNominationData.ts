@@ -48,7 +48,7 @@ export const getNominationData = async (
     });
 
     const films = await getFilms(nominations.map((n) => n.film));
-    films.forEach(async (f, i) => {
+    films.forEach(async (f) => {
       if (!f.poster) {
         const poster = await getPoster(f.imdbId);
         await setFilmPoster(f.id, poster);

@@ -1,5 +1,8 @@
 import { GetStaticProps, NextPage } from 'next';
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import {
+  withPageAuthRequired,
+  WithPageAuthRequiredProps
+} from '@auth0/nextjs-auth0';
 import { Year } from 'types/nominations';
 import React from 'react';
 import Head from 'next/head';
@@ -7,9 +10,9 @@ import { getYears } from 'services/airtable';
 import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
 
-type Props = {
+interface Props {
   years: Year[];
-};
+}
 
 const DashboardPage: NextPage<Props> = ({ years }) => {
   return (
@@ -27,7 +30,7 @@ const DashboardPage: NextPage<Props> = ({ years }) => {
           </thead>
           <tbody>
             {years.map((year) => (
-              <tr>
+              <tr key={year.year}>
                 <td>
                   <Link href={`/me/${year.year}`}>
                     <a>{year.year}</a>
@@ -51,4 +54,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-export default withPageAuthRequired(DashboardPage);
+export default withPageAuthRequired<Props & WithPageAuthRequiredProps>(
+  DashboardPage
+);
