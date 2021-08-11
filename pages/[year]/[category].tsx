@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styled from 'styled-components';
@@ -86,18 +86,18 @@ const CategoryPage: NextPage<Props> = ({
     nominations ? nominations[n] : initialNominations[n]
   );
 
+  const refreshNominations = useCallback(() => {
+    fetch(`/api/nominations?year=${year.year}`)
+      .then((result) => result.json())
+      .then(setNominations);
+  }, [setNominations, year.year]);
   useEffect(() => {
     if (!bettingOpen) {
       const interval = setInterval(refreshNominations, 10000);
 
       return () => clearInterval(interval);
     }
-  }, []);
-  const refreshNominations = () => {
-    fetch(`/api/nominations?year=${year.year}`)
-      .then((result) => result.json())
-      .then(setNominations);
-  };
+  }, [bettingOpen, refreshNominations]);
 
   return (
     <div>
