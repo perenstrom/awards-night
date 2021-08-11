@@ -1,13 +1,21 @@
 import React, { useEffect } from 'react';
-import { RecoilRoot } from 'recoil';
+import { MutableSnapshot, RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
 import { theme } from 'styles/theme';
 import Head from 'next/head';
+import { initializeRecoilState, route as categoryRoute } from './[year]/[category]';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+
+  // Initialize recoil state based on route and pageProps
+  const initializeState = ({ set }: MutableSnapshot) => {
+    if (router.route === categoryRoute) {
+      initializeRecoilState(set, pageProps);
+    }
+  };
 
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -25,7 +33,7 @@ function MyApp({ Component, pageProps }) {
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
         />
       </Head>
-      <RecoilRoot>
+      <RecoilRoot initializeState={initializeState}>
         <UserProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
