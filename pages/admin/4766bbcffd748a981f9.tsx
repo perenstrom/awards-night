@@ -21,9 +21,9 @@ import { NominationData } from "types/nominations";
 type Props = NominationData;
 
 const AdminPage: NextPage<Props> = ({
-  categories,
-  nominations: initialNominations,
-  films
+  //categories,
+  //nominations: initialNominations,
+  //films
 }) => {
   return null;
  /*  const [nominations, setNominations] = useState<NormalizedNominations>(

@@ -32,22 +32,26 @@ interface Props {
   bettingOpen: boolean;
 }
 
-export const PlayerStandings: React.FC<Props> = memo(
-  ({ players, completedCategories, bettingOpen }) => {
-    const { standingsText } = useStyles();
+const PlayerStandingsComponent: React.FC<Props> = ({
+  players,
+  completedCategories,
+  bettingOpen
+}) => {
+  const { standingsText } = useStyles();
 
-    const playerStandings = players.map((p) => (
-      <PlayerListItem key={p.id}>
-        {bettingOpen ? (
-          <Typography className={standingsText}>{p.name}</Typography>
-        ) : (
-          <Typography
-            className={standingsText}
-          >{`${p.name}: ${p.correct}/${completedCategories}`}</Typography>
-        )}
-      </PlayerListItem>
-    ));
+  const playerStandings = players.map((p) => (
+    <PlayerListItem key={p.id}>
+      {bettingOpen ? (
+        <Typography className={standingsText}>{p.name}</Typography>
+      ) : (
+        <Typography
+          className={standingsText}
+        >{`${p.name}: ${p.correct}/${completedCategories}`}</Typography>
+      )}
+    </PlayerListItem>
+  ));
 
-    return <PlayerList>{playerStandings}</PlayerList>;
-  }
-);
+  return <PlayerList>{playerStandings}</PlayerList>;
+};
+
+export const PlayerStandings = memo(PlayerStandingsComponent);

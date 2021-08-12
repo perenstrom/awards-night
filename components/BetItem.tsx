@@ -101,41 +101,39 @@ interface Props {
   onClick: (nominationId: NominationId, category: Category) => void;
 }
 
-export const BetItem: React.FC<Props> = memo(
-  ({
-    category,
-    nominationId,
-    won,
-    decided,
-    filmName,
-    poster,
-    nominee,
-    activeBet = false,
-    bettingOpen = true,
-    onClick
-  }) => {
-    return (
-      <Wrapper
-        key={nominationId}
-        activeBet={activeBet}
-        won={won}
-        decided={decided}
-        bettingOpen={bettingOpen}
-        onClick={
-          bettingOpen ? () => onClick(nominationId, category) : () => null
-        }
-      >
-        <PosterWrapper>
-          <PosterInnerWrapper>
-            <Poster src={poster} width="48" height="72" />
-            <Frame></Frame>
-          </PosterInnerWrapper>
-        </PosterWrapper>
-        <InnerWrapper>
-          <Typography variant="h3">{filmName}</Typography>
-          {nominee && <Typography>{nominee}</Typography>}
-        </InnerWrapper>
-      </Wrapper>
-    );
-  }
-);
+export const BetItemComponent: React.FC<Props> = ({
+  category,
+  nominationId,
+  won,
+  decided,
+  filmName,
+  poster,
+  nominee,
+  activeBet = false,
+  bettingOpen = true,
+  onClick
+}) => {
+  return (
+    <Wrapper
+      key={nominationId}
+      activeBet={activeBet}
+      won={won}
+      decided={decided}
+      bettingOpen={bettingOpen}
+      onClick={bettingOpen ? () => onClick(nominationId, category) : () => null}
+    >
+      <PosterWrapper>
+        <PosterInnerWrapper>
+          <Poster src={poster} width="48" height="72" />
+          <Frame></Frame>
+        </PosterInnerWrapper>
+      </PosterWrapper>
+      <InnerWrapper>
+        <Typography variant="h3">{filmName}</Typography>
+        {nominee && <Typography>{nominee}</Typography>}
+      </InnerWrapper>
+    </Wrapper>
+  );
+};
+
+export const BetItem = memo(BetItemComponent);

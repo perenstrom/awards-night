@@ -44,7 +44,7 @@ interface Props {
   year: Year;
 }
 
-export const CategoryMenu: React.FC<Props> = memo(({ category, year }) => {
+const CategoryMenuComponent: React.FC<Props> = ({ category, year }) => {
   return (
     <Header>
       {category.previousCategory ? (
@@ -64,4 +64,6 @@ export const CategoryMenu: React.FC<Props> = memo(({ category, year }) => {
       )}
     </Header>
   );
-});
+};
+
+export const CategoryMenu = memo(CategoryMenuComponent);

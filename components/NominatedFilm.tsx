@@ -50,26 +50,30 @@ interface Props {
   players: NormalizedPlayers;
 }
 
-export const NominatedFilm: React.FC<Props> = memo(
-  ({ nomination, film, bets, players }) => {
-    const bettingPlayers = nomination.bets
-      ? nomination.bets.map((bet) => (
-          <BetList key={bet}>
-            <BettingPlayer>{players[bets[bet].player].name}</BettingPlayer>
-          </BetList>
-        ))
-      : null;
+const NominatedFilmComponent: React.FC<Props> = ({
+  nomination,
+  film,
+  bets,
+  players
+}) => {
+  const bettingPlayers = nomination.bets
+    ? nomination.bets.map((bet) => (
+        <BetList key={bet}>
+          <BettingPlayer>{players[bets[bet].player].name}</BettingPlayer>
+        </BetList>
+      ))
+    : null;
 
-    const poster =
-      film.poster ??
-      `https://via.placeholder.com/342x513.png?text=${film.name}`;
+  const poster =
+    film.poster ?? `https://via.placeholder.com/342x513.png?text=${film.name}`;
 
-    return (
-      <Wrapper winner={nomination.won}>
-        <Poster alt={film.name} src={poster} />
-        {nomination.nominee && <p>{nomination.nominee}</p>}
-        {bettingPlayers}
-      </Wrapper>
-    );
-  }
-);
+  return (
+    <Wrapper winner={nomination.won}>
+      <Poster alt={film.name} src={poster} />
+      {nomination.nominee && <p>{nomination.nominee}</p>}
+      {bettingPlayers}
+    </Wrapper>
+  );
+};
+
+export const NominatedFilm = memo(NominatedFilmComponent);

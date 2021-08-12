@@ -1,16 +1,10 @@
-import React, { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { getCategories, getYears } from 'services/airtable';
 import {
-  getBets,
-  getCategories,
-  getYears,
-  getPlayers as getPlayersFromAirtable
-} from 'services/airtable';
-import {
-  Bet,
   Category,
   Nomination,
   NormalizedBets,
@@ -28,7 +22,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
 import { CategoryMenu } from 'components/CategoryMenu';
 import { PlayerStandings } from 'components/PlayerStandings';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import {
   betsState,
   categoriesState,
@@ -75,13 +69,12 @@ const CategoryPage: NextPage<Props> = ({
   const { category: slug } = router.query;
 
   const [nominations, setNominations] = useRecoilState(nominationsState);
-  const [bets, setBets] = useRecoilState(betsState);
-  const [normalizedCategories, setNormalizedCategories] = useRecoilState(
-    normalizedCategoriesState
-  );
+  const bets = useRecoilValue(betsState);
+  const normalizedCategories = useRecoilValue(normalizedCategoriesState);
   const categories = useRecoilValue(categoriesState);
   const meta = useRecoilValue(metaState);
-  const [players, setPlayers] = useRecoilState<NormalizedPlayers>(playerState);
+  const players = useRecoilValue<NormalizedPlayers>(playerState);
+
   const currentSlug =
     (slug as string) ??
     categories[0]?.slug ??
@@ -93,46 +86,18 @@ const CategoryPage: NextPage<Props> = ({
     nominations ? nominations[n] : initialNominations[n]
   );
 
-  useEffect(() => {
-    initState(
-      initialNominations,
-      initialBets,
-      initialPlayers,
-      initialCategories
-    );
-  }, []);
-  const initState = (
-    initialNominations: NormalizedNominations,
-    initialBets: NormalizedBets,
-    initialPlayers: NormalizedPlayers,
-    initialCategories: NormalizedCategories
-  ) => {
-    if (!nominations) {
-      setNominations(initialNominations);
-    }
-    if (!bets) {
-      setBets(initialBets);
-    }
-    if (!players) {
-      setPlayers(initialPlayers);
-    }
-    if (!normalizedCategories) {
-      setNormalizedCategories(initialCategories);
-    }
-  };
-
+  const refreshNominations = useCallback(() => {
+    fetch(`/api/nominations?year=${year.year}`)
+      .then((result) => result.json())
+      .then(setNominations);
+  }, [setNominations, year.year]);
   useEffect(() => {
     if (!bettingOpen) {
       const interval = setInterval(refreshNominations, 10000);
 
       return () => clearInterval(interval);
     }
-  }, []);
-  const refreshNominations = () => {
-    fetch(`/api/nominations?year=${year.year}`)
-      .then((result) => result.json())
-      .then(setNominations);
-  };
+  }, [bettingOpen, refreshNominations]);
 
   return (
     <div>
@@ -188,6 +153,18 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
       bettingOpen: year.bettingOpen
     }
   };
+};
+
+export const route = '/[year]/[category]';
+export const initializeRecoilState = (
+  set: SetRecoilState,
+  pageProps: Props
+) => {
+  const { nominations, bets, players, categories } = pageProps;
+  set(nominationsState, nominations);
+  set(betsState, bets);
+  set(playerState, players);
+  set(normalizedCategoriesState, categories);
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

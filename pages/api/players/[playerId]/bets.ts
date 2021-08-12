@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getBetsForPlayer } from 'services/airtable';
 import { PlayerId } from 'types/nominations';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const playerBets = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     return new Promise((resolve) => {
       const { playerId } = req.query;
@@ -27,3 +27,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404).end();
   }
 };
+
+export default playerBets;

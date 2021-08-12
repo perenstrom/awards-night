@@ -1,5 +1,8 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import {
+  withPageAuthRequired,
+  WithPageAuthRequiredProps
+} from '@auth0/nextjs-auth0';
 import { getNominationData } from 'lib/getNominationData';
 import {
   BetId,
@@ -156,4 +159,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export default withPageAuthRequired(DashboardPage);
+export default withPageAuthRequired<Props & WithPageAuthRequiredProps>(
+  DashboardPage
+);

@@ -1,13 +1,7 @@
 import AirtableError from 'airtable/lib/airtable_error';
 import { isAuthorized } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  BetRecord,
-  createBet,
-  deleteBet,
-  getBets,
-  updateBet
-} from 'services/airtable';
+import { createBet, deleteBet, getBets, updateBet } from 'services/airtable';
 import { BetId, NominationId, PlayerId } from 'types/nominations';
 
 interface PostRequestBody {
@@ -24,7 +18,7 @@ interface DeleteRequestBody {
   betId: string;
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const bets = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     return new Promise((resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
@@ -38,11 +32,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both playerId and nominationId must be provided');
         resolve('');
       } else {
-        const newBet: BetRecord = {
-          player: [playerId as PlayerId],
-          nomination: [nominationId as NominationId]
-        };
-        createBet(newBet)
+        createBet({
+          player: playerId as PlayerId,
+          nomination: nominationId as NominationId
+        })
           .then((bet) => {
             res.status(200).end(JSON.stringify(bet));
             resolve('');
@@ -113,3 +106,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(404).end();
   }
 };
+
+export default bets;

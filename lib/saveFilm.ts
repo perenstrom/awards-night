@@ -16,7 +16,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
   if (!film) {
     // Film is not already in the system
-    let filmDetails = null;
+    let filmDetails: Omit<Film, 'id'> = null;
     try {
       filmDetails = await getFilmFromTmdb(imdbId);
     } catch (error) {
@@ -35,12 +35,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
     let savedFilm = null;
     try {
-      savedFilm = await createFilm({
-        imdb_id: filmDetails.imdbId,
-        name: filmDetails.name,
-        poster_url: filmDetails.poster,
-        nominations: null
-      });
+      savedFilm = await createFilm(filmDetails);
     } catch (error) {
       // Error in airtable call
       console.error(error);

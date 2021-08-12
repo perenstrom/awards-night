@@ -1,13 +1,11 @@
+import { getYear, updateYear } from 'services/airtable';
 import {
-  getYear,
   getCategories,
   getNominationsByCategoryAndYear,
   createNominations,
-  NominationRecord,
-  updateYear
 } from 'services/airtable';
-import { CategoryId, FilmId } from 'types/nominations';
-import { StatusMessage } from 'types/utilityTypes';
+import { CategoryId, FilmId, Nomination } from 'types/nominations';
+import { PartialBy, StatusMessage } from 'types/utilityTypes';
 import { getGenericErrorMessage } from 'utils/statusMessages';
 import { triggerDeploy } from 'utils/triggerDeploy';
 
@@ -59,12 +57,12 @@ export const saveNominations = async (data: {
   let savedNominations = null;
   try {
     savedNominations = await createNominations(
-      films.map<NominationRecord>((filmId, index) => ({
-        category: [fullCategory.id],
-        film: [filmId],
+      films.map<PartialBy<Nomination, 'id' | 'bets' | 'decided'>>((filmId, index) => ({
+        category: fullCategory.id,
+        film: filmId,
         nominee: nominees[index],
         won: false,
-        year: [fullYear.id]
+        year: fullYear.id
       }))
     );
   } catch (error) {
