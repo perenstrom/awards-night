@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.4
+Restore admin interface for marking winners, with support for all years.
+
 ## 3.3.3
 Refactoring. Upgraded to Next 11.
 

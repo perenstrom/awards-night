@@ -25,7 +25,7 @@ interface PostRequestBody {
 }
 
 const mapNomination = (nomination: Nomination): NominationRecord => ({
-  year: [nomination.year as YearId],
+  year: nomination.year && [nomination.year as YearId],
   category: nomination.category && [nomination.category],
   film: nomination.category && [nomination.film],
   nominee: nomination.nominee,
