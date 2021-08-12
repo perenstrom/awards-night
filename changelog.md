@@ -1,7 +1,7 @@
 # Changelog
 
 ## 3.3.3
-WIP. Refactoring. Upgraded to Next 11.
+Refactoring. Upgraded to Next 11.
 
 ## 3.3.2
 Bug-fix with imdb-id in Admin interface.
