@@ -1,6 +1,6 @@
-/* import React, { useState } from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
-import { GetStaticProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import {
   Category,
   NominationData,
@@ -10,27 +10,28 @@ import {
 import { getNominationData } from 'lib/getNominationData';
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
-import { CategoryHeading } from 'components/CategoryHeading';
-import { NominationListWrapper } from 'components/NominationListWrapper';
-import { updateNomination as updateNominationApi } from 'services/local'; */
-
-// TEMP IMPORTS
-import { NextPage, GetStaticProps } from "next";
-import { NominationData } from "types/nominations";
+import { updateNomination as updateNominationApi } from 'services/local';
+import { ParsedUrlQuery } from 'querystring';
+import { withAdminRequired } from 'lib/withAdminRequired';
+import { Typography } from '@material-ui/core';
+import { MainContainer } from 'components/MainContainer';
 
 type Props = NominationData;
 
-const AdminPage: NextPage<Props> = ({
-  //categories,
-  //nominations: initialNominations,
-  //films
+const AdminYearPage: NextPage<Props> = ({
+  year,
+  categories,
+  nominations: initialNominations,
+  films
 }) => {
-  return null;
- /*  const [nominations, setNominations] = useState<NormalizedNominations>(
-    initialNominations
-  );
+  //return null;
+  const [nominations, setNominations] =
+    useState<NormalizedNominations>(initialNominations);
 
-  const updateNomination = async (nominationId: NominationId, category: Category) => {
+  const updateNomination = async (
+    nominationId: NominationId,
+    category: Category
+  ) => {
     const winningNominationsInCategory = category.nominations.filter(
       (nominationId) => nominations[nominationId].won
     );
@@ -82,11 +83,11 @@ const AdminPage: NextPage<Props> = ({
       <Head>
         <title>Admin</title>
       </Head>
-      <NominationListWrapper>
-        <h1>Admin page</h1>
-        {categories.map((category) => (
+      <MainContainer>
+        <Typography variant="h1">Admin page for {year.year}</Typography>
+        {(Object.values(categories) as Category[]).map((category) => (
           <div key={category.id}>
-            <CategoryHeading>{category.name}</CategoryHeading>
+            <Typography variant="h2">{category.name}</Typography>
             <CategoryBets>
               {category.nominations.map((nominationId) => {
                 const nomination = nominations
@@ -111,17 +112,28 @@ const AdminPage: NextPage<Props> = ({
             </CategoryBets>
           </div>
         ))}
-      </NominationListWrapper>
+      </MainContainer>
     </div>
-  ); */
+  );
 };
 
-export const getStaticProps: GetStaticProps<{}> = async () => {
-  //const nominationData = await getNominationData();
+interface Params extends ParsedUrlQuery {
+  year: string;
+}
+const getMyServerSideProps: GetServerSideProps<Props, Params> = async (
+  context
+) => {
+  const nominationData = await getNominationData(
+    parseInt(context.params.year, 10)
+  );
 
   return {
-    props: {}
+    props: nominationData
   };
 };
 
-export default AdminPage;
+export const getServerSideProps = withAdminRequired({
+  getServerSideProps: getMyServerSideProps
+});
+
+export default AdminYearPage;
