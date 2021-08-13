@@ -52,11 +52,12 @@ export const airtableMap = {
   },
   nomination: {
     toAirtable: (nomination: Partial<Nomination>): NominationRecord => ({
-      year: [nomination.year],
-      category: [nomination.category],
-      film: [nomination.film],
+      year: nomination.year && [nomination.year],
+      category: nomination.category && [nomination.category],
+      film: nomination.category && [nomination.film],
       nominee: nomination.nominee,
-      won: nomination.won
+      won: nomination.won,
+      decided: nomination.decided
     }),
     fromAirtable: (nominationResponse: AirtableRecord): Nomination => ({
       id: nominationResponse.id as NominationId,
@@ -66,7 +67,7 @@ export const airtableMap = {
       nominee: nominationResponse.get('nominee') ?? null,
       won: !!nominationResponse.get('won'),
       bets: nominationResponse.get('bets') ?? null,
-      decided: null
+      decided: !!nominationResponse.get('decided')
     })
   },
   film: {
@@ -85,7 +86,7 @@ export const airtableMap = {
   bet: {
     toAirtable: (bet: Partial<Bet>): BetRecord => ({
       nomination: [bet.nomination],
-      player: [bet.player]
+      player: bet.player ? [bet.player] : undefined
     }),
     fromAirtable: (betResponse: AirtableRecord): Bet => ({
       id: betResponse.id as BetId,

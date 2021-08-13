@@ -15,6 +15,7 @@ export interface NominationRecord {
   film: FilmId[];
   nominee: string;
   won: boolean;
+  decided: boolean;
 }
 
 export interface FilmRecord {

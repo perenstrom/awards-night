@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
 import {
   Category,
+  Nomination,
   NominationData,
   NominationId,
   NormalizedNominations
@@ -24,7 +25,6 @@ const AdminYearPage: NextPage<Props> = ({
   nominations: initialNominations,
   films
 }) => {
-  //return null;
   const [nominations, setNominations] =
     useState<NormalizedNominations>(initialNominations);
 
@@ -33,22 +33,45 @@ const AdminYearPage: NextPage<Props> = ({
     category: Category
   ) => {
     const winningNominationsInCategory = category.nominations.filter(
-      (nominationId) => nominations[nominationId].won
+      (n) => nominations[n].won
     );
 
     if (winningNominationsInCategory.length > 1) {
       throw new Error('Multiple wins for one category');
     }
 
+    const relatedNominations = category.nominations.filter(
+      (n) => n !== nominationId && n !== winningNominationsInCategory[0]
+    );
+
+    const normalizeNominations = (
+      nominations: Nomination[]
+    ): NormalizedNominations =>
+      nominations.reduce(
+        (normalizedRelatedNominations, nomination) => ({
+          ...normalizedRelatedNominations,
+          [nomination.id]: nomination
+        }),
+        {}
+      );
+
     if (winningNominationsInCategory[0] === nominationId) {
       // Remove win
-      const updatedNomination = await updateNominationApi(nominationId, {
-        won: false
-      });
+      const [updatedNomination, ...updatedRelatedNominations] =
+        await Promise.all([
+          updateNominationApi(nominationId, {
+            won: false,
+            decided: false
+          }),
+          ...relatedNominations.map((nominationId) =>
+            updateNominationApi(nominationId, { decided: false })
+          )
+        ]);
 
       setNominations({
         ...nominations,
-        [nominationId]: updatedNomination
+        [nominationId]: updatedNomination,
+        ...normalizeNominations(updatedRelatedNominations)
       });
     } else if (winningNominationsInCategory[0]) {
       // Update both old and new
@@ -66,14 +89,22 @@ const AdminYearPage: NextPage<Props> = ({
         [nominationId]: newWinner
       });
     } else {
-      // Update new
-      const updatedNomination = await updateNominationApi(nominationId, {
-        won: true
-      });
+      // Set new
+      const [updatedNomination, ...updatedRelatedNominations] =
+        await Promise.all([
+          updateNominationApi(nominationId, {
+            won: true,
+            decided: true
+          }),
+          ...relatedNominations.map((nominationId) =>
+            updateNominationApi(nominationId, { decided: true })
+          )
+        ]);
 
       setNominations({
         ...nominations,
-        [nominationId]: updatedNomination
+        [nominationId]: updatedNomination,
+        ...normalizeNominations(updatedRelatedNominations)
       });
     }
   };
