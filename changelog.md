@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.1
+* Set category as decided when marking winners.
+* Correctly mark bets as wrong when category is decided.
+
 ## 3.4
 Restore admin interface for marking winners, with support for all years.
 

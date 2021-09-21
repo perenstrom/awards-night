@@ -3,13 +3,12 @@ import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getYear, updateNomination } from 'services/airtable';
-import { NominationRecord } from 'services/airtable/airtable.types';
+import { airtableMap } from 'services/maps/airtableMap';
 import {
   CategoryId,
   FilmId,
   Nomination,
   NominationId,
-  YearId
 } from 'types/nominations';
 
 interface PatchRequestBody {
@@ -23,14 +22,6 @@ interface PostRequestBody {
   films: FilmId[];
   nominees: string[];
 }
-
-const mapNomination = (nomination: Nomination): NominationRecord => ({
-  year: nomination.year && [nomination.year as YearId],
-  category: nomination.category && [nomination.category],
-  film: nomination.category && [nomination.film],
-  nominee: nomination.nominee,
-  won: nomination.won
-});
 
 const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
@@ -53,7 +44,7 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
           .end('Both nominationId and nomination must be provided');
         resolve('');
       } else {
-        updateNomination(nominationId, mapNomination(nomination))
+        updateNomination(nominationId, airtableMap.nomination.toAirtable(nomination))
           .then((nomination) => {
             res.status(200).end(JSON.stringify(nomination));
             resolve('');
