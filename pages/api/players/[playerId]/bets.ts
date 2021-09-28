@@ -15,7 +15,7 @@ const playerBets = async (req: NextApiRequest, res: NextApiResponse) => {
 
       getBetsForPlayer(playerId as PlayerId)
         .then((bets) => {
-          res.status(200).end(JSON.stringify(bets));
+          res.status(200).json(bets);
           resolve('');
         })
         .catch((error) => {

@@ -47,6 +47,7 @@ export interface Film {
   imdbId: string;
   name: string;
   poster: string;
+  releaseDate: string;
 }
 
 export type NormalizedFilms = Record<FilmId, Film>;

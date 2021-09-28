@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.5
+WIP. 
+
 ## 3.4.1
 * Set category as decided when marking winners.
 * Correctly mark bets as wrong when category is decided.

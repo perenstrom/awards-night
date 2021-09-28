@@ -2,6 +2,7 @@ import {
   Bet,
   BetId,
   CategoryId,
+  Film,
   FilmId,
   Nomination,
   NominationId,
@@ -10,6 +11,11 @@ import {
 } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 
+export const defaultHeaders = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json;charset=UTF-8'
+};
+
 export const createBet = async (
   playerId: PlayerId,
   nominationId: NominationId
@@ -17,10 +23,7 @@ export const createBet = async (
   const url = '/api/bets';
   const options: RequestInit = {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify({
       playerId,
       nominationId
@@ -34,10 +37,7 @@ export const getLoggedInPlayer = async (): Promise<Player> => {
   const url = `/api/players/me`;
   const options: RequestInit = {
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    headers: defaultHeaders
   };
 
   return apiResult<Player>(url, options);
@@ -49,10 +49,7 @@ export const getBetsForPlayer = async (
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    headers: defaultHeaders
   };
 
   return apiResult<Record<NominationId, BetId>>(url, options);
@@ -65,10 +62,7 @@ export const updateBet = async (
   const url = '/api/bets';
   const options: RequestInit = {
     method: 'PATCH',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify({
       betId,
       nominationId
@@ -82,10 +76,7 @@ export const deleteBet = async (betId: BetId): Promise<BetId> => {
   const url = '/api/bets';
   const options: RequestInit = {
     method: 'DELETE',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify({
       betId
     })
@@ -103,10 +94,7 @@ export const createNominations = async (data: {
   const url = '/api/nominations';
   const options: RequestInit = {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify(data)
   };
 
@@ -120,10 +108,7 @@ export const updateNomination = async (
   const url = '/api/nominations';
   const options: RequestInit = {
     method: 'PATCH',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify({
       nominationId,
       nomination
@@ -137,16 +122,23 @@ export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
   const url = '/api/films';
   const options: RequestInit = {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
+    headers: defaultHeaders,
     body: JSON.stringify({
       imdbId
     })
   };
 
   return apiResult<StatusMessage>(url, options);
+};
+
+export const searchFilm = async (query: string): Promise<Omit<Film, 'id'>> => {
+  const url = `/api/films?query=${query}`;
+  const options: RequestInit = {
+    method: 'GET',
+    headers: defaultHeaders
+  };
+
+  return apiResult<Omit<Film, 'id'>>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>

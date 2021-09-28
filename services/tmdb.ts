@@ -1,5 +1,5 @@
 import { Film } from 'types/nominations';
-import { MovieDetails } from './tmdb.types';
+import { MovieDetails, MovieSearchResults } from './tmdb.types';
 
 export const getPoster = (imdbId: string): Promise<string> => {
   return fetch(
@@ -32,8 +32,27 @@ export const getFilm = (imdbId: string): Promise<Omit<Film, 'id'>> => {
     });
 };
 
+export const searchFilm = (
+  searchString: string
+): Promise<Omit<Film, 'id'>[]> => {
+  return fetch(
+    `${process.env.TMDB_BASE_URL}/search/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&query=${searchString}`
+  )
+    .then((response) => response.json())
+    .then((data: MovieSearchResults) => {
+      return data.results.map((filmResponse) => formatTmdbFilm(filmResponse));
+    })
+    .catch((error) => {
+      console.warn(
+        `Failed to fetch search results for "${searchString}", ${error}`
+      );
+      throw error;
+    });
+};
+
 const formatTmdbFilm = (film: MovieDetails): Omit<Film, 'id'> => ({
   imdbId: film.imdb_id,
   name: film.title,
-  poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`
+  poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`,
+  releaseDate: film.release_date
 });
