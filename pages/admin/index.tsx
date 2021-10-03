@@ -1,4 +1,4 @@
-import React, { FormEvent, ReactElement, useRef, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -18,13 +18,14 @@ import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/withAdminRequired';
 import { saveFilm } from 'lib/saveFilm';
-import { createFilm, createNominations } from 'services/local';
+import { createNominations } from 'services/local';
 import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
 import { getCategories, getFilms, getYears } from 'services/airtable';
 import { NominationFields } from 'components/admin/NominationFields';
 import { saveNominations } from 'lib/saveNominations';
 import { parseFormData } from 'utils/parseFormData';
 import { AddNominationsFields, PostBody } from 'types/admin.types';
+import { AddFilm } from 'components/admin/AddFilm';
 
 const useStyles = makeStyles(() => ({
   sectionHeading: {
@@ -55,27 +56,6 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
   } = props;
   const router = useRouter();
   const [statusMessages, setStatusMessages] = useState(initialStatusMessages);
-
-  const imdbIdInputElement = useRef<HTMLInputElement>(null);
-  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
-    'idle'
-  );
-  const onAddFilmSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setAddFilmStatus('loading');
-    setStatusMessages({ ...statusMessages, addFilms: null });
-    const imdbId = imdbIdInputElement.current.value;
-
-    if (imdbId) {
-      const saveFilmResult = await createFilm(imdbId);
-      setStatusMessages({ ...statusMessages, addFilms: saveFilmResult });
-      if (saveFilmResult.severity !== 'error') {
-        imdbIdInputElement.current.value = '';
-        imdbIdInputElement.current.focus();
-      }
-    }
-    setAddFilmStatus('idle');
-  };
 
   const nominationCountElement = useRef<HTMLInputElement>(null);
   const [nominationCount, setNominationCount] = useState(
@@ -149,61 +129,10 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
               <Alert severity={message.severity}>{message.message}</Alert>
             </Box>
           ))}
-        <Box mt={2}>
-          <Paper>
-            <Box p={2}>
-              <Typography variant="h2" className={sectionHeading}>
-                Add film
-              </Typography>
-              <Box mt={2}>
-                <form
-                  action={router.pathname}
-                  method="POST"
-                  onSubmit={onAddFilmSubmit}
-                >
-                  <TextField
-                    id="imdb-id"
-                    name="imdbId"
-                    label="IMDb ID"
-                    variant="outlined"
-                    size="small"
-                    inputProps={{
-                      minLength: '9',
-                      maxLength: '10',
-                      pattern: 'tt[0-9]{7-8}'
-                    }}
-                    inputRef={imdbIdInputElement}
-                  />
-                  <Box ml={1} display="inline">
-                    <Button
-                      name="action"
-                      value="addFilm"
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={addFilmStatus === 'loading'}
-                      disableElevation
-                    >
-                      Add
-                    </Button>
-                  </Box>
-                  {addFilmStatus === 'loading' && (
-                    <Box mt={2.5}>
-                      <CircularProgress size={'2rem'} />
-                    </Box>
-                  )}
-                </form>
-                {statusMessages?.addFilms && (
-                  <Box mt={2}>
-                    <Alert severity={statusMessages.addFilms.severity}>
-                      {statusMessages.addFilms.message}
-                    </Alert>
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
+        <AddFilm
+          submitAction={router.pathname}
+          parentStatusMessage={statusMessages.addFilms}
+        />
         {availableCategories && availableYears && availableFilms && (
           <Box mt={2}>
             <Paper>
