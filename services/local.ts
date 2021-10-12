@@ -2,7 +2,7 @@ import {
   Bet,
   BetId,
   CategoryId,
-  Film,
+  ExternalFilm,
   FilmId,
   Nomination,
   NominationId,
@@ -131,14 +131,14 @@ export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
   return apiResult<StatusMessage>(url, options);
 };
 
-export const searchFilm = async (query: string): Promise<Omit<Film, 'id'>> => {
+export const searchFilm = async (query: string): Promise<ExternalFilm> => {
   const url = `/api/films?query=${query}`;
   const options: RequestInit = {
     method: 'GET',
     headers: defaultHeaders
   };
 
-  return apiResult<Omit<Film, 'id'>>(url, options);
+  return apiResult<ExternalFilm>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>

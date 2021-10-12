@@ -1,5 +1,5 @@
-import { Film } from 'types/nominations';
-import { MovieDetails, MovieSearchResults } from './tmdb.types';
+import { ExternalFilm, TmdbFilmResult } from 'types/nominations';
+import { MovieDetails, MovieResult, MovieSearchResults } from './tmdb.types';
 
 export const getPoster = (imdbId: string): Promise<string> => {
   return fetch(
@@ -13,7 +13,7 @@ export const getPoster = (imdbId: string): Promise<string> => {
     });
 };
 
-export const getFilm = (imdbId: string): Promise<Omit<Film, 'id'>> => {
+export const getFilm = (imdbId: string): Promise<ExternalFilm> => {
   return fetch(
     `${process.env.TMDB_BASE_URL}/movie/${imdbId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
   )
@@ -32,15 +32,13 @@ export const getFilm = (imdbId: string): Promise<Omit<Film, 'id'>> => {
     });
 };
 
-export const searchFilm = (
-  searchString: string
-): Promise<Omit<Film, 'id'>[]> => {
+export const searchFilms = (searchString: string): Promise<TmdbFilmResult[]> => {
   return fetch(
     `${process.env.TMDB_BASE_URL}/search/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&query=${searchString}`
   )
     .then((response) => response.json())
     .then((data: MovieSearchResults) => {
-      return data.results.map((filmResponse) => formatTmdbFilm(filmResponse));
+      return data.results.map((filmResponse) => formatTmdbSearchResult(filmResponse));
     })
     .catch((error) => {
       console.warn(
@@ -50,8 +48,17 @@ export const searchFilm = (
     });
 };
 
-const formatTmdbFilm = (film: MovieDetails): Omit<Film, 'id'> => ({
+const formatTmdbFilm = (film: MovieDetails): ExternalFilm => ({
   imdbId: film.imdb_id,
+  name: film.title,
+  poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`,
+  releaseDate: film.release_date
+});
+
+const formatTmdbSearchResult = (
+  film: MovieResult
+): TmdbFilmResult => ({
+  tmdbId: film.id,
   name: film.title,
   poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`,
   releaseDate: film.release_date

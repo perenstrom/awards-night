@@ -10,23 +10,27 @@ import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/withAdminRequired';
 import { saveFilm } from 'lib/saveFilm';
-import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
+import { Category, CategoryId, TmdbFilmResult, Film, FilmId, Year } from 'types/nominations';
 import { getCategories, getFilms, getYears } from 'services/airtable';
 import { saveNominations } from 'lib/saveNominations';
 import { PostBody } from 'types/admin.types';
 import { AddFilm } from 'components/admin/AddFilm';
 import { AddNominations } from 'components/admin/AddNominations';
+import { AddFilmBySearch } from 'components/admin/AddFilmBySearch';
+import { searchFilms } from 'services/tmdb';
 
 type Props = {
   statusMessages?: {
     general?: StatusMessage[];
     addFilms?: StatusMessage;
+    searchFilms?: StatusMessage;
     addNominations?: StatusMessage;
   };
   availableCategories: Category[];
   availableYears: Year[];
   availableFilms: Film[];
   nominationCount: number;
+  searchResults?: TmdbFilmResult[];
 };
 
 const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
@@ -35,7 +39,8 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
     availableCategories,
     availableYears,
     availableFilms,
-    nominationCount: initialNominationCount
+    nominationCount: initialNominationCount,
+    searchResults
   } = props;
   const router = useRouter();
 
@@ -56,6 +61,11 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
           submitAction={router.pathname}
           parentStatusMessage={statusMessages.addFilms}
         />
+        <AddFilmBySearch
+          submitAction={router.pathname}
+          searchResults={searchResults}
+          parentStatusMessage={statusMessages.searchFilms}
+        />
         {availableCategories && availableYears && availableFilms && (
           <AddNominations
             submitAction={router.pathname}
@@ -75,6 +85,8 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   // POST:
   let generalStatusMessages: StatusMessage[] = [];
   let addFilmMessage: StatusMessage = null;
+  let searchFilmsMessage: StatusMessage = null;
+  let searchResults: TmdbFilmResult[] = [];
   let addNominationsMessage: StatusMessage = null;
   let nominationCount = 5;
 
@@ -86,6 +98,10 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     switch (parsedBody.action) {
       case 'addFilm':
         addFilmMessage = await saveFilm(parsedBody.imdbId);
+        break;
+
+      case 'searchFilms':
+        searchResults = await searchFilms(parsedBody.filmQuery);
         break;
 
       case 'addNominations':
@@ -138,13 +154,15 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     props: {
       statusMessages: {
         general: generalStatusMessages,
+        searchFilms: searchFilmsMessage,
         addFilms: addFilmMessage,
         addNominations: addNominationsMessage
       },
       availableCategories,
       availableYears,
       availableFilms,
-      nominationCount
+      nominationCount,
+      searchResults
     }
   };
 };

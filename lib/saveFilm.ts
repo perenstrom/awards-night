@@ -1,4 +1,4 @@
-import { Film } from 'types/nominations';
+import { ExternalFilm, Film } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 import { getFilmByImdb, createFilm } from 'services/airtable';
 import { getFilm as getFilmFromTmdb } from 'services/tmdb';
@@ -16,7 +16,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
   if (!film) {
     // Film is not already in the system
-    let filmDetails: Omit<Film, 'id'> = null;
+    let filmDetails: ExternalFilm = null;
     try {
       filmDetails = await getFilmFromTmdb(imdbId);
     } catch (error) {
