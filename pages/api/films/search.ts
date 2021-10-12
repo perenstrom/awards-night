@@ -1,6 +1,6 @@
 import { isAdmin } from 'lib/withAdminRequired';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { searchFilm } from 'services/tmdb';
+import { searchFilms } from 'services/tmdb';
 
 interface GetRequestQuery {
   query: string;
@@ -19,7 +19,7 @@ const films = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Query must be provided');
         resolve('');
       } else {
-        searchFilm(query)
+        searchFilms(query)
           .then((films) => {
             res.status(200).json(films);
             resolve('');

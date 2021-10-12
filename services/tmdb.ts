@@ -32,13 +32,17 @@ export const getFilm = (imdbId: string): Promise<ExternalFilm> => {
     });
 };
 
-export const searchFilms = (searchString: string): Promise<TmdbFilmResult[]> => {
+export const searchFilms = (
+  searchString: string
+): Promise<TmdbFilmResult[]> => {
   return fetch(
     `${process.env.TMDB_BASE_URL}/search/movie?api_key=${process.env.TMDB_API_KEY}&language=en-US&query=${searchString}`
   )
     .then((response) => response.json())
     .then((data: MovieSearchResults) => {
-      return data.results.map((filmResponse) => formatTmdbSearchResult(filmResponse));
+      return data.results.map((filmResponse) =>
+        formatTmdbSearchResult(filmResponse)
+      );
     })
     .catch((error) => {
       console.warn(
@@ -55,9 +59,7 @@ const formatTmdbFilm = (film: MovieDetails): ExternalFilm => ({
   releaseDate: film.release_date
 });
 
-const formatTmdbSearchResult = (
-  film: MovieResult
-): TmdbFilmResult => ({
+const formatTmdbSearchResult = (film: MovieResult): TmdbFilmResult => ({
   tmdbId: film.id,
   name: film.title,
   poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`,

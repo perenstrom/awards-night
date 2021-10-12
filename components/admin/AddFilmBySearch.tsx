@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
 import {
   CircularProgress,
   Typography,
@@ -16,6 +16,7 @@ import {
 import { Alert } from '@material-ui/lab';
 import { StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
+import { searchFilms } from 'services/local';
 
 const useStyles = makeStyles(() => ({
   sectionHeading: {
@@ -40,9 +41,30 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
   const [statusMessage, setStatusMessage] = useState(parentStatusMessage);
   const [searchResults, setSearchResults] = useState(initialSearchResults);
 
+  const searchFilmInputElement = useRef<HTMLInputElement>(null);
   const [searchFilmStatus, setSearchFilmStatus] = useState<'idle' | 'loading'>(
     'idle'
   );
+  const onSearchFilmSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setSearchFilmStatus('loading');
+    setStatusMessage(null);
+    const query = searchFilmInputElement.current.value;
+
+    if (query) {
+      try {
+        const searchFilmResult = await searchFilms(query);
+        setSearchResults(searchFilmResult);
+      } catch (_) {
+        setStatusMessage({
+          severity: 'error',
+          message:
+            'Something went wrong when searching for films, please try again.'
+        });
+      }
+    }
+    setSearchFilmStatus('idle');
+  };
 
   return (
     <Box mt={2}>
@@ -52,14 +74,18 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
             Search films
           </Typography>
           <Box mt={2}>
-            <form action={submitAction} method="POST" onSubmit={null}>
+            <form
+              action={submitAction}
+              method="POST"
+              onSubmit={onSearchFilmSubmit}
+            >
               <TextField
                 id="filmQuery"
                 name="filmQuery"
                 label="Film name"
                 variant="outlined"
                 size="small"
-                inputRef={null}
+                inputRef={searchFilmInputElement}
               />
               <Box ml={1} display="inline">
                 <Button

@@ -2,12 +2,12 @@ import {
   Bet,
   BetId,
   CategoryId,
-  ExternalFilm,
   FilmId,
   Nomination,
   NominationId,
   Player,
-  PlayerId
+  PlayerId,
+  TmdbFilmResult
 } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 
@@ -131,14 +131,14 @@ export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
   return apiResult<StatusMessage>(url, options);
 };
 
-export const searchFilm = async (query: string): Promise<ExternalFilm> => {
-  const url = `/api/films?query=${query}`;
+export const searchFilms = async (query: string): Promise<TmdbFilmResult[]> => {
+  const url = `/api/films/search?query=${query}`;
   const options: RequestInit = {
     method: 'GET',
     headers: defaultHeaders
   };
 
-  return apiResult<ExternalFilm>(url, options);
+  return apiResult<TmdbFilmResult[]>(url, options);
 };
 
 const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
