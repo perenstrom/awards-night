@@ -13,9 +13,9 @@ export const getPoster = (imdbId: string): Promise<string> => {
     });
 };
 
-export const getFilm = (imdbId: string): Promise<ExternalFilm> => {
+export const getFilm = (tmdbId: string): Promise<ExternalFilm> => {
   return fetch(
-    `${process.env.TMDB_BASE_URL}/movie/${imdbId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
+    `${process.env.TMDB_BASE_URL}/movie/${tmdbId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
   )
     .then((response) => response.json())
     .then((data) => {
@@ -27,10 +27,13 @@ export const getFilm = (imdbId: string): Promise<ExternalFilm> => {
       }
     })
     .catch((error) => {
-      console.warn(`Failed to fetch movie details for ${imdbId}, ${error}`);
+      console.warn(`Failed to fetch movie details for ${tmdbId}, ${error}`);
       throw error;
     });
 };
+
+export const getFilmByImdb = (imdbId: string): Promise<ExternalFilm> =>
+  getFilm(imdbId);
 
 export const searchFilms = (
   searchString: string
