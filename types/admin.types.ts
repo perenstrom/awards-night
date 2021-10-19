@@ -7,7 +7,7 @@ export interface AddNominationsFields {
 }
 
 export interface AddFilmPostBody {
-  action: 'addFilm';
+  action: 'addFilmByImdbId';
   imdbId: string;
 }
 

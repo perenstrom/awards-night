@@ -1,7 +1,7 @@
 import { ExternalFilm, Film } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 import { getFilmByImdb, createFilm } from 'services/airtable';
-import { getFilm as getFilmFromTmdb } from 'services/tmdb';
+import { getFilmByImdb as getFilmFromTmdb } from 'services/tmdb';
 import { getGenericErrorMessage, getStatusMessage } from 'utils/statusMessages';
 
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
