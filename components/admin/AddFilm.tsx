@@ -79,7 +79,7 @@ export const AddFilm: React.FC<Props> = (props) => {
               <Box ml={1} display="inline">
                 <Button
                   name="action"
-                  value="addFilm"
+                  value="addFilmByImdbId"
                   variant="contained"
                   color="primary"
                   type="submit"

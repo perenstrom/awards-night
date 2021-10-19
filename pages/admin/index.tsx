@@ -96,7 +96,7 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     const parsedBody = qs.parse(body.toString('utf-8')) as PostBody;
 
     switch (parsedBody.action) {
-      case 'addFilm':
+      case 'addFilmByImdbId':
         addFilmMessage = await saveFilm(parsedBody.imdbId);
         break;
 
