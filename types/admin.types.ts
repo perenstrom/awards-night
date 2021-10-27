@@ -16,6 +16,11 @@ export interface SearchFilmsPostBody {
   filmQuery: string;
 }
 
+export interface AddFilmByTmdbPostBody {
+  action: 'addFilmByTmdbId';
+  tmdbId: string;
+}
+
 export interface AddNominationsPostBody extends AddNominationsFields {
   action: 'addNominations';
 }
@@ -28,5 +33,6 @@ export interface ChangeNominationCountPostBody {
 export type PostBody =
   | AddFilmPostBody
   | SearchFilmsPostBody
+  | AddFilmByTmdbPostBody
   | AddNominationsPostBody
   | ChangeNominationCountPostBody;

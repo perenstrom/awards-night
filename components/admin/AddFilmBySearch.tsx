@@ -7,11 +7,9 @@ import {
   Button,
   makeStyles,
   Paper,
-  TableContainer,
-  TableRow,
-  TableCell,
-  Table,
-  TableBody
+  List,
+  ListItem,
+  ListItemText
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { StatusMessage } from 'types/utilityTypes';
@@ -106,18 +104,27 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
                 </Box>
               )}
             </form>
-            <TableContainer>
-              <Table>
-                <TableBody>
+            {searchResults.length > 0 && (
+              <form action={submitAction} method="POST">
+                <input type="hidden" name="action" value="addFilmByTmdbId" />
+                <List dense>
                   {searchResults.map((film) => (
-                    <TableRow key={film.tmdbId}>
-                      <TableCell>{film.name}</TableCell>
-                      <TableCell>{film.releaseDate}</TableCell>
-                    </TableRow>
+                    <ListItem
+                      button
+                      type="submit"
+                      name="tmdbId"
+                      value={film.tmdbId}
+                      component="button"
+                      key={film.tmdbId}
+                    >
+                      <ListItemText>
+                        {`${film.name} (${film.releaseDate.substr(0, 4)})`}
+                      </ListItemText>
+                    </ListItem>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                </List>
+              </form>
+            )}
             {statusMessage && (
               <Box mt={2}>
                 <Alert severity={statusMessage.severity}>

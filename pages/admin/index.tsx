@@ -9,8 +9,15 @@ import { Alert } from '@material-ui/lab';
 import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/withAdminRequired';
-import { saveFilm } from 'lib/saveFilm';
-import { Category, CategoryId, TmdbFilmResult, Film, FilmId, Year } from 'types/nominations';
+import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
+import {
+  Category,
+  CategoryId,
+  TmdbFilmResult,
+  Film,
+  FilmId,
+  Year
+} from 'types/nominations';
 import { getCategories, getFilms, getYears } from 'services/airtable';
 import { saveNominations } from 'lib/saveNominations';
 import { PostBody } from 'types/admin.types';
@@ -23,7 +30,7 @@ type Props = {
   statusMessages?: {
     general?: StatusMessage[];
     addFilms?: StatusMessage;
-    searchFilms?: StatusMessage;
+    searchAndAddFilms?: StatusMessage;
     addNominations?: StatusMessage;
   };
   availableCategories: Category[];
@@ -64,7 +71,7 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
         <AddFilmBySearch
           submitAction={router.pathname}
           searchResults={searchResults}
-          parentStatusMessage={statusMessages.searchFilms}
+          parentStatusMessage={statusMessages.searchAndAddFilms}
         />
         {availableCategories && availableYears && availableFilms && (
           <AddNominations
@@ -85,7 +92,7 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   // POST:
   let generalStatusMessages: StatusMessage[] = [];
   let addFilmMessage: StatusMessage = null;
-  let searchFilmsMessage: StatusMessage = null;
+  let searchAndAddFilmsMessage: StatusMessage = null;
   let searchResults: TmdbFilmResult[] = [];
   let addNominationsMessage: StatusMessage = null;
   let nominationCount = 5;
@@ -102,6 +109,10 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
 
       case 'searchFilms':
         searchResults = await searchFilms(parsedBody.filmQuery);
+        break;
+
+      case 'addFilmByTmdbId':
+        searchAndAddFilmsMessage = await saveFilmByTmdbId(parsedBody.tmdbId);
         break;
 
       case 'addNominations':
@@ -154,7 +165,7 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     props: {
       statusMessages: {
         general: generalStatusMessages,
-        searchFilms: searchFilmsMessage,
+        searchAndAddFilms: searchAndAddFilmsMessage,
         addFilms: addFilmMessage,
         addNominations: addNominationsMessage
       },
