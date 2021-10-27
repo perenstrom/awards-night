@@ -131,6 +131,21 @@ export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
   return apiResult<StatusMessage>(url, options);
 };
 
+export const createFilmByTmdb = async (
+  tmdbId: string
+): Promise<StatusMessage> => {
+  const url = '/api/films';
+  const options: RequestInit = {
+    method: 'POST',
+    headers: defaultHeaders,
+    body: JSON.stringify({
+      tmdbId
+    })
+  };
+
+  return apiResult<StatusMessage>(url, options);
+};
+
 export const searchFilms = async (query: string): Promise<TmdbFilmResult[]> => {
   const url = `/api/films/search?query=${query}`;
   const options: RequestInit = {

@@ -6,6 +6,10 @@ export interface AddNominationsFields {
   nominees: string[];
 }
 
+export interface AddFilmBySearchFields {
+  tmdbId: string;
+}
+
 export interface AddFilmPostBody {
   action: 'addFilmByImdbId';
   imdbId: string;

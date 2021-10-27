@@ -14,7 +14,7 @@ import {
 import { Alert } from '@material-ui/lab';
 import { StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
-import { searchFilms } from 'services/local';
+import { createFilmByTmdb, searchFilms } from 'services/local';
 
 const useStyles = makeStyles(() => ({
   sectionHeading: {
@@ -47,6 +47,7 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
     event.preventDefault();
     setSearchFilmStatus('loading');
     setStatusMessage(null);
+    setSearchResults([]);
     const query = searchFilmInputElement.current.value;
 
     if (query) {
@@ -64,12 +65,31 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
     setSearchFilmStatus('idle');
   };
 
+  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
+    'idle'
+  );
+  const onAddFilmClick = async (tmdbId: string) => {
+    setAddFilmStatus('loading');
+    setStatusMessage(null);
+    try {
+      const saveFilmResult = await createFilmByTmdb(tmdbId);
+      setSearchResults([]);
+      setStatusMessage(saveFilmResult);
+    } catch (error) {
+      setStatusMessage({
+        severity: 'error',
+        message: 'Something went wrong when adding movie. Please try again.'
+      });
+    }
+    setAddFilmStatus('idle');
+  };
+
   return (
     <Box mt={2}>
       <Paper>
         <Box p={2}>
           <Typography variant="h2" className={sectionHeading}>
-            Search films
+            Search and add films
           </Typography>
           <Box mt={2}>
             <form
@@ -92,7 +112,10 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
                   variant="contained"
                   color="primary"
                   type="submit"
-                  disabled={searchFilmStatus === 'loading'}
+                  disabled={
+                    searchFilmStatus === 'loading' ||
+                    addFilmStatus === 'loading'
+                  }
                   disableElevation
                 >
                   Search
@@ -114,8 +137,10 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
                       type="submit"
                       name="tmdbId"
                       value={film.tmdbId}
+                      disabled={addFilmStatus === 'loading'}
                       component="button"
                       key={film.tmdbId}
+                      onClick={() => onAddFilmClick(film.tmdbId.toString())}
                     >
                       <ListItemText>
                         {`${film.name} (${film.releaseDate.substr(0, 4)})`}
