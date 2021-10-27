@@ -25,7 +25,7 @@ const getPlayer = async (
       getPlayerByAuth0Id(auth0id as string)
         .then((player) => {
           if (player) {
-            res.status(200).end(JSON.stringify(player));
+            res.status(200).json(player);
             return resolve();
           } else {
             res.status(404).end();

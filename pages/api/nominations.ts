@@ -46,7 +46,7 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         updateNomination(nominationId, airtableMap.nomination.toAirtable(nomination))
           .then((nomination) => {
-            res.status(200).end(JSON.stringify(nomination));
+            res.status(200).json(nomination);
             resolve('');
           })
           .catch((error) => {
@@ -71,7 +71,7 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         saveNominations({ category, year, films, nominees })
           .then((statusMessage) => {
-            res.status(200).end(JSON.stringify(statusMessage));
+            res.status(200).json(statusMessage);
             resolve('');
           })
           .catch((error) => {

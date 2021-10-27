@@ -6,9 +6,23 @@ export interface AddNominationsFields {
   nominees: string[];
 }
 
+export interface AddFilmBySearchFields {
+  tmdbId: string;
+}
+
 export interface AddFilmPostBody {
-  action: 'addFilm';
+  action: 'addFilmByImdbId';
   imdbId: string;
+}
+
+export interface SearchFilmsPostBody {
+  action: 'searchFilms';
+  filmQuery: string;
+}
+
+export interface AddFilmByTmdbPostBody {
+  action: 'addFilmByTmdbId';
+  tmdbId: string;
 }
 
 export interface AddNominationsPostBody extends AddNominationsFields {
@@ -22,5 +36,7 @@ export interface ChangeNominationCountPostBody {
 
 export type PostBody =
   | AddFilmPostBody
+  | SearchFilmsPostBody
+  | AddFilmByTmdbPostBody
   | AddNominationsPostBody
   | ChangeNominationCountPostBody;

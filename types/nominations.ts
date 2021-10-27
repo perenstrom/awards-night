@@ -42,11 +42,18 @@ export type NormalizedCategories = Record<CategoryId, Category>;
 
 const FILM_TYPE = Symbol();
 export type FilmId = string & { TYPE: typeof FILM_TYPE };
-export interface Film {
-  id: FilmId;
-  imdbId: string;
+interface BaseFilm {
   name: string;
   poster: string;
+  releaseDate: string;
+}
+export interface Film extends BaseFilm {
+  id: FilmId;
+  imdbId: string;
+}
+export type ExternalFilm = Omit<Film, 'id'>;
+export interface TmdbFilmResult extends BaseFilm {
+  tmdbId: number;
 }
 
 export type NormalizedFilms = Record<FilmId, Film>;

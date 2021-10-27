@@ -37,7 +37,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
           nomination: nominationId as NominationId
         })
           .then((bet) => {
-            res.status(200).end(JSON.stringify(bet));
+            res.status(200).json(bet);
             resolve('');
           })
           .catch((error) => {
@@ -63,7 +63,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
 
         updateBet(betId as BetId, nominationId as NominationId)
           .then((bet) => {
-            res.status(200).end(JSON.stringify(bet));
+            res.status(200).json(bet);
             resolve('');
           })
           .catch((error) => {
@@ -89,7 +89,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
 
         deleteBet(betId as BetId)
           .then((bet) => {
-            res.status(200).end(JSON.stringify(bet));
+            res.status(200).json(bet);
             resolve('');
           })
           .catch((error) => {

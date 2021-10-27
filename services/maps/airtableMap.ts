@@ -80,7 +80,8 @@ export const airtableMap = {
       id: filmResponse.id as FilmId,
       imdbId: filmResponse.get('imdb_id'),
       name: filmResponse.get('name'),
-      poster: filmResponse.get('poster_url') ?? null
+      poster: filmResponse.get('poster_url') ?? null,
+      releaseDate: null
     })
   },
   bet: {

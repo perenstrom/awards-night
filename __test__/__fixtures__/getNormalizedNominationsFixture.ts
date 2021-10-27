@@ -7,7 +7,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2020-best-adapted-screenplay-1': {
       bets: [],
       category: 'best-adapted-screenplay-id',
-      decided: null,
+      decided: false,
       film: 'citizen-kane',
       id: 'nomination-2020-best-adapted-screenplay-1',
       nominee: null,
@@ -17,7 +17,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2020-best-adapted-screenplay-2': {
       bets: [],
       category: 'best-adapted-screenplay-id',
-      decided: null,
+      decided: false,
       film: 'moana',
       id: 'nomination-2020-best-adapted-screenplay-2',
       nominee: null,
@@ -27,7 +27,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2020-best-picture-1': {
       bets: [],
       category: 'best-picture-id',
-      decided: null,
+      decided: false,
       film: 'the-matrix',
       id: 'nomination-2020-best-picture-1',
       nominee: null,
@@ -37,7 +37,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2020-best-picture-2': {
       bets: [],
       category: 'best-picture-id',
-      decided: null,
+      decided: false,
       film: 'bridget-jones',
       id: 'nomination-2020-best-picture-2',
       nominee: null,
@@ -47,7 +47,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2021-best-animated-short-1': {
       bets: ['bet-3'],
       category: 'best-animated-short-id',
-      decided: null,
+      decided: false,
       film: 'failsafe',
       id: 'nomination-2021-best-animated-short-1',
       nominee: null,
@@ -57,7 +57,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2021-best-animated-short-2': {
       bets: ['bet-4'],
       category: 'best-animated-short-id',
-      decided: null,
+      decided: false,
       film: 'twelve-angry-men',
       id: 'nomination-2021-best-animated-short-2',
       nominee: null,
@@ -67,7 +67,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2021-best-picture-1': {
       bets: ['bet-5', 'bet-6'],
       category: 'best-picture-id',
-      decided: null,
+      decided: false,
       film: 'legally-blond',
       id: 'nomination-2021-best-picture-1',
       nominee: 'Vanessa Kirby',
@@ -77,7 +77,7 @@ export const getNormalizedNominationsFixture = (
     'nomination-2021-best-picture-2': {
       bets: [],
       category: 'best-picture-id',
-      decided: null,
+      decided: false,
       film: 'legally-blond-2',
       id: 'nomination-2021-best-picture-2',
       nominee: 'Vanessa Kirby',
