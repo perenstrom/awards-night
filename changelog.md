@@ -1,7 +1,8 @@
 # Changelog
 
 ## 3.5
-WIP. 
+### Admin interface
+* Now a card to search and add movies by name.
 
 ## 3.4.1
 * Set category as decided when marking winners.
