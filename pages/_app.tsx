@@ -2,10 +2,23 @@ import React, { useEffect } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import { UserProvider } from '@auth0/nextjs-auth0';
-import { CssBaseline, ThemeProvider } from '@material-ui/core';
+import {
+  CssBaseline,
+  ThemeProvider,
+  Theme,
+  StyledEngineProvider
+} from '@mui/material';
 import { theme } from 'styles/theme';
 import Head from 'next/head';
-import { initializeRecoilState, route as categoryRoute } from './[year]/[category]';
+import {
+  initializeRecoilState,
+  route as categoryRoute
+} from './[year]/[category]';
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -35,10 +48,12 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <RecoilRoot initializeState={initializeState}>
         <UserProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Component {...pageProps} key={router.asPath} />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Component {...pageProps} key={router.asPath} />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </UserProvider>
       </RecoilRoot>
     </>

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { Category, NominationId } from 'types/nominations';
 
 const getBackgroundColor = (

@@ -1,8 +1,8 @@
-import { createTheme } from '@material-ui/core';
+import { createTheme, adaptV4Theme } from '@mui/material';
 
-export const theme = createTheme({
+export const theme = createTheme(adaptV4Theme({
   palette: {
-    type: 'light'
+    mode: 'light'
   },
   typography: {
     fontFamily: 'Futura, Helvetica, Arial, sans-serif',
@@ -42,4 +42,4 @@ export const theme = createTheme({
       textTransform: 'none'
     }
   }
-});
+}));

@@ -1,14 +1,7 @@
 import React, { FormEvent, useRef, useState } from 'react';
-import {
-  CircularProgress,
-  Typography,
-  TextField,
-  Box,
-  Button,
-  makeStyles,
-  Paper
-} from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { CircularProgress, Typography, TextField, Box, Button, Paper } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Alert } from '@mui/material';
 import { StatusMessage } from 'types/utilityTypes';
 import { createFilm } from 'services/local';
 

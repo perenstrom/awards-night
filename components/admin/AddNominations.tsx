@@ -1,17 +1,10 @@
 import React, { ReactElement, useRef, useState } from 'react';
-import {
-  CircularProgress,
-  Typography,
-  TextField,
-  Box,
-  Button,
-  Paper,
-  makeStyles
-} from '@material-ui/core';
+import { CircularProgress, Typography, TextField, Box, Button, Paper } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { StatusMessage } from 'types/utilityTypes';
 import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
 import { AddNominationsFields } from 'types/admin.types';
-import { Alert } from '@material-ui/lab';
+import { Alert } from '@mui/material';
 import { NominationFields } from './NominationFields';
 import { parseFormData } from 'utils/parseFormData';
 import { createNominations } from 'services/local';

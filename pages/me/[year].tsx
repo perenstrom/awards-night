@@ -25,7 +25,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 
 const Loading = styled.span`

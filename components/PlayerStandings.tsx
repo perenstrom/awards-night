@@ -1,7 +1,9 @@
 import { memo } from 'react';
 import { Player } from 'types/nominations';
 import styled from 'styled-components';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const PlayerList = styled.ul`
   background-color: rgb(238, 238, 238);

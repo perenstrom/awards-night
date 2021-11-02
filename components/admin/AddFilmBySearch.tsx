@@ -5,13 +5,13 @@ import {
   TextField,
   Box,
   Button,
-  makeStyles,
   Paper,
   List,
   ListItem,
-  ListItemText
-} from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+  ListItemText,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Alert } from '@mui/material';
 import { StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
 import { createFilmByTmdb, searchFilms } from 'services/local';
