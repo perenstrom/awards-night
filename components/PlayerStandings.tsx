@@ -3,8 +3,6 @@ import { Player } from 'types/nominations';
 import styled from 'styled-components';
 import { Typography } from '@mui/material';
 
-import makeStyles from '@mui/styles/makeStyles';
-
 const PlayerList = styled.ul`
   background-color: rgb(238, 238, 238);
   display: flex;
@@ -24,10 +22,6 @@ const PlayerListItem = styled.li`
   font-size: 1.3em;
 `;
 
-const useStyles = makeStyles(() => ({
-  standingsText: { fontSize: '1.5rem' }
-}));
-
 interface Props {
   players: Player[];
   completedCategories: number;
@@ -39,15 +33,13 @@ const PlayerStandingsComponent: React.FC<Props> = ({
   completedCategories,
   bettingOpen
 }) => {
-  const { standingsText } = useStyles();
-
   const playerStandings = players.map((p) => (
     <PlayerListItem key={p.id}>
       {bettingOpen ? (
-        <Typography className={standingsText}>{p.name}</Typography>
+        <Typography sx={{ fontSize: '1.5rem' }}>{p.name}</Typography>
       ) : (
         <Typography
-          className={standingsText}
+          sx={{ fontSize: '1.5rem' }}
         >{`${p.name}: ${p.correct}/${completedCategories}`}</Typography>
       )}
     </PlayerListItem>

@@ -1,15 +1,15 @@
 import React, { FormEvent, useRef, useState } from 'react';
-import { CircularProgress, Typography, TextField, Box, Button, Paper } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  CircularProgress,
+  Typography,
+  TextField,
+  Box,
+  Button,
+  Paper
+} from '@mui/material';
 import { Alert } from '@mui/material';
 import { StatusMessage } from 'types/utilityTypes';
 import { createFilm } from 'services/local';
-
-const useStyles = makeStyles(() => ({
-  sectionHeading: {
-    paddingTop: 0
-  }
-}));
 
 interface Props {
   submitAction: string;
@@ -17,7 +17,6 @@ interface Props {
 }
 
 export const AddFilm: React.FC<Props> = (props) => {
-  const { sectionHeading } = useStyles(props);
   const { submitAction, parentStatusMessage } = props;
 
   const [statusMessage, setStatusMessage] = useState(parentStatusMessage);
@@ -47,7 +46,7 @@ export const AddFilm: React.FC<Props> = (props) => {
     <Box mt={2}>
       <Paper>
         <Box p={2}>
-          <Typography variant="h2" className={sectionHeading}>
+          <Typography variant="h2" sx={{ pt: 0 }}>
             Add film
           </Typography>
           <Box mt={2}>
