@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import styled from 'styled-components';
+import { styled } from '@mui/system';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { getCategories, getYears } from 'services/airtable';
 import {
@@ -34,7 +34,7 @@ import {
 import { getNominationData } from 'lib/getNominationData';
 import { getBettingData } from 'lib/getBettingData';
 
-const GridContainer = styled.div`
+const GridContainer = styled('div')`
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: 50px auto 66px;

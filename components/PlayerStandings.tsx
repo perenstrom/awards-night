@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { Player } from 'types/nominations';
-import styled from 'styled-components';
+import { styled } from '@mui/system';
 import { Typography } from '@mui/material';
 
-const PlayerList = styled.ul`
+const PlayerList = styled('ul')`
   background-color: rgb(238, 238, 238);
   display: flex;
   justify-content: center;
@@ -12,7 +12,7 @@ const PlayerList = styled.ul`
   margin: 0;
 `;
 
-const PlayerListItem = styled.li`
+const PlayerListItem = styled('li')`
   list-style: none;
   display: inline-block;
   background-color: #2ecc71;

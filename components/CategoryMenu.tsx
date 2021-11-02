@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { Category, Year } from 'types/nominations';
-import styled, { css } from 'styled-components';
+import { styled, css } from '@mui/system';
 import Link from 'next/link';
 
-const Header = styled.div`
+const Header = styled('div')`
   background-color: rgb(238, 238, 238);
   display: flex;
 `;
@@ -19,17 +19,17 @@ const linkStyle = css`
   margin: 0;
 `;
 
-const CategoryLink = styled.a`
+const CategoryLink = styled('a')`
   ${linkStyle}
   background-color: rgb(187, 162, 103);
 `;
 
-const CategoryLinkDisabled = styled.p`
+const CategoryLinkDisabled = styled('p')`
   ${linkStyle}
   background-color: rgb(192, 182, 160);
 `;
 
-const CategoryTitle = styled.h2`
+const CategoryTitle = styled('h2')`
   display: block;
   height: 100%;
   line-height: 50px;

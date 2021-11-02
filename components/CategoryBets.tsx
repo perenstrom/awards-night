@@ -1,5 +1,5 @@
-import styled from "styled-components";
+import { styled } from '@mui/system';
 
-export const CategoryBets = styled.ul`
+export const CategoryBets = styled('ul')`
   padding: 0;
 `;

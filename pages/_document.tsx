@@ -1,37 +1,28 @@
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@mui/styles';
-import { ServerStyleSheet } from 'styled-components';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
-    const styledComponentsSheet = new ServerStyleSheet();
     const materialUiSheets = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;
 
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            styledComponentsSheet.collectStyles(
-              materialUiSheets.collect(<App {...props} />)
-            )
-        });
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: (App) => (props) =>
+          materialUiSheets.collect(<App {...props} />)
+      });
 
-      const initialProps = await Document.getInitialProps(ctx);
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {materialUiSheets.getStyleElement()}
-            {styledComponentsSheet.getStyleElement()}
-          </>
-        )
-      };
-    } finally {
-      styledComponentsSheet.seal();
-    }
+    const initialProps = await Document.getInitialProps(ctx);
+    return {
+      ...initialProps,
+      styles: (
+        <>
+          {initialProps.styles}
+          {materialUiSheets.getStyleElement()}
+        </>
+      )
+    };
   }
 
   render() {

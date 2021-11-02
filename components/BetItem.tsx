@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import styled from 'styled-components';
 import { Typography } from '@mui/material';
 import { Category, NominationId } from 'types/nominations';
+import { styled } from '@mui/system';
 
 const getBackgroundColor = (
   activeBet: boolean,
@@ -32,7 +32,7 @@ interface WrapperProps {
   readonly decided: boolean;
   readonly bettingOpen: boolean;
 }
-const Wrapper = styled.li<WrapperProps>`
+const Wrapper = styled('li')<WrapperProps>`
   display: flex;
   width: 100%;
   background-color: ${({ activeBet, won, decided }) =>
@@ -45,7 +45,7 @@ const Wrapper = styled.li<WrapperProps>`
   cursor: ${({ bettingOpen }) => bettingOpen && 'pointer'};
 `;
 
-const InnerWrapper = styled.div`
+const InnerWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   padding-left: 1em;
@@ -53,21 +53,21 @@ const InnerWrapper = styled.div`
   padding-bottom: 0.5rem;
 `;
 
-const PosterWrapper = styled.div`
+const PosterWrapper = styled('div')`
   position: relative;
   overflow: hidden;
 `;
 
-const PosterInnerWrapper = styled.div`
+const PosterInnerWrapper = styled('div')`
   position: relative;
 `;
 
-const Poster = styled.img`
+const Poster = styled('img')`
   display: block;
   border-radius: 4px;
 `;
 
-const Frame = styled.span`
+const Frame = styled('span')`
   display: block;
   position: absolute;
   top: 0;
