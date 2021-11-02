@@ -22,13 +22,13 @@ import {
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import Head from 'next/head';
-import styled from 'styled-components';
+import { styled } from '@mui/system';
 import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 
-const Loading = styled.span`
+const Loading = styled('span')`
   font-size: 1rem;
   font-weight: normal;
 `;

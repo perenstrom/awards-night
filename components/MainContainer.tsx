@@ -1,15 +1,8 @@
-import { makeStyles, Container } from '@material-ui/core';
-import { theme } from 'styles/theme';
-
-const useStyles = makeStyles(() => ({
-  main: { paddingTop: theme.spacing(8) }
-}));
+import { Container } from '@mui/material';
 
 export const MainContainer: React.FC<{}> = (props) => {
-  const { main } = useStyles(props);
-
   return (
-    <Container maxWidth="md" className={main}>
+    <Container maxWidth="md" sx={{ pt: 8 }}>
       {props.children}
     </Container>
   );

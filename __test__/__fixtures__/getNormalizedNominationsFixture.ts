@@ -3,7 +3,7 @@ import { NormalizedNominations } from 'types/nominations';
 export const getNormalizedNominationsFixture = (
   nominations?: string[]
 ): NormalizedNominations => {
-  const nominationsFixture: NormalizedNominations = {
+  const nominationsFixture: any = {
     'nomination-2020-best-adapted-screenplay-1': {
       bets: [],
       category: 'best-adapted-screenplay-id',

@@ -5,22 +5,15 @@ import {
   TextField,
   Box,
   Button,
-  makeStyles,
   Paper,
   List,
   ListItem,
   ListItemText
-} from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+} from '@mui/material';
+import { Alert } from '@mui/material';
 import { StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
 import { createFilmByTmdb, searchFilms } from 'services/local';
-
-const useStyles = makeStyles(() => ({
-  sectionHeading: {
-    paddingTop: 0
-  }
-}));
 
 interface Props {
   submitAction: string;
@@ -29,7 +22,6 @@ interface Props {
 }
 
 export const AddFilmBySearch: React.FC<Props> = (props) => {
-  const { sectionHeading } = useStyles(props);
   const {
     submitAction,
     searchResults: initialSearchResults,
@@ -88,7 +80,7 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
     <Box mt={2}>
       <Paper>
         <Box p={2}>
-          <Typography variant="h2" className={sectionHeading}>
+          <Typography variant="h2" sx={{ pt: 0 }}>
             Search and add films
           </Typography>
           <Box mt={2}>

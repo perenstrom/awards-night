@@ -5,12 +5,12 @@ import {
   NormalizedBets,
   NormalizedPlayers
 } from 'types/nominations';
-import styled from 'styled-components';
+import { styled } from '@mui/system';
 
 interface WrapperProps {
   readonly winner: boolean;
 }
-const Wrapper = styled.li<WrapperProps>`
+const Wrapper = styled('li')<WrapperProps>`
   list-style: none;
   flex-grow: 1;
   flex-basis: 0;
@@ -22,17 +22,17 @@ const Wrapper = styled.li<WrapperProps>`
   background-color: ${({ winner }) => winner && 'rgb(187, 162, 103)'};
 `;
 
-const Poster = styled.img`
+const Poster = styled('img')`
   width: 100%;
 `;
 
-const BetList = styled.ul`
+const BetList = styled('ul')`
   text-align: center;
   overflow: hidden;
   padding: 0;
 `;
 
-const BettingPlayer = styled.li`
+const BettingPlayer = styled('li')`
   list-style: none;
   display: inline-block;
   background-color: #2ecc71;

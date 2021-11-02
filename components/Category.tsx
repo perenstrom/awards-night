@@ -5,10 +5,10 @@ import {
   NormalizedFilms,
   NormalizedPlayers
 } from 'types/nominations';
-import styled from 'styled-components';
 import { NominatedFilm } from './NominatedFilm';
+import { styled } from '@mui/system';
 
-const FilmList = styled.ul`
+const FilmList = styled('ul')`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;

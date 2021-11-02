@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, TextField } from '@material-ui/core';
+import { Box, Grid, TextField } from '@mui/material';
 import { Film } from 'types/nominations';
 
 interface Props {

@@ -5,22 +5,15 @@ import {
   TextField,
   Box,
   Button,
-  Paper,
-  makeStyles
-} from '@material-ui/core';
+  Paper
+} from '@mui/material';
 import { StatusMessage } from 'types/utilityTypes';
 import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
 import { AddNominationsFields } from 'types/admin.types';
-import { Alert } from '@material-ui/lab';
+import { Alert } from '@mui/material';
 import { NominationFields } from './NominationFields';
 import { parseFormData } from 'utils/parseFormData';
 import { createNominations } from 'services/local';
-
-const useStyles = makeStyles(() => ({
-  sectionHeading: {
-    paddingTop: 0
-  }
-}));
 
 interface Props {
   submitAction: string;
@@ -32,7 +25,6 @@ interface Props {
 }
 
 export const AddNominations: React.FC<Props> = (props) => {
-  const { sectionHeading } = useStyles(props);
   const {
     submitAction,
     parentStatusMessage,
@@ -104,7 +96,7 @@ export const AddNominations: React.FC<Props> = (props) => {
     <Box mt={2}>
       <Paper>
         <Box p={2}>
-          <Typography variant="h2" className={sectionHeading}>
+          <Typography variant="h2" sx={{ pt: 0 }}>
             Add nominations
           </Typography>
           <Box mt={2}>
