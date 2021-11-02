@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.6
+Update Material UI (now MUI) to version 5.
+
 ## 3.5
 ### Admin interface
 * Now a card to search and add movies by name.
