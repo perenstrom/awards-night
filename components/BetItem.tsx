@@ -1,7 +1,6 @@
 import { memo } from 'react';
-import { Typography } from '@mui/material';
+import { Typography, styled } from '@mui/material';
 import { Category, NominationId } from 'types/nominations';
-import { styled } from '@mui/system';
 
 const getBackgroundColor = (
   activeBet: boolean,

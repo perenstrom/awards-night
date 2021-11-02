@@ -5,7 +5,7 @@ import {
   NormalizedBets,
   NormalizedPlayers
 } from 'types/nominations';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material';
 
 interface WrapperProps {
   readonly winner: boolean;

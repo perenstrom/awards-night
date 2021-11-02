@@ -6,7 +6,7 @@ import {
   NormalizedPlayers
 } from 'types/nominations';
 import { NominatedFilm } from './NominatedFilm';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material';
 
 const FilmList = styled('ul')`
   display: flex;
