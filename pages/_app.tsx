@@ -5,7 +5,6 @@ import { UserProvider } from '@auth0/nextjs-auth0';
 import {
   CssBaseline,
   ThemeProvider,
-  Theme,
   StyledEngineProvider
 } from '@mui/material';
 import { theme } from 'styles/theme';
@@ -14,11 +13,6 @@ import {
   initializeRecoilState,
   route as categoryRoute
 } from './[year]/[category]';
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
