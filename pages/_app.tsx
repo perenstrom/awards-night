@@ -1,20 +1,25 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
 import { UserProvider } from '@auth0/nextjs-auth0';
-import {
-  CssBaseline,
-  ThemeProvider,
-  StyledEngineProvider
-} from '@mui/material';
-import { theme } from 'styles/theme';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import Head from 'next/head';
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
+
+import { theme } from 'styles/theme';
 import {
   initializeRecoilState,
   route as categoryRoute
 } from './[year]/[category]';
 
-function MyApp({ Component, pageProps }) {
+const clientSideEmotionCache = createCache({ key: 'css', prepend: true });
+
+function MyApp({
+  Component,
+  pageProps,
+  emotionCache = clientSideEmotionCache
+}) {
   const router = useRouter();
 
   // Initialize recoil state based on route and pageProps
@@ -24,16 +29,8 @@ function MyApp({ Component, pageProps }) {
     }
   };
 
-  useEffect(() => {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
-    }
-  }, []);
-
   return (
-    <>
+    <CacheProvider value={emotionCache}>
       <Head>
         <meta
           name="viewport"
@@ -42,15 +39,13 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <RecoilRoot initializeState={initializeState}>
         <UserProvider>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <Component {...pageProps} key={router.asPath} />
-            </ThemeProvider>
-          </StyledEngineProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} key={router.asPath} />
+          </ThemeProvider>
         </UserProvider>
       </RecoilRoot>
-    </>
+    </CacheProvider>
   );
 }
 

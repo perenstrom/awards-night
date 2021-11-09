@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.6.1
+Fix bug in server side rendering of MUI.
+
 ## 3.6
 Update Material UI (now MUI) to version 5.
 
