@@ -45,7 +45,7 @@ export const getNormalizedNominationsFixture = (
       year: '2020-id'
     },
     'nomination-2021-best-animated-short-1': {
-      bets: ['bet-3'],
+      bets: ['bet-3', 'bet-9'],
       category: 'best-animated-short-id',
       decided: false,
       film: 'failsafe',
@@ -65,7 +65,7 @@ export const getNormalizedNominationsFixture = (
       year: '2021-id'
     },
     'nomination-2021-best-picture-1': {
-      bets: ['bet-5', 'bet-6'],
+      bets: ['bet-5', 'bet-6', 'bet-10'],
       category: 'best-picture-id',
       decided: false,
       film: 'legally-blond',

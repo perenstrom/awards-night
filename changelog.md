@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.7
+WIP. Group functionality.
+
 ## 3.6.1
 Fix bug in server side rendering of MUI.
 

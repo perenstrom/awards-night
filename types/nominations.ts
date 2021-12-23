@@ -75,9 +75,13 @@ export interface Player {
   name: string;
   correct: number;
   bets: BetId[];
+  group: GroupId;
 }
 
 export type NormalizedPlayers = Record<PlayerId, Player>;
+
+const GROUP_TYPE = Symbol();
+export type GroupId = string & { TYPE: typeof GROUP_TYPE };
 
 export interface NominationMeta {
   completedCategories: number;

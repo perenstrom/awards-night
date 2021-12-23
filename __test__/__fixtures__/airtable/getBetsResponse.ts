@@ -72,6 +72,42 @@ export const getBetsResponse = (bets?) => {
           nomination: ['nomination-2020-best-picture-2']
         },
         createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-9',
+        fields: {
+          id: 9,
+          player: ['player-3'],
+          nomination: ['nomination-2021-best-animated-short-1']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-10',
+        fields: {
+          id: 10,
+          player: ['player-3'],
+          nomination: ['nomination-2021-best-picture-1']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-11',
+        fields: {
+          id: 11,
+          player: ['player-4'],
+          nomination: ['nomination-2020-best-picture-1']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
+      },
+      {
+        id: 'bet-12',
+        fields: {
+          id: 12,
+          player: ['player-4'],
+          nomination: ['nomination-2020-best-adapted-screenplay-2']
+        },
+        createdTime: '2021-03-22T13:16:20.000Z'
       }
     ]
   };
