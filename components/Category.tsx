@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import {
+  Bet,
   Nomination,
-  NormalizedBets,
   NormalizedFilms,
   NormalizedPlayers
 } from 'types/nominations';
@@ -19,14 +19,14 @@ const FilmList = styled('ul')`
 interface Props {
   nominations: Nomination[];
   films: NormalizedFilms;
-  bets: NormalizedBets;
+  bets: Bet[];
   players: NormalizedPlayers;
 }
 
 const CategoryComponent: React.FC<Props> = ({
   nominations,
   films,
-  bets,
+  bets: categoryBets,
   players
 }) => {
   return (
@@ -36,7 +36,7 @@ const CategoryComponent: React.FC<Props> = ({
           key={nomination.id}
           nomination={nomination}
           film={films[nomination.film]}
-          bets={bets}
+          bets={categoryBets.filter((bet) => bet.nomination === nomination.id)}
           players={players}
         />
       ))}

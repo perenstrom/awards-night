@@ -22,7 +22,7 @@ export const addPlayersWinnings = (
   categories.forEach((category) => {
     category.nominations.forEach((n) => {
       if (nominations[n].won) {
-        const winningBets = (nominationBets[n] ?? []) as BetId[];
+        const winningBets = (nominationBets?.[n] ?? []) as BetId[];
         winningBets.forEach((bet) => {
           newPlayers[bets[bet].player].correct !== undefined
             ? newPlayers[bets[bet].player].correct++

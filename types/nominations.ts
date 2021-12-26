@@ -99,4 +99,5 @@ export interface NominationData {
 export interface BettingData {
   bets: NormalizedBets;
   players: NormalizedPlayers;
+  nominationBets: NominationBets;
 }

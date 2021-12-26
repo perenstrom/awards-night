@@ -27,6 +27,7 @@ describe('getBettingData', () => {
 
     const expectedBettingData: BettingData = {
       bets: {},
+      nominationBets: {},
       players: {
         ['player-1' as PlayerId]: {
           id: 'player-1' as PlayerId,
@@ -97,6 +98,18 @@ describe('getBettingData', () => {
           bets: ['bet-4' as BetId, 'bet-6' as BetId],
           group: 'group-1' as GroupId
         }
+      },
+      nominationBets: {
+        ['nomination-2021-best-animated-short-1' as NominationId]: [
+          'bet-3' as BetId
+        ],
+        ['nomination-2021-best-animated-short-2' as NominationId]: [
+          'bet-4' as BetId
+        ],
+        ['nomination-2021-best-picture-1' as NominationId]: [
+          'bet-5' as BetId,
+          'bet-6' as BetId
+        ]
       }
     };
 

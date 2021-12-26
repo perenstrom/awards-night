@@ -23,7 +23,9 @@ export const getBettingData = async (
   const betsToFetch = Object.values(nominationBets).flat();
   const bets = await getBets(betsToFetch);
   const players = await getPlayers(bets.map((b) => b.player));
-
+  
+  console.log(JSON.stringify(players, null, 2));
+  console.log(group);
   const playersInGroup = players.filter((p) => p.group === group);
   const playerIds = playersInGroup.map((p) => p.id);
 
@@ -31,13 +33,16 @@ export const getBettingData = async (
   const betIds = betsInGroup.map((bet) => bet.id);
 
   const nominationBetsInGroup: NominationBets = {};
-  betsInGroup.forEach((bet) => {
-    if (nominationBetsInGroup[bet.nomination]) {
-      nominationBetsInGroup[bet.nomination].push(bet.id);
-    } else {
-      nominationBetsInGroup[bet.nomination] = [bet.id];
-    }
-  });
+
+  if (!year.bettingOpen) {
+    betsInGroup.forEach((bet) => {
+      if (nominationBetsInGroup[bet.nomination]) {
+        nominationBetsInGroup[bet.nomination].push(bet.id);
+      } else {
+        nominationBetsInGroup[bet.nomination] = [bet.id];
+      }
+    });
+  }
 
   const playersWithFilteredBets: Player[] = playersInGroup.map((p) => ({
     ...p,
@@ -74,6 +79,7 @@ export const getBettingData = async (
 
   return {
     bets: normalizedBets,
-    players: normalizedPlayers
+    players: normalizedPlayers,
+    nominationBets: nominationBetsInGroup
   };
 };
