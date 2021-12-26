@@ -5,7 +5,6 @@ export const getNormalizedNominationsFixture = (
 ): NormalizedNominations => {
   const nominationsFixture: any = {
     'nomination-2020-best-adapted-screenplay-1': {
-      bets: [],
       category: 'best-adapted-screenplay-id',
       decided: false,
       film: 'citizen-kane',
@@ -15,7 +14,6 @@ export const getNormalizedNominationsFixture = (
       year: '2020-id'
     },
     'nomination-2020-best-adapted-screenplay-2': {
-      bets: [],
       category: 'best-adapted-screenplay-id',
       decided: false,
       film: 'moana',
@@ -25,7 +23,6 @@ export const getNormalizedNominationsFixture = (
       year: '2020-id'
     },
     'nomination-2020-best-picture-1': {
-      bets: [],
       category: 'best-picture-id',
       decided: false,
       film: 'the-matrix',
@@ -35,7 +32,6 @@ export const getNormalizedNominationsFixture = (
       year: '2020-id'
     },
     'nomination-2020-best-picture-2': {
-      bets: [],
       category: 'best-picture-id',
       decided: false,
       film: 'bridget-jones',
@@ -45,7 +41,6 @@ export const getNormalizedNominationsFixture = (
       year: '2020-id'
     },
     'nomination-2021-best-animated-short-1': {
-      bets: ['bet-3', 'bet-9'],
       category: 'best-animated-short-id',
       decided: false,
       film: 'failsafe',
@@ -55,7 +50,6 @@ export const getNormalizedNominationsFixture = (
       year: '2021-id'
     },
     'nomination-2021-best-animated-short-2': {
-      bets: ['bet-4'],
       category: 'best-animated-short-id',
       decided: false,
       film: 'twelve-angry-men',
@@ -65,7 +59,6 @@ export const getNormalizedNominationsFixture = (
       year: '2021-id'
     },
     'nomination-2021-best-picture-1': {
-      bets: ['bet-5', 'bet-6', 'bet-10'],
       category: 'best-picture-id',
       decided: false,
       film: 'legally-blond',
@@ -75,7 +68,6 @@ export const getNormalizedNominationsFixture = (
       year: '2021-id'
     },
     'nomination-2021-best-picture-2': {
-      bets: [],
       category: 'best-picture-id',
       decided: false,
       film: 'legally-blond-2',

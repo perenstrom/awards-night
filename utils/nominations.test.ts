@@ -46,7 +46,6 @@ const categories: Category[] = [
 const nominations: NormalizedNominations = {
   // Cat a
   ['noma' as NominationId]: {
-    bets: ['bet-a' as BetId, 'bet-b' as BetId],
     category: 'a' as CategoryId,
     decided: null,
     film: 'a' as FilmId,
@@ -56,7 +55,6 @@ const nominations: NormalizedNominations = {
     year: '2021' as YearId
   },
   ['nomb' as NominationId]: {
-    bets: [],
     category: 'a' as CategoryId,
     decided: null,
     film: 'b' as FilmId,
@@ -67,7 +65,6 @@ const nominations: NormalizedNominations = {
   },
   // Cat b
   ['nomc' as NominationId]: {
-    bets: ['bet-c' as BetId],
     category: 'b' as CategoryId,
     decided: null,
     film: 'c' as FilmId,
@@ -77,7 +74,6 @@ const nominations: NormalizedNominations = {
     year: '2021' as YearId
   },
   ['nomd' as NominationId]: {
-    bets: ['bet-d' as BetId],
     category: 'b' as CategoryId,
     decided: null,
     film: 'd' as FilmId,
@@ -88,7 +84,6 @@ const nominations: NormalizedNominations = {
   },
   // Cat c
   ['nome' as NominationId]: {
-    bets: [],
     category: 'c' as CategoryId,
     decided: null,
     film: 'e' as FilmId,
@@ -98,7 +93,6 @@ const nominations: NormalizedNominations = {
     year: '2021' as YearId
   },
   ['nomf' as NominationId]: {
-    bets: [],
     category: 'c' as CategoryId,
     decided: null,
     film: 'f' as FilmId,

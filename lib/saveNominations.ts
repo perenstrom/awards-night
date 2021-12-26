@@ -57,7 +57,7 @@ export const saveNominations = async (data: {
   let savedNominations = null;
   try {
     savedNominations = await createNominations(
-      films.map<PartialBy<Nomination, 'id' | 'bets' | 'decided'>>((filmId, index) => ({
+      films.map<PartialBy<Nomination, 'id' | 'decided'>>((filmId, index) => ({
         category: fullCategory.id,
         film: filmId,
         nominee: nominees[index],

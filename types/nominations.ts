@@ -21,11 +21,12 @@ export interface Nomination {
   won: boolean;
   film: FilmId;
   nominee: string;
-  bets: BetId[];
   decided: boolean;
 }
 
 export type NormalizedNominations = Record<NominationId, Nomination>;
+
+export type NominationBets = Record<NominationId, BetId[]>;
 
 const CATEGORY_TYPE = Symbol();
 export type CategoryId = string & { TYPE: typeof CATEGORY_TYPE };
