@@ -77,7 +77,7 @@ export const playerState = selector<NormalizedPlayers>({
     if (players) {
       return addPlayersWinnings(categories, nominations, bets, players);
     } else {
-      players;
+      return players;
     }
   },
   set: ({ set }, newValue) => {

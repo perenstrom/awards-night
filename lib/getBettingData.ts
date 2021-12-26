@@ -1,8 +1,9 @@
-import { getBets, getNominations, getPlayers } from 'services/airtable';
+import { getBets, getPlayers } from 'services/airtable';
+import { getNominationBets } from 'services/airtable/nominations';
 import {
   BettingData,
   GroupId,
-  Nomination,
+  NominationBets,
   NormalizedBets,
   NormalizedCategories,
   NormalizedNominations,
@@ -15,33 +16,33 @@ import { addPlayersWinnings } from 'utils/nominations';
 export const getBettingData = async (
   year: Year,
   categories: NormalizedCategories,
+  nominations: NormalizedNominations,
   group: GroupId
 ): Promise<BettingData> => {
-  const nominationsWithBets = await getNominations(year.nominations);
-  const bets = await getBets(nominationsWithBets.map((n) => n.bets).flat());
+  const nominationBets = await getNominationBets(year.nominations);
+  const betsToFetch = Object.values(nominationBets).flat();
+  const bets = await getBets(betsToFetch);
   const players = await getPlayers(bets.map((b) => b.player));
-  
+
   const playersInGroup = players.filter((p) => p.group === group);
   const playerIds = playersInGroup.map((p) => p.id);
-  
+
   const betsInGroup = bets.filter((b) => playerIds.includes(b.player));
   const betIds = betsInGroup.map((bet) => bet.id);
 
-  const nominationsWithFilteredBets: Nomination[] = nominationsWithBets.map(
-    (n) => ({
-      ...n,
-      bets: (n.bets || []).filter((b) => betIds.includes(b))
-    })
-  );
+  const nominationBetsInGroup: NominationBets = {};
+  betsInGroup.forEach((bet) => {
+    if (nominationBetsInGroup[bet.nomination]) {
+      nominationBetsInGroup[bet.nomination].push(bet.id);
+    } else {
+      nominationBetsInGroup[bet.nomination] = [bet.id];
+    }
+  });
+
   const playersWithFilteredBets: Player[] = playersInGroup.map((p) => ({
     ...p,
     bets: (p.bets || []).filter((b) => betIds.includes(b))
   }));
-
-  const normalizedNominations: NormalizedNominations = {};
-  nominationsWithFilteredBets.forEach((n) => {
-    normalizedNominations[n.id] = n;
-  });
 
   const normalizedBets: NormalizedBets = {};
   if (!year.bettingOpen) {
@@ -64,7 +65,8 @@ export const getBettingData = async (
   if (!year.bettingOpen) {
     normalizedPlayers = addPlayersWinnings(
       Object.values(categories),
-      normalizedNominations,
+      nominations,
+      nominationBetsInGroup,
       normalizedBets,
       rawNormalizedPlayers
     );

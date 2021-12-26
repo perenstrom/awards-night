@@ -4,6 +4,7 @@ import {
   CategoryId,
   FilmId,
   GroupId,
+  NominationBets,
   NominationId,
   NormalizedBets,
   NormalizedNominations,
@@ -103,6 +104,15 @@ const nominations: NormalizedNominations = {
   }
 };
 
+const nominationBets: NominationBets = {
+  ['noma' as NominationId]: ['bet-a' as BetId, 'bet-b' as BetId],
+  ['nomb' as NominationId]: [],
+  ['nomc' as NominationId]: ['bet-c' as BetId],
+  ['nomd' as NominationId]: ['bet-d' as BetId],
+  ['nome' as NominationId]: [],
+  ['nomf' as NominationId]: []
+};
+
 const players: NormalizedPlayers = {
   ['player-a' as PlayerId]: {
     id: 'player-a' as PlayerId,
@@ -175,6 +185,7 @@ describe('calculatePlayerWinnings', () => {
     const enhancedPlayers: NormalizedPlayers = addPlayersWinnings(
       categories,
       nominations,
+      nominationBets,
       bets,
       players
     );

@@ -1,6 +1,13 @@
-import { BetId, BettingData, GroupId, NominationId, PlayerId } from 'types/nominations';
+import {
+  BetId,
+  BettingData,
+  GroupId,
+  NominationId,
+  PlayerId
+} from 'types/nominations';
 import { mockRequests } from '__test__/test-utils';
 import { getNormalizedCategoriesFixture } from '__test__/__fixtures__/getNormalizedCategoriesFixture';
+import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
 import { getYearFixture } from '__test__/__fixtures__/getYearFixture';
 import { getBettingData } from './getBettingData';
 
@@ -8,9 +15,13 @@ describe('getBettingData', () => {
   mockRequests();
 
   it('returns correct group betting data for a year, without bets (betting open)', async () => {
+    const normalizedCategories = getNormalizedCategoriesFixture(2020);
     const bettingData = await getBettingData(
       getYearFixture(2020),
-      getNormalizedCategoriesFixture(2020),
+      normalizedCategories,
+      getNormalizedNominationsFixture(
+        Object.values(normalizedCategories).flatMap((c) => c.nominations)
+      ),
       'group-1' as GroupId
     );
 
@@ -38,9 +49,13 @@ describe('getBettingData', () => {
   });
 
   it('returns correct group betting data for a year, with bets (betting closed)', async () => {
+    const normalizedCategories = getNormalizedCategoriesFixture(2021);
     const bettingData = await getBettingData(
       getYearFixture(2021),
-      getNormalizedCategoriesFixture(2021),
+      normalizedCategories,
+      getNormalizedNominationsFixture(
+        Object.values(normalizedCategories).flatMap((c) => c.nominations)
+      ),
       'group-1' as GroupId
     );
 
