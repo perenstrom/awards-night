@@ -40,25 +40,29 @@ describe('getNominationData', () => {
           id: 'citizen-kane',
           imdbId: 'imdb-ck',
           name: 'Citizen Kane',
-          poster: 'http://image.tmdb.org/t/p/w342/citizen-kane.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/citizen-kane.jpg',
+          releaseDate: '1941-05-01'
         },
         moana: {
           id: 'moana',
           imdbId: 'imdb-m',
           name: 'Moana',
-          poster: 'http://image.tmdb.org/t/p/w342/moana.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/moana.jpg',
+          releaseDate: '2016-11-14'
         },
         'the-matrix': {
           id: 'the-matrix',
           imdbId: 'imdb-tm',
           name: 'The Matrix',
-          poster: 'http://image.tmdb.org/t/p/w342/the-matrix.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/the-matrix.jpg',
+          releaseDate: '1999-03-24'
         },
         'bridget-jones': {
           id: 'bridget-jones',
           imdbId: 'imdb-bj',
           name: 'Bridget Jones',
-          poster: 'http://image.tmdb.org/t/p/w342/bridget-jones.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/bridget-jones.jpg',
+          releaseDate: '2001-04-04'
         }
       },
       meta: {
@@ -100,25 +104,29 @@ describe('getNominationData', () => {
           id: 'failsafe',
           imdbId: 'imdb-fs',
           name: 'Failsafe',
-          poster: 'http://image.tmdb.org/t/p/w342/failsafe.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/failsafe.jpg',
+          releaseDate: '1964-09-15'
         },
         'twelve-angry-men': {
           id: 'twelve-angry-men',
           imdbId: 'imdb-tam',
           name: 'Twelve Angry Men',
-          poster: 'http://image.tmdb.org/t/p/w342/twelve-angry-men.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/twelve-angry-men.jpg',
+          releaseDate: '1957-04-10'
         },
         'legally-blond': {
           id: 'legally-blond',
           imdbId: 'imdb-lb',
           name: 'Legally Blond',
-          poster: 'http://image.tmdb.org/t/p/w342/legally-blond.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/legally-blond.jpg',
+          releaseDate: '2001-06-26'
         },
         'legally-blond-2': {
           id: 'legally-blond-2',
           imdbId: 'imdb-lb2',
           name: 'Legally Blond 2',
-          poster: 'http://image.tmdb.org/t/p/w342/legally-blond-2.jpg'
+          poster: 'http://image.tmdb.org/t/p/w342/legally-blond-2.jpg',
+          releaseDate: '2003-06-30'
         }
       },
       meta: {

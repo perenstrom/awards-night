@@ -1,6 +1,6 @@
 import { refreshNominations } from 'lib/refreshNominations';
 import { saveNominations } from 'lib/saveNominations';
-import { isAdmin } from 'lib/withAdminRequired';
+import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getYear, updateNomination } from 'services/airtable';
 import { airtableMap } from 'services/maps/airtableMap';

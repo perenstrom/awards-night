@@ -1,14 +1,15 @@
-import { NominationRecord } from "services/airtable/airtable.types";
-import { airtableMap } from "services/maps/airtableMap";
-import { Nomination, NominationId } from "types/nominations";
-import { PartialBy } from "types/utilityTypes";
-import { arrayChunk } from "utils/arrayChunk";
-import { base } from "./base";
+import Record from 'airtable/lib/record';
+import { NominationRecord } from 'services/airtable/airtable.types';
+import { airtableMap } from 'services/maps/airtableMap';
+import { Nomination, NominationBets, NominationId } from 'types/nominations';
+import { PartialBy } from 'types/utilityTypes';
+import { arrayChunk } from 'utils/arrayChunk';
+import { base } from './base';
 
 const nominationsBase = base('nominations');
 
 export const createNominations = async (
-  nominations: PartialBy<Nomination, 'id' | 'bets' | 'decided'>[]
+  nominations: PartialBy<Nomination, 'id' | 'decided'>[]
 ): Promise<Nomination[]> => {
   console.log(`Creating nominations:\n${JSON.stringify(nominations, null, 2)}`);
   const nominationsChunks = arrayChunk(nominations, 10);
@@ -16,7 +17,7 @@ export const createNominations = async (
   return Promise.all<Nomination[]>(
     nominationsChunks.map(
       (nominations) =>
-        new Promise((resolve, reject) => {
+        new Promise<Nomination[]>((resolve, reject) => {
           nominationsBase
             .create(
               nominations.map((nomination) => ({
@@ -39,9 +40,9 @@ export const createNominations = async (
   ).then((result) => result.flat());
 };
 
-export const getNominations = async (
+const getNominationsFromAirtable = async (
   nominationIds?: NominationId[]
-): Promise<Nomination[]> => {
+): Promise<Record[]> => {
   const query = nominationIds
     ? {
         filterByFormula: `OR(${nominationIds
@@ -51,18 +52,43 @@ export const getNominations = async (
       }
     : {};
 
-  const nominations: Nomination[] = [];
+  let nominations: Record[] = [];
   await nominationsBase
     .select(query)
     .eachPage((nominationsResult, fetchNextPage) => {
-      nominationsResult.forEach((nomination) => {
-        nominations.push(airtableMap.nomination.fromAirtable(nomination));
-      });
+      nominations = [...nominations, ...nominationsResult];
 
       fetchNextPage();
     });
 
   return nominations;
+};
+
+export const getNominations = async (
+  nominationIds?: NominationId[]
+): Promise<Nomination[]> => {
+  const nominationsResult = await getNominationsFromAirtable(nominationIds);
+
+  const nominations: Nomination[] = [];
+  nominationsResult.forEach((nomination) => {
+    nominations.push(airtableMap.nomination.fromAirtable(nomination));
+  });
+
+  return nominations;
+};
+
+export const getNominationBets = async (
+  nominationIds?: NominationId[]
+): Promise<NominationBets> => {
+  const nominationsResult = await getNominationsFromAirtable(nominationIds);
+
+  let nominationBets: NominationBets = {};
+  nominationsResult.forEach((nomination) => {
+    const oneNominationBets = airtableMap.nominationBets.fromAirtable(nomination);
+    nominationBets = {...nominationBets, ...oneNominationBets};
+  });
+
+  return nominationBets;
 };
 
 export const getNominationsByCategoryAndYear = async (

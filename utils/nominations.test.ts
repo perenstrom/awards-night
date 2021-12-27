@@ -3,11 +3,14 @@ import {
   Category,
   CategoryId,
   FilmId,
+  GroupId,
+  NominationBets,
   NominationId,
   NormalizedBets,
   NormalizedNominations,
   NormalizedPlayers,
-  PlayerId
+  PlayerId,
+  YearId
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
@@ -43,102 +46,107 @@ const categories: Category[] = [
 
 const nominations: NormalizedNominations = {
   // Cat a
-  noma: {
-    bets: ['bet-a', 'bet-b'],
+  ['noma' as NominationId]: {
     category: 'a' as CategoryId,
     decided: null,
     film: 'a' as FilmId,
     id: 'noma' as NominationId,
     nominee: '',
     won: true,
-    year: 2021
+    year: '2021' as YearId
   },
-  nomb: {
-    bets: [],
+  ['nomb' as NominationId]: {
     category: 'a' as CategoryId,
     decided: null,
     film: 'b' as FilmId,
     id: 'nomb' as NominationId,
     nominee: '',
     won: false,
-    year: 2021
+    year: '2021' as YearId
   },
   // Cat b
-  nomc: {
-    bets: ['bet-c'],
+  ['nomc' as NominationId]: {
     category: 'b' as CategoryId,
     decided: null,
     film: 'c' as FilmId,
     id: 'nomc' as NominationId,
     nominee: '',
     won: false,
-    year: 2021
+    year: '2021' as YearId
   },
-  nomd: {
-    bets: ['bet-d'],
+  ['nomd' as NominationId]: {
     category: 'b' as CategoryId,
     decided: null,
     film: 'd' as FilmId,
     id: 'nomd' as NominationId,
     nominee: '',
     won: true,
-    year: 2021
+    year: '2021' as YearId
   },
   // Cat c
-  nome: {
-    bets: [],
+  ['nome' as NominationId]: {
     category: 'c' as CategoryId,
     decided: null,
     film: 'e' as FilmId,
     id: 'nome' as NominationId,
     nominee: '',
     won: false,
-    year: 2021
+    year: '2021' as YearId
   },
-  nomf: {
-    bets: [],
+  ['nomf' as NominationId]: {
     category: 'c' as CategoryId,
     decided: null,
     film: 'f' as FilmId,
     id: 'nomf' as NominationId,
     nominee: '',
     won: false,
-    year: 2021
+    year: '2021' as YearId
   }
 };
 
+const nominationBets: NominationBets = {
+  ['noma' as NominationId]: ['bet-a' as BetId, 'bet-b' as BetId],
+  ['nomb' as NominationId]: [],
+  ['nomc' as NominationId]: ['bet-c' as BetId],
+  ['nomd' as NominationId]: ['bet-d' as BetId],
+  ['nome' as NominationId]: [],
+  ['nomf' as NominationId]: []
+};
+
 const players: NormalizedPlayers = {
-  'player-a': {
+  ['player-a' as PlayerId]: {
     id: 'player-a' as PlayerId,
-    bets: ['bet-a', 'bet-c'],
+    bets: ['bet-a' as BetId, 'bet-c' as BetId],
     correct: 0,
-    name: 'Player A'
+    name: 'Player A',
+    group: 'group-1' as GroupId
   },
-  'player-b': {
+  ['player-b' as PlayerId]: {
     id: 'player-b' as PlayerId,
-    bets: ['bet-b', 'bet-d'],
+    bets: ['bet-b' as BetId, 'bet-d' as BetId],
     correct: 0,
-    name: 'Player B'
+    name: 'Player B',
+    group: 'group-1' as GroupId
   }
 };
 
 const bets: NormalizedBets = {
-  'bet-a': {
+  ['bet-a' as BetId]: {
     id: 'bet-a' as BetId,
     nomination: 'noma' as NominationId,
     player: 'player-a' as PlayerId
   },
-  'bet-b': {
+  ['bet-b' as BetId]: {
     id: 'bet-b' as BetId,
     nomination: 'noma' as NominationId,
     player: 'player-b' as PlayerId
   },
-  'bet-c': {
+  ['bet-c' as BetId]: {
     id: 'bet-c' as BetId,
     nomination: 'nomc' as NominationId,
     player: 'player-a' as PlayerId
   },
-  'bet-d': {
+  ['bet-d' as BetId]: {
     id: 'bet-d' as BetId,
     nomination: 'nomd' as NominationId,
     player: 'player-b' as PlayerId
@@ -158,23 +166,26 @@ describe('calculateCompletedCategories', () => {
 describe('calculatePlayerWinnings', () => {
   it('returns the expected players object', async () => {
     const expectedPlayers: NormalizedPlayers = {
-      'player-a': {
+      ['player-a' as PlayerId]: {
         id: 'player-a' as PlayerId,
-        bets: ['bet-a', 'bet-c'],
+        bets: ['bet-a' as BetId, 'bet-c' as BetId],
         correct: 1,
-        name: 'Player A'
+        name: 'Player A',
+        group: 'group-1' as GroupId
       },
-      'player-b': {
+      ['player-b' as PlayerId]: {
         id: 'player-b' as PlayerId,
-        bets: ['bet-b', 'bet-d'],
+        bets: ['bet-b' as BetId, 'bet-d' as BetId],
         correct: 2,
-        name: 'Player B'
+        name: 'Player B',
+        group: 'group-1' as GroupId
       }
     };
 
     const enhancedPlayers: NormalizedPlayers = addPlayersWinnings(
       categories,
       nominations,
+      nominationBets,
       bets,
       players
     );

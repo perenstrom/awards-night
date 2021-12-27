@@ -13,6 +13,7 @@ import {
   Film,
   FilmId,
   Nomination,
+  NominationBets,
   NominationId,
   Player,
   PlayerId,
@@ -66,8 +67,13 @@ export const airtableMap = {
       film: nominationResponse.get('film')[0],
       nominee: nominationResponse.get('nominee') ?? null,
       won: !!nominationResponse.get('won'),
-      bets: nominationResponse.get('bets') ?? null,
       decided: !!nominationResponse.get('decided')
+    })
+  },
+  nominationBets: {
+    fromAirtable: (nominationResponse: AirtableRecord): NominationBets => ({
+      [nominationResponse.id as NominationId]:
+        nominationResponse.get('bets') ?? []
     })
   },
   film: {
@@ -81,7 +87,7 @@ export const airtableMap = {
       imdbId: filmResponse.get('imdb_id'),
       name: filmResponse.get('name'),
       poster: filmResponse.get('poster_url') ?? null,
-      releaseDate: null
+      releaseDate: filmResponse.get('release_date') ?? null
     })
   },
   bet: {
@@ -100,7 +106,8 @@ export const airtableMap = {
       id: playerResponse.id as PlayerId,
       name: playerResponse.get('name'),
       correct: 0,
-      bets: playerResponse.get('bets') ?? null
+      bets: playerResponse.get('bets') ?? null,
+      group: playerResponse.get('group_id')[0] ?? null
     })
   }
 };

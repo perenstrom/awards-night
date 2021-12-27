@@ -1,13 +1,17 @@
 import {
   Bet,
   BetId,
+  BettingData,
   CategoryId,
   FilmId,
   Nomination,
   NominationId,
+  NormalizedCategories,
+  NormalizedNominations,
   Player,
   PlayerId,
-  TmdbFilmResult
+  TmdbFilmResult,
+  Year
 } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 
@@ -53,6 +57,23 @@ export const getBetsForPlayer = async (
   };
 
   return apiResult<Record<NominationId, BetId>>(url, options);
+};
+
+export const getBettingData = async (data: {
+  year: Year;
+  categories: NormalizedCategories;
+  nominations: NormalizedNominations;
+  playerId: PlayerId;
+}): Promise<BettingData> => {
+  const url = `/api/bets/bettingdata`;
+
+  const options: RequestInit = {
+    method: 'POST',
+    headers: defaultHeaders,
+    body: JSON.stringify(data)
+  };
+
+  return apiResult<BettingData>(url, options);
 };
 
 export const updateBet = async (
@@ -163,7 +184,8 @@ const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
         if (response.status === 200) {
           resolve(response.json());
         } else {
-          console.error(response.status);
+          process.env.NODE_ENV === 'development' &&
+            console.error(response.status);
           reject(response.status);
         }
       })

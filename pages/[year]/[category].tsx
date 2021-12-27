@@ -1,22 +1,20 @@
 import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { getCategories, getYears } from 'services/airtable';
 import {
   Category,
   Nomination,
-  NormalizedBets,
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  NormalizedPlayers,
   Player,
-  PlayerId,
   NominationMeta,
   Year,
-  NominationData
+  NominationData,
+  BetId
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -29,10 +27,12 @@ import {
   nominationsState,
   normalizedCategoriesState,
   playerState,
-  metaState
+  metaState,
+  nominationBetsState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
-import { getBettingData } from 'lib/getBettingData';
+import { getBettingData, getLoggedInPlayer } from 'services/local';
+import { useUser } from '@auth0/nextjs-auth0';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -49,8 +49,6 @@ interface Props {
   categories: NormalizedCategories;
   nominations: NormalizedNominations;
   films: NormalizedFilms;
-  bets: NormalizedBets;
-  players: NormalizedPlayers;
   meta: NominationMeta;
   bettingOpen: boolean;
 }
@@ -60,8 +58,6 @@ const CategoryPage: NextPage<Props> = ({
   categories: initialCategories,
   nominations: initialNominations,
   films,
-  bets: initialBets,
-  players: initialPlayers,
   meta: initialMeta,
   bettingOpen
 }) => {
@@ -69,11 +65,45 @@ const CategoryPage: NextPage<Props> = ({
   const { category: slug } = router.query;
 
   const [nominations, setNominations] = useRecoilState(nominationsState);
-  const bets = useRecoilValue(betsState);
   const normalizedCategories = useRecoilValue(normalizedCategoriesState);
   const categories = useRecoilValue(categoriesState);
   const meta = useRecoilValue(metaState);
-  const players = useRecoilValue<NormalizedPlayers>(playerState);
+
+  const [bets, setBets] = useRecoilState(betsState);
+  const [players, setPlayers] = useRecoilState(playerState);
+  const [nominationBets, setNominationBets] =
+    useRecoilState(nominationBetsState);
+
+  const { user } = useUser();
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      if (user) {
+        try {
+          const player = await getLoggedInPlayer();
+          const bettingData = await getBettingData({
+            categories: initialCategories,
+            nominations: initialNominations,
+            playerId: player.id,
+            year: year
+          });
+          setBets(bettingData.bets);
+          setPlayers(bettingData.players);
+          setNominationBets(bettingData.nominationBets);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchDataAsync();
+  }, [
+    initialCategories,
+    initialNominations,
+    setBets,
+    setNominationBets,
+    setPlayers,
+    user,
+    year
+  ]);
 
   const currentSlug =
     (slug as string) ??
@@ -85,6 +115,12 @@ const CategoryPage: NextPage<Props> = ({
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     nominations ? nominations[n] : initialNominations[n]
   );
+  const categoryBetIds: BetId[] = categoryNominations.flatMap(
+    (n) => nominationBets?.[n.id] || []
+  );
+  const categoryBets = bets
+    ? Object.values(bets).filter((b) => categoryBetIds.includes(b.id))
+    : [];
 
   const refreshNominations = useCallback(() => {
     fetch(`/api/nominations?year=${year.year}`)
@@ -109,17 +145,19 @@ const CategoryPage: NextPage<Props> = ({
         <CategoryComponent
           nominations={categoryNominations}
           films={films}
-          bets={bets ?? initialBets}
-          players={players ?? initialPlayers}
+          bets={categoryBets}
+          players={players}
         />
         <PlayerStandings
           completedCategories={
             meta ? meta.completedCategories : initialMeta.completedCategories
           }
           players={
-            (Object.entries(players ?? initialPlayers) as [PlayerId, Player][])
-              .map((p) => p[1])
-              .sort((a, b) => a.correct - b.correct) as Player[]
+            players
+              ? (Object.values(players).sort(
+                  (a, b) => a.correct - b.correct
+                ) as Player[])
+              : []
           }
           bettingOpen={bettingOpen}
         />
@@ -139,7 +177,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
     parseInt(context.params.year, 10)
   );
   const { year, categories, nominations, films, meta } = nominationData;
-  const { bets, players } = await getBettingData(year, categories, nominations);
 
   return {
     props: {
@@ -147,8 +184,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
       categories,
       nominations,
       films,
-      bets,
-      players,
       meta,
       bettingOpen: year.bettingOpen
     }
@@ -160,10 +195,8 @@ export const initializeRecoilState = (
   set: SetRecoilState,
   pageProps: Props
 ) => {
-  const { nominations, bets, players, categories } = pageProps;
+  const { nominations, categories } = pageProps;
   set(nominationsState, nominations);
-  set(betsState, bets);
-  set(playerState, players);
   set(normalizedCategoriesState, categories);
 };
 

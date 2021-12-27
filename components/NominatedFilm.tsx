@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import {
+  Bet,
   Film,
   Nomination,
-  NormalizedBets,
   NormalizedPlayers
 } from 'types/nominations';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material';
 
 interface WrapperProps {
   readonly winner: boolean;
@@ -46,7 +46,7 @@ const BettingPlayer = styled('li')`
 interface Props {
   nomination: Nomination;
   film: Film;
-  bets: NormalizedBets;
+  bets: Bet[];
   players: NormalizedPlayers;
 }
 
@@ -56,10 +56,10 @@ const NominatedFilmComponent: React.FC<Props> = ({
   bets,
   players
 }) => {
-  const bettingPlayers = nomination.bets
-    ? nomination.bets.map((bet) => (
-        <BetList key={bet}>
-          <BettingPlayer>{players[bets[bet].player].name}</BettingPlayer>
+  const bettingPlayers = bets
+    ? bets.map((bet) => (
+        <BetList key={bet.id}>
+          <BettingPlayer>{players[bet.player].name}</BettingPlayer>
         </BetList>
       ))
     : null;

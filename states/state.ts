@@ -6,7 +6,8 @@ import {
   NormalizedCategories,
   NormalizedNominations,
   NormalizedPlayers,
-  NominationMeta
+  NominationMeta,
+  NominationBets
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
@@ -20,6 +21,11 @@ export const betsState = atom<NormalizedBets>({
 
 export const nominationsState = atom<NormalizedNominations>({
   key: 'nominationsState',
+  default: null
+});
+
+export const nominationBetsState = atom<NominationBets>({
+  key: 'nominationBetsState',
   default: null
 });
 
@@ -72,12 +78,19 @@ export const playerState = selector<NormalizedPlayers>({
     const players = get(rawPlayersState);
     const categories = get(categoriesState);
     const nominations = get(nominationsState);
+    const nominationBets = get(nominationBetsState);
     const bets = get(betsState);
 
     if (players) {
-      return addPlayersWinnings(categories, nominations, bets, players);
+      return addPlayersWinnings(
+        categories,
+        nominations,
+        nominationBets,
+        bets,
+        players
+      );
     } else {
-      players;
+      return players;
     }
   },
   set: ({ set }, newValue) => {

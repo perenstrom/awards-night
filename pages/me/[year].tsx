@@ -22,10 +22,9 @@ import {
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import Head from 'next/head';
-import { styled } from '@mui/system';
 import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
-import { Typography } from '@mui/material';
+import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 
 const Loading = styled('span')`

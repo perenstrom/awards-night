@@ -1,4 +1,4 @@
-import { isAdmin } from 'lib/withAdminRequired';
+import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { searchFilms } from 'services/tmdb';
 

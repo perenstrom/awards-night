@@ -8,7 +8,7 @@ import { Alert } from '@mui/material';
 
 import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
-import { withAdminRequired } from 'lib/withAdminRequired';
+import { withAdminRequired } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import {
   Category,

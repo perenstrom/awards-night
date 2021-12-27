@@ -21,11 +21,12 @@ export interface Nomination {
   won: boolean;
   film: FilmId;
   nominee: string;
-  bets: BetId[];
   decided: boolean;
 }
 
 export type NormalizedNominations = Record<NominationId, Nomination>;
+
+export type NominationBets = Record<NominationId, BetId[]>;
 
 const CATEGORY_TYPE = Symbol();
 export type CategoryId = string & { TYPE: typeof CATEGORY_TYPE };
@@ -75,9 +76,13 @@ export interface Player {
   name: string;
   correct: number;
   bets: BetId[];
+  group: GroupId;
 }
 
 export type NormalizedPlayers = Record<PlayerId, Player>;
+
+const GROUP_TYPE = Symbol();
+export type GroupId = string & { TYPE: typeof GROUP_TYPE };
 
 export interface NominationMeta {
   completedCategories: number;
@@ -94,4 +99,5 @@ export interface NominationData {
 export interface BettingData {
   bets: NormalizedBets;
   players: NormalizedPlayers;
+  nominationBets: NominationBets;
 }

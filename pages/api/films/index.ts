@@ -1,5 +1,5 @@
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
-import { isAdmin } from 'lib/withAdminRequired';
+import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface PostRequestBody {
