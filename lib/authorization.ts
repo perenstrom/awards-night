@@ -47,3 +47,13 @@ export const isAuthorized = (
   const user = session?.user ?? null;
   return user?.[airtableIdKey] === playerId;
 };
+
+export const getUserFromRequest = (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
+  const session = <{ user: UserProfile }>getSession(req, res);
+  const user = session?.user ?? null;
+
+  return user;
+};

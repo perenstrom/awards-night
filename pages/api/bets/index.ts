@@ -1,5 +1,5 @@
 import AirtableError from 'airtable/lib/airtable_error';
-import { isAuthorized } from 'lib/withAdminRequired';
+import { isAuthorized } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createBet, deleteBet, getBets, updateBet } from 'services/airtable';
 import { BetId, NominationId, PlayerId } from 'types/nominations';

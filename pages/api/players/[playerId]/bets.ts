@@ -1,4 +1,4 @@
-import { isAuthorized } from 'lib/withAdminRequired';
+import { isAuthorized } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getBetsForPlayer } from 'services/airtable';
 import { PlayerId } from 'types/nominations';

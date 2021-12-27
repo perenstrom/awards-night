@@ -24,8 +24,6 @@ export const getBettingData = async (
   const bets = await getBets(betsToFetch);
   const players = await getPlayers(bets.map((b) => b.player));
   
-  console.log(JSON.stringify(players, null, 2));
-  console.log(group);
   const playersInGroup = players.filter((p) => p.group === group);
   const playerIds = playersInGroup.map((p) => p.id);
 

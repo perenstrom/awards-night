@@ -13,7 +13,7 @@ import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import { updateNomination as updateNominationApi } from 'services/local';
 import { ParsedUrlQuery } from 'querystring';
-import { withAdminRequired } from 'lib/withAdminRequired';
+import { withAdminRequired } from 'lib/authorization';
 import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 
