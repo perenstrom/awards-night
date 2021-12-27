@@ -1,7 +1,9 @@
 # Changelog
 
 ## 3.7
-WIP. Group functionality.
+### Group functionality
+* All users now belong to one (and only one) group.
+* A user only sees the bets from other players in the same group.
 
 ## 3.6.1
 Fix bug in server side rendering of MUI.
