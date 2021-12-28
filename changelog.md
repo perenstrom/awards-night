@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.7.2
+* Fix bug when a user doesn't belong to a group.
+
 ## 3.7.1
 * Fix MUI props leak.
 

@@ -107,7 +107,7 @@ export const airtableMap = {
       name: playerResponse.get('name'),
       correct: 0,
       bets: playerResponse.get('bets') ?? null,
-      group: playerResponse.get('group_id')[0] ?? null
+      group: playerResponse.get('group_id')?.[0] ?? null
     })
   }
 };
