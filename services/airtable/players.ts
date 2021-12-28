@@ -1,6 +1,6 @@
-import { airtableMap } from "services/maps/airtableMap";
-import { PlayerId, Player } from "types/nominations";
-import { base } from "./base";
+import { airtableMap } from 'services/maps/airtableMap';
+import { PlayerId, Player } from 'types/nominations';
+import { base } from './base';
 
 const playersBase = base('players');
 

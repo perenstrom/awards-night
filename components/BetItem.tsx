@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Typography, styled } from '@mui/material';
 import { Category, NominationId } from 'types/nominations';
+import { defaultStyledOptions } from 'utils/mui';
 
 const getBackgroundColor = (
   activeBet: boolean,
@@ -31,7 +32,15 @@ interface WrapperProps {
   readonly decided: boolean;
   readonly bettingOpen: boolean;
 }
-const Wrapper = styled('li')<WrapperProps>`
+const Wrapper = styled(
+  'li',
+  defaultStyledOptions<WrapperProps>([
+    'activeBet',
+    'bettingOpen',
+    'decided',
+    'won'
+  ])
+)<WrapperProps>`
   display: flex;
   width: 100%;
   background-color: ${({ activeBet, won, decided }) =>
