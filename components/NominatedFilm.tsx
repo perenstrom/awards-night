@@ -1,16 +1,15 @@
 import { memo } from 'react';
-import {
-  Bet,
-  Film,
-  Nomination,
-  NormalizedPlayers
-} from 'types/nominations';
+import { Bet, Film, Nomination, NormalizedPlayers } from 'types/nominations';
 import { styled } from '@mui/material';
+import { defaultStyledOptions } from 'utils/mui';
 
 interface WrapperProps {
   readonly winner: boolean;
 }
-const Wrapper = styled('li')<WrapperProps>`
+const Wrapper = styled(
+  'li',
+  defaultStyledOptions<WrapperProps>(['winner'])
+)<WrapperProps>`
   list-style: none;
   flex-grow: 1;
   flex-basis: 0;

@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.7.1
+* Fix MUI props leak.
+
 ## 3.7
 ### Group functionality
 * All users now belong to one (and only one) group.
