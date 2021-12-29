@@ -120,7 +120,11 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
               )}
             </form>
             {searchResults.length > 0 && (
-              <form action={submitAction} method="POST">
+              <form
+                action={submitAction}
+                method="POST"
+                onSubmit={(event) => event.preventDefault()}
+              >
                 <input type="hidden" name="action" value="addFilmByTmdbId" />
                 <List dense>
                   {searchResults.map((film) => (
