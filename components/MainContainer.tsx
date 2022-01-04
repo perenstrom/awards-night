@@ -1,9 +1,13 @@
 import { Container } from '@mui/material';
 
-export const MainContainer: React.FC<{}> = (props) => {
+interface Props {
+  topMargin?: number;
+}
+
+export const MainContainer: React.FC<Props> = ({ children, topMargin = 8 }) => {
   return (
-    <Container maxWidth="md" sx={{ pt: 8 }}>
-      {props.children}
+    <Container maxWidth="md" sx={{ pt: topMargin }}>
+      {children}
     </Container>
   );
 };
