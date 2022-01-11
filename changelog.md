@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8
+New start page.
+
 ## 3.7.3
 * Fix bug when adding a movie by search in admin interface.
 
