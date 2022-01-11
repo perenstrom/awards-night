@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8.1
+Fix start page typos.
+
 ## 3.8
 New start page.
 
