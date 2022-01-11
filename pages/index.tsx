@@ -80,7 +80,7 @@ const FrontPage: NextPage<Props> = () => {
             <CardContent>
               <Typography variant="h3">Gather your friends</Typography>
               <Typography variant="body1" pt="1rem">
-                Find the cinemaphiles amongst your friends and challenge them
+                Find the cinephiles amongst your friends and challenge them
               </Typography>
             </CardContent>
           </Card>
@@ -130,8 +130,8 @@ const FrontPage: NextPage<Props> = () => {
             Get access!
           </Typography>
           <Typography variant="body1" pt="1rem">
-            Oscar Night is currently under development and in closed Alpha. If
-            you want to be a part of the alpha testing, send me an email at{' '}
+            Oscar Night is currently under development and in closed alpha. If
+            you want to be a part of the alpha testing, send me an e-mail at{' '}
             <a href="mailto:hello@oscarnight.app">hello@oscarnight.app</a>.
           </Typography>
           <Typography variant="body1" pt="1rem" mb="4rem">
