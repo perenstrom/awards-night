@@ -3,6 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import { MainContainer } from 'components/MainContainer';
 import {
+  Box,
   Card,
   CardContent,
   CardMedia,
@@ -63,37 +64,80 @@ const FrontPage: NextPage<Props> = () => {
       </HeroWrapper>
       <MainContainer>
         <CardWrapper>
-          <Card sx={{ flexGrow: 1 }}>
+          <Card
+            sx={{
+              flexGrow: 1,
+              hyphens: 'auto',
+              overflowWrap: 'break-word',
+              flexBasis: 1 / 3
+            }}
+          >
             <CardMedia
               component="img"
-              image="/images/live-view.png"
-              height="140"
+              image="/images/gather.jpg"
+              height="220"
             />
             <CardContent>
               <Typography variant="h3">Gather your friends</Typography>
+              <Typography variant="body1" pt="1rem">
+                Find the cinemaphiles amongst your friends and challenge them
+              </Typography>
             </CardContent>
           </Card>
-          <Card sx={{ flexGrow: 1 }}>
+          <Card
+            sx={{
+              flexGrow: 1,
+              hyphens: 'auto',
+              overflowWrap: 'break-word',
+              flexBasis: 1 / 3
+            }}
+          >
             <CardMedia
               component="img"
-              image="/images/live-view.png"
-              height="140"
+              image="/images/predict.png"
+              height="220"
             />
             <CardContent>
               <Typography variant="h3">Predict winners</Typography>
+              <Typography variant="body1" pt="1rem">
+                Privately choose which films will win in each category
+              </Typography>
             </CardContent>
           </Card>
-          <Card sx={{ flexGrow: 1 }}>
+          <Card
+            sx={{
+              flexGrow: 1,
+              hyphens: 'auto',
+              overflowWrap: 'break-word',
+              flexBasis: 1 / 3
+            }}
+          >
             <CardMedia
               component="img"
               image="/images/live-view.png"
-              height="140"
+              height="220"
             />
             <CardContent>
               <Typography variant="h3">See results live</Typography>
+              <Typography variant="body1" pt="1rem">
+                Follow the ceremony and see the results update live
+              </Typography>
             </CardContent>
           </Card>
         </CardWrapper>
+        <Box pt="3rem" width="60%" margin="0 auto" sx={{ textAlign: 'center' }}>
+          <Typography variant="h1" component="h2">
+            Get access!
+          </Typography>
+          <Typography variant="body1" pt="1rem">
+            Oscar Night is currently under development and in closed Alpha. If
+            you want to be a part of the alpha testing, send me an email at{' '}
+            <a href="mailto:hello@oscarnight.app">hello@oscarnight.app</a>.
+          </Typography>
+          <Typography variant="body1" pt="1rem" mb="4rem">
+            – Per Enström.
+          </Typography>
+        </Box>
       </MainContainer>
     </div>
   );
