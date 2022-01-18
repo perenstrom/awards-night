@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8.2
+Fix start page responsiveness.
+
 ## 3.8.1
 Fix start page typos.
 
