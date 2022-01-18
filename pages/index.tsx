@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Grid,
   styled,
   Typography
 } from '@mui/material';
@@ -27,11 +28,6 @@ const HeroWrapper = styled('div')`
 
 const TitleShadow = styled('span')`
   text-shadow: 0 0 3rem #000000;
-`;
-
-const CardWrapper = styled('div')`
-  display: flex;
-  gap: 1rem;
 `;
 
 const FrontPage: NextPage<Props> = () => {
@@ -63,68 +59,74 @@ const FrontPage: NextPage<Props> = () => {
         </MainContainer>
       </HeroWrapper>
       <MainContainer>
-        <CardWrapper>
-          <Card
-            sx={{
-              flexGrow: 1,
-              hyphens: 'auto',
-              overflowWrap: 'break-word',
-              flexBasis: 1 / 3
-            }}
-          >
-            <CardMedia
-              component="img"
-              image="/images/gather.jpg"
-              height="220"
-            />
-            <CardContent>
-              <Typography variant="h3">Gather your friends</Typography>
-              <Typography variant="body1" pt="1rem">
-                Find the cinephiles amongst your friends and challenge them
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card
-            sx={{
-              flexGrow: 1,
-              hyphens: 'auto',
-              overflowWrap: 'break-word',
-              flexBasis: 1 / 3
-            }}
-          >
-            <CardMedia
-              component="img"
-              image="/images/predict.png"
-              height="220"
-            />
-            <CardContent>
-              <Typography variant="h3">Predict winners</Typography>
-              <Typography variant="body1" pt="1rem">
-                Privately choose which films will win in each category
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card
-            sx={{
-              flexGrow: 1,
-              hyphens: 'auto',
-              overflowWrap: 'break-word',
-              flexBasis: 1 / 3
-            }}
-          >
-            <CardMedia
-              component="img"
-              image="/images/live-view.png"
-              height="220"
-            />
-            <CardContent>
-              <Typography variant="h3">See results live</Typography>
-              <Typography variant="body1" pt="1rem">
-                Follow the ceremony and see the results update live
-              </Typography>
-            </CardContent>
-          </Card>
-        </CardWrapper>
+        <Grid container spacing={2}>
+          <Grid item sm={4} xs={12}>
+            <Card
+              sx={{
+                flexGrow: 1,
+                hyphens: 'auto',
+                overflowWrap: 'break-word',
+                flexBasis: 1 / 3
+              }}
+            >
+              <CardMedia
+                component="img"
+                image="/images/gather.jpg"
+                height="220"
+              />
+              <CardContent>
+                <Typography variant="h3">Gather your friends</Typography>
+                <Typography variant="body1" pt="1rem">
+                  Find the cinephiles amongst your friends and challenge them
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <Card
+              sx={{
+                flexGrow: 1,
+                hyphens: 'auto',
+                overflowWrap: 'break-word',
+                flexBasis: 1 / 3
+              }}
+            >
+              <CardMedia
+                component="img"
+                image="/images/predict.png"
+                height="220"
+              />
+              <CardContent>
+                <Typography variant="h3">Predict winners</Typography>
+                <Typography variant="body1" pt="1rem">
+                  Privately choose which films will win in each category
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <Card
+              sx={{
+                flexGrow: 1,
+                hyphens: 'auto',
+                overflowWrap: 'break-word',
+                flexBasis: 1 / 3
+              }}
+            >
+              <CardMedia
+                component="img"
+                image="/images/live-view.png"
+                height="220"
+              />
+              <CardContent>
+                <Typography variant="h3">See results live</Typography>
+                <Typography variant="body1" pt="1rem">
+                  Follow the ceremony and see the results update live
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
         <Box pt="3rem" width="60%" margin="0 auto" sx={{ textAlign: 'center' }}>
           <Typography variant="h1" component="h2">
             Get access!
