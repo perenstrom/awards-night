@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Bet, Film, Nomination, NormalizedPlayers } from 'types/nominations';
-import { styled } from '@mui/material';
+import { Chip, Stack, styled } from '@mui/material';
 import { defaultStyledOptions } from 'utils/mui';
 
 interface WrapperProps {
@@ -25,23 +25,6 @@ const Poster = styled('img')`
   width: 100%;
 `;
 
-const BetList = styled('ul')`
-  text-align: center;
-  overflow: hidden;
-  padding: 0;
-`;
-
-const BettingPlayer = styled('li')`
-  list-style: none;
-  display: inline-block;
-  background-color: #2ecc71;
-  padding: 0.3em;
-  border-radius: 0.3em;
-  margin-right: 0.3em;
-  margin-top: 0.3em;
-  font-size: 1.3em;
-`;
-
 interface Props {
   nomination: Nomination;
   film: Film;
@@ -57,9 +40,24 @@ const NominatedFilmComponent: React.FC<Props> = ({
 }) => {
   const bettingPlayers = bets
     ? bets.map((bet) => (
-        <BetList key={bet.id}>
-          <BettingPlayer>{players[bet.player].name}</BettingPlayer>
-        </BetList>
+        <Stack
+          direction="row"
+          component="ul"
+          spacing={1}
+          padding={0}
+          margin={1}
+          justifyContent="center"
+          flexWrap="wrap"
+          key={bet.id}
+        >
+          <Chip
+            color="success"
+            size="small"
+            component="li"
+            sx={{ marginBottom: '0.5rem' }}
+            label={players[bet.player].name}
+          />
+        </Stack>
       ))
     : null;
 

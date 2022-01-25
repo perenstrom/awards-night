@@ -12,6 +12,7 @@ const FilmList = styled('ul')`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  align-items: flex-start;
   margin: 0px;
   padding: 1em;
 `;
