@@ -46,7 +46,7 @@ export type FilmId = string & { TYPE: typeof FILM_TYPE };
 interface BaseFilm {
   name: string;
   poster: string;
-  releaseDate: string;
+  releaseDate?: string;
 }
 export interface Film extends BaseFilm {
   id: FilmId;

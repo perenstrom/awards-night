@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
 import {
   Box,
@@ -11,12 +12,22 @@ import {
   styled,
   Typography
 } from '@mui/material';
+import { Player } from 'types/nominations';
+import { getLoggedInPlayer } from 'services/local';
+import { defaultStyledOptions } from 'utils/mui';
 
 interface Props {}
 
-const HeroWrapper = styled('div')`
+const MainWrapper = styled('div')`
+  flex-grow: 1;
   display: flex;
   align-items: center;
+`;
+
+const HeroWrapper = styled('div')`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   height: 20rem;
   background-color: black;
@@ -26,37 +37,79 @@ const HeroWrapper = styled('div')`
   background-size: cover;
 `;
 
+interface LoginProps {
+  readonly ready: boolean;
+}
+const Login = styled(
+  'div',
+  defaultStyledOptions<LoginProps>(['ready'])
+)<LoginProps>`
+  opacity: ${({ ready }) => (ready ? '1' : '0')};
+  align-self: flex-end;
+  padding: 0.5rem;
+  line-height: 1;
+
+  transition: opacity 0.3s ease-in;
+
+  a {
+    color: rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+  }
+`;
+
 const TitleShadow = styled('span')`
   text-shadow: 0 0 3rem #000000;
 `;
 
+type State = 'idle' | 'loading';
 const FrontPage: NextPage<Props> = () => {
+  const [player, setPlayer] = useState<Player>();
+  const [state, setState] = useState<State>('loading');
+
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      try {
+        const player = await getLoggedInPlayer();
+        setPlayer(player);
+      } catch (_) {}
+      setState('idle');
+    };
+    fetchDataAsync();
+  }, []);
+
   return (
     <div>
       <Head>
         <title>Oscar Night – Social prediction for the Academy Awards</title>
       </Head>
       <HeroWrapper>
-        <MainContainer topMargin={0}>
-          <Typography
-            color="white"
-            variant="h1"
-            fontSize="4.5rem"
-            textAlign="center"
-          >
-            <TitleShadow>Oscar Night</TitleShadow>
-          </Typography>
-          <Typography
-            color="white"
-            textAlign="center"
-            variant="h2"
-            fontSize="1.2rem"
-            pt="0.5rem"
-            mb="3rem"
-          >
-            Social Prediction for the Academy Awards
-          </Typography>
-        </MainContainer>
+        <Login ready={state === 'idle'}>
+          <Link href={`/me`}>
+            <a>{player ? 'DASHBOARD' : 'LOG IN'}</a>
+          </Link>
+        </Login>
+        <MainWrapper>
+          <MainContainer topMargin={0}>
+            <Typography
+              color="white"
+              variant="h1"
+              fontSize="4.5rem"
+              textAlign="center"
+            >
+              <TitleShadow>Oscar Night</TitleShadow>
+            </Typography>
+            <Typography
+              color="white"
+              textAlign="center"
+              variant="h2"
+              fontSize="1.2rem"
+              pt="0.5rem"
+              mb="3rem"
+            >
+              Social Prediction for the Academy Awards
+            </Typography>
+          </MainContainer>
+        </MainWrapper>
       </HeroWrapper>
       <MainContainer>
         <Grid container spacing={2}>
