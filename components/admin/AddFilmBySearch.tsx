@@ -139,7 +139,7 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
                       onClick={() => onAddFilmClick(film.tmdbId.toString())}
                     >
                       <ListItemText>
-                        {`${film.name} (${film.releaseDate.substr(0, 4)})`}
+                        {`${film.name} (${film.releaseDate ? film.releaseDate.slice(0, 4) : 'n/a'})`}
                       </ListItemText>
                     </ListItem>
                   ))}
