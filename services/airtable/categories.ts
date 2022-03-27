@@ -19,7 +19,7 @@ export const getCategories = async (
   const categories: Category[] = [];
   try {
     await categoriesBase
-      .select(query)
+      .select({ ...query, sort: [{ field: 'name', direction: 'asc' }] })
       .eachPage((categoriesResult, fetchNextPage) => {
         categoriesResult.forEach((category) => {
           categories.push(airtableMap.category.fromAirtable(category));
