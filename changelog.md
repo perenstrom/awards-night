@@ -1,4 +1,7 @@
 # Changelog
+## 3.8.4
+* Sort categories alphabetically
+
 ## 3.8.3
 * Add log in link to start page
 * Fix bug when adding movies without release date
