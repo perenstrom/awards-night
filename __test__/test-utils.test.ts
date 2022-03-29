@@ -27,7 +27,7 @@ describe('airtableFormulaToArray', () => {
 
     const airtableIdArray = airtableFormulaToArray(airtableFormula);
 
-    const expectedArray = [];
+    const expectedArray: string[] = [];
     expect(airtableIdArray).toEqual(expectedArray);
   });
 
@@ -73,21 +73,21 @@ describe('extractAirtableFormulaFromSearch', () => {
     expect(airtableFormula).toEqual(expectedFormula);
   });
 
-  it('returns null when empty', async () => {
+  it('returns empty string when empty', async () => {
     const search = '';
 
     const airtableFormula = extractAirtableFormulaFromSearch(search);
 
-    const expectedFormula = null;
+    const expectedFormula = '';
     expect(airtableFormula).toEqual(expectedFormula);
   });
 
-  it('returns null when parameter missing', async () => {
+  it('returns empty string when parameter missing', async () => {
     const search = '?otherParam=otherValue';
 
     const airtableFormula = extractAirtableFormulaFromSearch(search);
 
-    const expectedFormula = null;
+    const expectedFormula = '';
     expect(airtableFormula).toEqual(expectedFormula);
   });
 });

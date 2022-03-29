@@ -26,6 +26,7 @@ import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
 import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
+import { RequiredBy } from 'types/utilityTypes';
 
 const Loading = styled('span')`
   font-size: 1rem;
@@ -56,6 +57,10 @@ const DashboardPage: NextPage<Props> = ({
   }, []);
 
   const updateBet = async (nominationId: NominationId, category: Category) => {
+    if (!player) {
+      throw new Error('Trying to update bets for undefined player');
+    }
+
     setState('saving');
     const nominationsWithExistingBets = category.nominations.filter(
       (nominationId) => Object.keys(bets).includes(nominationId)
@@ -138,8 +143,11 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
   const nominationData = await getNominationData(
-    parseInt(context.params.year, 10)
+    parseInt((context as RequiredBy<typeof context, 'params'>).params.year, 10)
   );
+  if (!nominationData) {
+    throw new Error('Error when fetching nomination data');
+  }
 
   return {
     props: nominationData

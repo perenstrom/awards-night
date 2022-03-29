@@ -1,4 +1,5 @@
 import { rest } from 'msw';
+import { PlayerId } from 'types/nominations';
 import {
   airtableFormulaToArray,
   extractAirtableFormulaFromSearch
@@ -14,7 +15,10 @@ export const mockGetPlayers = () => {
           extractAirtableFormulaFromSearch(decodeURIComponent(req.url.search))
         );
 
-        return res(ctx.status(200), ctx.json(getPlayersResponse(players)));
+        return res(
+          ctx.status(200),
+          ctx.json(getPlayersResponse(players as PlayerId[]))
+        );
       }
     )
   };

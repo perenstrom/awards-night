@@ -1,10 +1,11 @@
 import { airtableMap } from 'services/maps/airtableMap';
 import { Year, YearId } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import { base } from './base';
 
 const yearsBase = base('years');
 
-export const getYear = async (year: number): Promise<Year> => {
+export const getYear = async (year: number): Promise<Nullable<Year>> => {
   const years: Year[] = [];
   await yearsBase
     .select({ filterByFormula: `year='${year}'` })

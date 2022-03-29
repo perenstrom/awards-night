@@ -1,4 +1,5 @@
 import { rest } from 'msw';
+import { YearId } from 'types/nominations';
 import {
   airtableFormulaToArray,
   extractAirtableFormulaFromSearch
@@ -14,7 +15,10 @@ export const mockGetYears = () => {
           extractAirtableFormulaFromSearch(decodeURIComponent(req.url.search))
         );
 
-        return res(ctx.status(200), ctx.json(getYearsResponse(years)));
+        return res(
+          ctx.status(200),
+          ctx.json(getYearsResponse(years as YearId[]))
+        );
       }
     )
   };

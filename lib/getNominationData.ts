@@ -12,21 +12,28 @@ import {
   NormalizedNominations,
   Year,
   CategoryId,
-  NominationData,
+  NominationData
 } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
 export const getNominationData = async (
   year: number
-): Promise<NominationData> => {
+): Promise<Nullable<NominationData>> => {
   try {
     const yearData = await getYear(year);
+    if (!yearData) {
+      throw new Error('Error when fetching year data');
+    }
 
     const categories = await getCategories(yearData.categories);
+    if (!categories) {
+      throw new Error('Error when fetching categories');
+    }
     const normalizedCategories: NormalizedCategories = {};
     const categoryIdToSlug: Record<CategoryId, string> = {};
     categories.forEach((c) => {
-      normalizedCategories[c.slug] = c;
+      normalizedCategories[c.slug as CategoryId] = c;
       categoryIdToSlug[c.id] = c.slug;
     });
 
@@ -35,15 +42,19 @@ export const getNominationData = async (
     const normalizedNominations: NormalizedNominations = {};
     nominations.forEach((n) => {
       normalizedNominations[n.id] = n;
-      normalizedCategories[categoryIdToSlug[n.category]].nominations.push(n.id);
+      normalizedCategories[
+        categoryIdToSlug[n.category] as CategoryId
+      ].nominations.push(n.id);
     });
 
     const films = await getFilms(nominations.map((n) => n.film));
     films.forEach(async (f) => {
       if (!f.poster) {
         const poster = await getPoster(f.imdbId);
-        await setFilmPoster(f.id, poster);
-        f.poster = poster;
+        if (poster) {
+          await setFilmPoster(f.id, poster);
+          f.poster = poster;
+        }
       }
     });
     const normalizedFilms: NormalizedFilms = {};
@@ -65,6 +76,7 @@ export const getNominationData = async (
     };
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 

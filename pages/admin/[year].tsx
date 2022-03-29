@@ -154,9 +154,17 @@ interface Params extends ParsedUrlQuery {
 const getMyServerSideProps: GetServerSideProps<Props, Params> = async (
   context
 ) => {
+  if (!context?.params?.year) {
+    throw new Error('No year in params');
+  }
+
   const nominationData = await getNominationData(
-    parseInt(context.params.year, 10)
+    parseInt(context?.params?.year, 10)
   );
+
+  if (!nominationData) {
+    throw new Error('Error when fetching nomination data');
+  }
 
   return {
     props: nominationData

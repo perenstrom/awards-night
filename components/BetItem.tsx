@@ -23,6 +23,8 @@ const getBackgroundColor = (
   } else if (!activeBet && !won) {
     // White
     return 'rgb(238, 238, 238)';
+  } else {
+    return 'rgb(238, 238, 238)';
   }
 };
 

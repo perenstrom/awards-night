@@ -1,4 +1,7 @@
 # Changelog
+## 3.8.5
+* Activate Typescript Strict
+
 ## 3.8.4
 * Sort categories alphabetically
 

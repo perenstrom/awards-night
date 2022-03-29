@@ -16,6 +16,10 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
+  if (!context.params?.year) {
+    throw new Error('Page called without year param');
+  }
+
   const year = context.params.year;
 
   return {

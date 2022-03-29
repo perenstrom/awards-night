@@ -1,7 +1,8 @@
 import { airtableMap } from 'services/maps/airtableMap';
-import { Film, FilmId } from 'types/nominations';
-import { PartialBy } from 'types/utilityTypes';
 import { base } from './base';
+
+import type { Film, FilmId } from 'types/nominations';
+import type { Nullable, PartialBy } from 'types/utilityTypes';
 
 const filmsBase = base('films');
 
@@ -47,7 +48,9 @@ export const getFilms = async (filmIds?: FilmId[]): Promise<Film[]> => {
   return films;
 };
 
-export const getFilmByImdb = async (imdbId: string): Promise<Film> => {
+export const getFilmByImdb = async (
+  imdbId: string
+): Promise<Nullable<Film>> => {
   const query = `imdb_id='${imdbId}'`;
   const films: Film[] = [];
 

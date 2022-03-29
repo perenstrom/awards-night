@@ -35,8 +35,8 @@ export interface Category {
   slug: string;
   name: string;
   nominations: NominationId[];
-  previousCategory: string;
-  nextCategory: string;
+  previousCategory: string | null;
+  nextCategory: string | null;
 }
 
 export type NormalizedCategories = Record<CategoryId, Category>;

@@ -4,7 +4,8 @@ import {
   NominationBets,
   NormalizedBets,
   NormalizedNominations,
-  NormalizedPlayers
+  NormalizedPlayers,
+  PlayerId
 } from 'types/nominations';
 
 export const addPlayersWinnings = (
@@ -16,7 +17,10 @@ export const addPlayersWinnings = (
 ): NormalizedPlayers => {
   const newPlayers: NormalizedPlayers = {};
   Object.keys(normalizedPlayers).forEach((playerId) => {
-    newPlayers[playerId] = { ...normalizedPlayers[playerId], correct: 0 };
+    newPlayers[playerId as PlayerId] = {
+      ...normalizedPlayers[playerId as PlayerId],
+      correct: 0
+    };
   });
 
   categories.forEach((category) => {

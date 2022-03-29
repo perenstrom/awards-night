@@ -6,7 +6,7 @@ import getRawBody from 'raw-body';
 import { Typography, Box } from '@mui/material';
 import { Alert } from '@mui/material';
 
-import { PropsWithUser, StatusMessage } from 'types/utilityTypes';
+import { Nullable, PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
@@ -37,7 +37,7 @@ type Props = {
   availableYears: Year[];
   availableFilms: Film[];
   nominationCount: number;
-  searchResults?: TmdbFilmResult[];
+  searchResults: TmdbFilmResult[];
 };
 
 const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
@@ -66,17 +66,17 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
           ))}
         <AddFilm
           submitAction={router.pathname}
-          parentStatusMessage={statusMessages.addFilms}
+          parentStatusMessage={statusMessages?.addFilms}
         />
         <AddFilmBySearch
           submitAction={router.pathname}
           searchResults={searchResults}
-          parentStatusMessage={statusMessages.searchAndAddFilms}
+          parentStatusMessage={statusMessages?.searchAndAddFilms}
         />
         {availableCategories && availableYears && availableFilms && (
           <AddNominations
             submitAction={router.pathname}
-            parentStatusMessage={statusMessages.addNominations}
+            parentStatusMessage={statusMessages?.addNominations}
             initialNominationCount={initialNominationCount}
             availableCategories={availableCategories}
             availableFilms={availableFilms}
@@ -91,10 +91,10 @@ const AdminPage: NextPage<PropsWithUser<Props>> = (props) => {
 const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   // POST:
   let generalStatusMessages: StatusMessage[] = [];
-  let addFilmMessage: StatusMessage = null;
-  let searchAndAddFilmsMessage: StatusMessage = null;
+  let addFilmMessage: Nullable<StatusMessage> = undefined;
+  let searchAndAddFilmsMessage: Nullable<StatusMessage> = undefined;
   let searchResults: TmdbFilmResult[] = [];
-  let addNominationsMessage: StatusMessage = null;
+  let addNominationsMessage: Nullable<StatusMessage> = undefined;
   let nominationCount = 5;
 
   if (req.method == 'POST') {
@@ -139,26 +139,26 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   }
 
   // All:
-  const availableCategories = await getCategories().catch<Category[]>(() => {
+  const availableCategories = await getCategories().catch(() => {
     generalStatusMessages.push({
       severity: 'error',
       message: 'Failed to fetch categories.'
     });
-    return null;
+    return [];
   });
-  const availableYears = await getYears().catch<Year[]>(() => {
+  const availableYears = await getYears().catch(() => {
     generalStatusMessages.push({
       severity: 'error',
       message: 'Failed to fetch years.'
     });
-    return null;
+    return [];
   });
-  const availableFilms = await getFilms().catch<Film[]>(() => {
+  const availableFilms = await getFilms().catch(() => {
     generalStatusMessages.push({
       severity: 'error',
       message: 'Failed to fetch films.'
     });
-    return null;
+    return [];
   });
 
   return {

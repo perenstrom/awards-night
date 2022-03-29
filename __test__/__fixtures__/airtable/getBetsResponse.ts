@@ -1,4 +1,6 @@
-export const getBetsResponse = (bets?) => {
+import { BetId } from 'types/nominations';
+
+export const getBetsResponse = (bets?: BetId[]) => {
   const response = {
     records: [
       {
@@ -114,7 +116,9 @@ export const getBetsResponse = (bets?) => {
 
   if (bets) {
     return {
-      records: response.records.filter((record) => bets.includes(record.id))
+      records: response.records.filter((record) =>
+        bets.includes(record.id as BetId)
+      )
     };
   } else {
     return response;

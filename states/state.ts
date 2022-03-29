@@ -16,22 +16,22 @@ import {
 
 export const betsState = atom<NormalizedBets>({
   key: 'betsState',
-  default: null
+  default: {}
 });
 
 export const nominationsState = atom<NormalizedNominations>({
   key: 'nominationsState',
-  default: null
+  default: {}
 });
 
 export const nominationBetsState = atom<NominationBets>({
   key: 'nominationBetsState',
-  default: null
+  default: {}
 });
 
 export const normalizedCategoriesState = atom<NormalizedCategories>({
   key: 'normalizedCategoriesState',
-  default: null
+  default: {}
 });
 
 export const categoriesState = selector<Category[]>({
@@ -57,7 +57,9 @@ export const metaState = selector<NominationMeta>({
     );
 
     if (categories.length === 0) {
-      return null;
+      return {
+        completedCategories: 0
+      };
     } else {
       return {
         completedCategories: completedCategories
@@ -68,7 +70,7 @@ export const metaState = selector<NominationMeta>({
 
 const rawPlayersState = atom<NormalizedPlayers>({
   key: 'rawPlayersState',
-  default: null,
+  default: {},
   dangerouslyAllowMutability: true
 });
 

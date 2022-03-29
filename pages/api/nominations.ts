@@ -8,7 +8,7 @@ import {
   CategoryId,
   FilmId,
   Nomination,
-  NominationId,
+  NominationId
 } from 'types/nominations';
 
 interface PatchRequestBody {
@@ -26,10 +26,19 @@ interface PostRequestBody {
 const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { year } = req.query;
-    const fullYear = await getYear(parseInt(year as string, 10));
-    const nominations = await refreshNominations(fullYear);
+    try {
+      const fullYear = await getYear(parseInt(year as string, 10));
+      if (fullYear) {
+        const nominations = await refreshNominations(fullYear);
 
-    res.end(JSON.stringify(nominations));
+        res.end(JSON.stringify(nominations));
+      } else {
+        res.status(404).end('No data found for that year');
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).end('Internal server error');
+    }
   } else if (req.method === 'PATCH') {
     return new Promise((resolve) => {
       if (!isAdmin(req, res)) {
@@ -44,7 +53,10 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
           .end('Both nominationId and nomination must be provided');
         resolve('');
       } else {
-        updateNomination(nominationId, airtableMap.nomination.toAirtable(nomination))
+        updateNomination(
+          nominationId,
+          airtableMap.nomination.toAirtable(nomination)
+        )
           .then((nomination) => {
             res.status(200).json(nomination);
             resolve('');

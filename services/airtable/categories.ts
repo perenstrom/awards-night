@@ -1,6 +1,6 @@
-import { airtableMap } from "services/maps/airtableMap";
-import { CategoryId, Category } from "types/nominations";
-import { base } from "./base";
+import { airtableMap } from 'services/maps/airtableMap';
+import { CategoryId, Category } from 'types/nominations';
+import { base } from './base';
 
 const categoriesBase = base('categories');
 
@@ -37,9 +37,14 @@ export const getCategories = async (
 
 const addAdjacentCategories = (categories: Category[]): Category[] => {
   return categories.map((category, index, categories) => {
-    const previousCategory = index === 0 ? null : categories[index - 1].slug;
+    const previousCategory =
+      index === 0
+        ? { previousCategory: null }
+        : { previousCategory: categories[index - 1].slug };
     const nextCategory =
-      index === categories.length - 1 ? null : categories[index + 1].slug;
-    return { ...category, previousCategory, nextCategory };
+      index === categories.length - 1
+        ? { nextCategory: null }
+        : { nextCategory: categories[index + 1].slug };
+    return { ...category, ...previousCategory, ...nextCategory };
   });
 };

@@ -55,7 +55,8 @@ export const airtableMap = {
     toAirtable: (nomination: Partial<Nomination>): NominationRecord => ({
       year: nomination.year && [nomination.year],
       category: nomination.category && [nomination.category],
-      film: nomination.category && [nomination.film],
+      ...(nomination.category &&
+        nomination.film && { film: [nomination.film] }),
       nominee: nomination.nominee,
       won: nomination.won,
       decided: nomination.decided
@@ -92,7 +93,7 @@ export const airtableMap = {
   },
   bet: {
     toAirtable: (bet: Partial<Bet>): BetRecord => ({
-      nomination: [bet.nomination],
+      nomination: bet.nomination && [bet.nomination],
       player: bet.player ? [bet.player] : undefined
     }),
     fromAirtable: (betResponse: AirtableRecord): Bet => ({

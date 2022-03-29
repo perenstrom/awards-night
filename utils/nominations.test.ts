@@ -21,26 +21,26 @@ const categories: Category[] = [
   {
     id: 'a' as CategoryId,
     name: 'cat a',
-    nextCategory: 'cat-b',
     nominations: ['noma' as NominationId, 'nomb' as NominationId],
-    previousCategory: null,
-    slug: 'cat-a'
+    slug: 'cat-a',
+    nextCategory: 'cat-b',
+    previousCategory: null
   },
   {
     id: 'b' as CategoryId,
     name: 'cat b',
-    nextCategory: 'cat-c',
     nominations: ['nomc' as NominationId, 'nomd' as NominationId],
-    previousCategory: 'cat-a',
-    slug: 'cat-b'
+    slug: 'cat-b',
+    nextCategory: 'cat-c',
+    previousCategory: 'cat-a'
   },
   {
     id: 'c' as CategoryId,
     name: 'cat c',
-    nextCategory: null,
     nominations: ['nome' as NominationId, 'nomf' as NominationId],
+    slug: 'cat-c',
     previousCategory: 'cat-b',
-    slug: 'cat-c'
+    nextCategory: null
   }
 ];
 
@@ -48,59 +48,59 @@ const nominations: NormalizedNominations = {
   // Cat a
   ['noma' as NominationId]: {
     category: 'a' as CategoryId,
-    decided: null,
     film: 'a' as FilmId,
     id: 'noma' as NominationId,
     nominee: '',
     won: true,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   },
   ['nomb' as NominationId]: {
     category: 'a' as CategoryId,
-    decided: null,
     film: 'b' as FilmId,
     id: 'nomb' as NominationId,
     nominee: '',
     won: false,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   },
   // Cat b
   ['nomc' as NominationId]: {
     category: 'b' as CategoryId,
-    decided: null,
     film: 'c' as FilmId,
     id: 'nomc' as NominationId,
     nominee: '',
     won: false,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   },
   ['nomd' as NominationId]: {
     category: 'b' as CategoryId,
-    decided: null,
     film: 'd' as FilmId,
     id: 'nomd' as NominationId,
     nominee: '',
     won: true,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   },
   // Cat c
   ['nome' as NominationId]: {
     category: 'c' as CategoryId,
-    decided: null,
     film: 'e' as FilmId,
     id: 'nome' as NominationId,
     nominee: '',
     won: false,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   },
   ['nomf' as NominationId]: {
     category: 'c' as CategoryId,
-    decided: null,
     film: 'f' as FilmId,
     id: 'nomf' as NominationId,
     nominee: '',
     won: false,
-    year: '2021' as YearId
+    year: '2021' as YearId,
+    decided: true
   }
 };
 

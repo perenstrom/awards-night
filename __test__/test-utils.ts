@@ -14,9 +14,9 @@ export const extractAirtableFormulaFromSearch = (
   const match = decodedSearch.match(filterByFormulaRegex);
 
   if (match) {
-    return decodedSearch.match(filterByFormulaRegex)[1];
+    return match[1];
   } else {
-    return null;
+    return '';
   }
 };
 
@@ -41,14 +41,16 @@ export const airtableFormulaToArray = (airtableFormula: string): string[] => {
   const orRegex = /OR\((.+)\)/;
   const orMatch = airtableFormula.match(orRegex);
   if (orMatch) {
-    const orArguments = airtableFormula.match(orRegex)[1];
+    const orArguments = orMatch[1];
     const expressions = orArguments.split(',');
 
-    const ids = expressions.map(extractRecordId);
+    const ids = expressions
+      .map(extractRecordId)
+      .filter((id) => id !== null) as string[];
 
     return ids;
   } else {
     const recordId = extractRecordId(airtableFormula);
-    return recordId ? [extractRecordId(airtableFormula)] : [];
+    return recordId ? [recordId] : [];
   }
 };

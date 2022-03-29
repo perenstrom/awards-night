@@ -1,4 +1,6 @@
-export const getPlayersResponse = (players?) => {
+import { PlayerId } from 'types/nominations';
+
+export const getPlayersResponse = (players?: PlayerId[]) => {
   const response = {
     records: [
       {
@@ -46,7 +48,9 @@ export const getPlayersResponse = (players?) => {
 
   if (players) {
     return {
-      records: response.records.filter((record) => players.includes(record.id))
+      records: response.records.filter((record) =>
+        players.includes(record.id as PlayerId)
+      )
     };
   } else {
     return response;

@@ -1,5 +1,6 @@
 import { airtableMap } from 'services/maps/airtableMap';
 import { PlayerId, Player } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import { base } from './base';
 
 const playersBase = base('players');
@@ -24,7 +25,9 @@ export const getPlayers = async (playerIds: PlayerId[]): Promise<Player[]> => {
   return players;
 };
 
-export const getPlayerByAuth0Id = async (auth0Id: string): Promise<Player> => {
+export const getPlayerByAuth0Id = async (
+  auth0Id: string
+): Promise<Nullable<Player>> => {
   const players: Player[] = [];
   await playersBase
     .select({ filterByFormula: `auth0_user_id='${auth0Id}'` })

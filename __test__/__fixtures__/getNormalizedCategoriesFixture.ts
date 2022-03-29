@@ -54,5 +54,11 @@ export const getNormalizedCategoriesFixture = (
     }
   };
 
-  return categoriesFixture[year];
+  if (Object.keys(categoriesFixture).includes(year.toString())) {
+    return categoriesFixture[
+      year.toString() as unknown as keyof typeof categoriesFixture
+    ];
+  } else {
+    throw new Error('Year not in fixture');
+  }
 };

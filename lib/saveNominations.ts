@@ -2,10 +2,16 @@ import { getYear, updateYear } from 'services/airtable';
 import {
   getCategories,
   getNominationsByCategoryAndYear,
-  createNominations,
+  createNominations
 } from 'services/airtable';
-import { CategoryId, FilmId, Nomination } from 'types/nominations';
-import { PartialBy, StatusMessage } from 'types/utilityTypes';
+import {
+  Category,
+  CategoryId,
+  FilmId,
+  Nomination,
+  Year
+} from 'types/nominations';
+import { Nullable, PartialBy, StatusMessage } from 'types/utilityTypes';
 import { getGenericErrorMessage } from 'utils/statusMessages';
 import { triggerDeploy } from 'utils/triggerDeploy';
 
@@ -16,13 +22,26 @@ export const saveNominations = async (data: {
   nominees: string[];
 }): Promise<StatusMessage> => {
   const { category, year, films, nominees } = data;
-  const fullYear = await getYear(year);
-  const fullCategoryResult = await getCategories([category]);
-  const fullCategory = fullCategoryResult[0];
-  const existingNominations = await getNominationsByCategoryAndYear(
-    fullCategory.slug,
-    year
-  );
+
+  let fullYear: Nullable<Year>;
+  let fullCategoryResult: Nullable<Category[]>;
+  let fullCategory: Nullable<Category>;
+  let existingNominations: Nullable<Nomination[]>;
+  try {
+    fullYear = await getYear(year);
+    fullCategoryResult = await getCategories([category]);
+    fullCategory = fullCategoryResult[0];
+    existingNominations = await getNominationsByCategoryAndYear(
+      fullCategory.slug,
+      year
+    );
+  } catch (error) {
+    return getGenericErrorMessage();
+  }
+
+  if (!fullYear || !fullCategoryResult || !fullCategory) {
+    return getGenericErrorMessage();
+  }
 
   if (existingNominations.length > 0) {
     return {
@@ -58,11 +77,11 @@ export const saveNominations = async (data: {
   try {
     savedNominations = await createNominations(
       films.map<PartialBy<Nomination, 'id' | 'decided'>>((filmId, index) => ({
-        category: fullCategory.id,
+        category: (fullCategory as Category).id,
         film: filmId,
         nominee: nominees[index],
         won: false,
-        year: fullYear.id
+        year: (fullYear as Year).id
       }))
     );
   } catch (error) {

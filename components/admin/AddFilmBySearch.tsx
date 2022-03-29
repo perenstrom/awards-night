@@ -11,7 +11,7 @@ import {
   ListItemText
 } from '@mui/material';
 import { Alert } from '@mui/material';
-import { StatusMessage } from 'types/utilityTypes';
+import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
 import { createFilmByTmdb, searchFilms } from 'services/local';
 
@@ -28,7 +28,8 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
     parentStatusMessage
   } = props;
 
-  const [statusMessage, setStatusMessage] = useState(parentStatusMessage);
+  const [statusMessage, setStatusMessage] =
+    useState<Nullable<StatusMessage>>(parentStatusMessage);
   const [searchResults, setSearchResults] = useState(initialSearchResults);
 
   const searchFilmInputElement = useRef<HTMLInputElement>(null);
@@ -40,7 +41,7 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
     setSearchFilmStatus('loading');
     setStatusMessage(null);
     setSearchResults([]);
-    const query = searchFilmInputElement.current.value;
+    const query = searchFilmInputElement.current?.value;
 
     if (query) {
       try {
@@ -139,7 +140,11 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
                       onClick={() => onAddFilmClick(film.tmdbId.toString())}
                     >
                       <ListItemText>
-                        {`${film.name} (${film.releaseDate ? film.releaseDate.slice(0, 4) : 'n/a'})`}
+                        {`${film.name} (${
+                          film.releaseDate
+                            ? film.releaseDate.slice(0, 4)
+                            : 'n/a'
+                        })`}
                       </ListItemText>
                     </ListItem>
                   ))}

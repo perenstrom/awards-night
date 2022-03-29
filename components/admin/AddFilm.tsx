@@ -8,7 +8,7 @@ import {
   Paper
 } from '@mui/material';
 import { Alert } from '@mui/material';
-import { StatusMessage } from 'types/utilityTypes';
+import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { createFilm } from 'services/local';
 
 interface Props {
@@ -19,7 +19,8 @@ interface Props {
 export const AddFilm: React.FC<Props> = (props) => {
   const { submitAction, parentStatusMessage } = props;
 
-  const [statusMessage, setStatusMessage] = useState(parentStatusMessage);
+  const [statusMessage, setStatusMessage] =
+    useState<Nullable<StatusMessage>>(parentStatusMessage);
 
   const imdbIdInputElement = useRef<HTMLInputElement>(null);
   const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
@@ -29,7 +30,7 @@ export const AddFilm: React.FC<Props> = (props) => {
     event.preventDefault();
     setAddFilmStatus('loading');
     setStatusMessage(null);
-    const imdbId = imdbIdInputElement.current.value;
+    const imdbId = imdbIdInputElement.current?.value;
 
     if (imdbId) {
       const saveFilmResult = await createFilm(imdbId);

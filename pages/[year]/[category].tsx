@@ -14,7 +14,8 @@ import {
   NominationMeta,
   Year,
   NominationData,
-  BetId
+  BetId,
+  CategoryId
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -33,6 +34,7 @@ import {
 import { getNominationData } from 'lib/getNominationData';
 import { getBettingData, getLoggedInPlayer } from 'services/local';
 import { useUser } from '@auth0/nextjs-auth0';
+import { Nullable } from 'types/utilityTypes';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -110,8 +112,8 @@ const CategoryPage: NextPage<Props> = ({
     categories[0]?.slug ??
     Object.keys(initialCategories)[0];
   const category: Category = normalizedCategories
-    ? normalizedCategories[currentSlug]
-    : initialCategories[currentSlug];
+    ? normalizedCategories[currentSlug as CategoryId]
+    : initialCategories[currentSlug as CategoryId];
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     nominations ? nominations[n] : initialNominations[n]
   );
@@ -173,9 +175,16 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
-  const nominationData: NominationData = await getNominationData(
+  if (!context.params?.year) {
+    throw new Error('Page called without year param');
+  }
+
+  const nominationData: Nullable<NominationData> = await getNominationData(
     parseInt(context.params.year, 10)
   );
+  if (!nominationData) {
+    throw new Error('Error when fetching nomination data');
+  }
   const { year, categories, nominations, films, meta } = nominationData;
 
   return {

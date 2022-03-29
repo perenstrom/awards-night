@@ -1,4 +1,6 @@
-export const getYearsResponse = (years?) => {
+import { YearId } from 'types/nominations';
+
+export const getYearsResponse = (years?: YearId[]) => {
   const response = {
     records: [
       {
@@ -39,7 +41,7 @@ export const getYearsResponse = (years?) => {
   if (years) {
     return {
       records: response.records.filter((record) =>
-        years.includes(record.fields.year.toString())
+        years.includes(record.fields.year.toString() as YearId)
       )
     };
   } else {

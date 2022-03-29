@@ -1,5 +1,5 @@
 import { ExternalFilm, Film } from 'types/nominations';
-import { StatusMessage } from 'types/utilityTypes';
+import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { getFilmByImdb, createFilm } from 'services/airtable';
 import {
   getFilmByImdb as getFilmFromTmdbByImdbId,
@@ -8,7 +8,7 @@ import {
 import { getGenericErrorMessage, getStatusMessage } from 'utils/statusMessages';
 
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
-  let film: Film;
+  let film: Nullable<Film>;
   try {
     film = await getFilmByImdb(imdbId);
   } catch (error) {
@@ -19,7 +19,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
   if (!film) {
     // Film is not already in the system
-    let filmDetails: ExternalFilm = null;
+    let filmDetails: Nullable<ExternalFilm> = null;
     try {
       filmDetails = await getFilmFromTmdbByImdbId(imdbId);
     } catch (error) {
@@ -48,6 +48,10 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
     if (savedFilm) {
       // Film successfully saved
       return getStatusMessage('success', `${savedFilm.name} added.`);
+    } else {
+      // Error in saving
+      console.error('No film returned by save call');
+      return getGenericErrorMessage();
     }
   } else {
     // Film is already in the system
@@ -58,7 +62,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 export const saveFilmByTmdbId = async (
   tmdbId: string
 ): Promise<StatusMessage> => {
-  let filmDetails: ExternalFilm = null;
+  let filmDetails: Nullable<ExternalFilm> = null;
   try {
     filmDetails = await getFilmFromTmdbByTmdbId(tmdbId);
   } catch (error) {
@@ -77,7 +81,7 @@ export const saveFilmByTmdbId = async (
     );
   }
 
-  let film: Film;
+  let film: Nullable<Film>;
   try {
     film = await getFilmByImdb(filmDetails.imdbId);
   } catch (error) {
@@ -100,6 +104,10 @@ export const saveFilmByTmdbId = async (
     if (savedFilm) {
       // Film successfully saved
       return getStatusMessage('success', `${savedFilm.name} added.`);
+    } else {
+      // Error in saving
+      console.error('No film returned by save call');
+      return getGenericErrorMessage();
     }
   } else {
     // Film is already in the system

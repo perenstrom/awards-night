@@ -3,23 +3,35 @@ import {
   UserProfile,
   withPageAuthRequired
 } from '@auth0/nextjs-auth0';
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next';
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse
+} from 'next';
+import { ParsedUrlQuery } from 'querystring';
 import { PlayerId } from 'types/nominations';
 
 export const isAdminKey = `${process.env.AUTH0_METADATA_NAMESPACE}/is_admin`;
 export const airtableIdKey = `${process.env.AUTH0_METADATA_NAMESPACE}/airtable_id`;
 
-export const withAdminRequired = (params: {
-  getServerSideProps: GetServerSideProps;
+export const withAdminRequired = <
+  Q extends { [key: string]: any },
+  P extends ParsedUrlQuery
+>(params: {
+  getServerSideProps: GetServerSideProps<Q, P>;
   returnTo?: string;
 }) => {
   return withPageAuthRequired({
     returnTo: params.returnTo,
     getServerSideProps: async (auth0Context) => {
-      const { user } = getSession(auth0Context.req, auth0Context.res);
+      const session = getSession(auth0Context.req, auth0Context.res);
+      const user = session?.user;
 
-      if (user[isAdminKey]) {
-        return await params.getServerSideProps(auth0Context);
+      if (user?.[isAdminKey]) {
+        return await params.getServerSideProps(
+          auth0Context as GetServerSidePropsContext<P>
+        );
       } else {
         return {
           redirect: {
