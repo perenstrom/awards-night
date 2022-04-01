@@ -27,6 +27,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 import { RequiredBy } from 'types/utilityTypes';
+import Link from 'next/link';
 
 const Loading = styled('span')`
   font-size: 1rem;
@@ -100,6 +101,13 @@ const DashboardPage: NextPage<Props> = ({
         <title>Bets</title>
       </Head>
       <MainContainer>
+        <Link href={'/me'}>
+          <a>&lt; Dashboard</a>
+        </Link>
+        <span> | </span>
+        <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
+          <a>Go to presentation mode &gt;</a>
+        </Link>
         <Typography variant="h1">
           {player && `Betting for ${player.name}`}
           {state !== 'idle' && <Loading> loading...</Loading>}
