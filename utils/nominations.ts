@@ -1,11 +1,9 @@
 import {
-  BetId,
   Category,
   NominationBets,
   NormalizedBets,
   NormalizedNominations,
-  NormalizedPlayers,
-  PlayerId
+  NormalizedPlayers
 } from 'types/nominations';
 
 export const addPlayersWinnings = (
@@ -16,9 +14,9 @@ export const addPlayersWinnings = (
   normalizedPlayers: NormalizedPlayers
 ): NormalizedPlayers => {
   const newPlayers: NormalizedPlayers = {};
-  Object.keys(normalizedPlayers).forEach((playerId) => {
-    newPlayers[playerId as PlayerId] = {
-      ...normalizedPlayers[playerId as PlayerId],
+  (Object.keys(normalizedPlayers) as string[]).forEach((playerId) => {
+    newPlayers[parseInt(playerId, 10)] = {
+      ...normalizedPlayers[parseInt(playerId, 10)],
       correct: 0
     };
   });
@@ -26,7 +24,7 @@ export const addPlayersWinnings = (
   categories.forEach((category) => {
     category.nominations.forEach((n) => {
       if (nominations[n].won) {
-        const winningBets = (nominationBets?.[n] ?? []) as BetId[];
+        const winningBets = (nominationBets?.[n] ?? []);
         winningBets.forEach((bet) => {
           newPlayers[bets[bet].player].correct !== undefined
             ? newPlayers[bets[bet].player].correct++

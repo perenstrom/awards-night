@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_CONNECTION_STRING")
+}
+
+model Bet {
+  id           Int        @id @default(autoincrement())
+  nominationId Int        @map("nomination_id")
+  playerId     Int        @map("player_id")
+  nomination   Nomination @relation(fields: [nominationId], references: [id], onDelete: NoAction)
+  player       Player     @relation(fields: [playerId], references: [id], onDelete: NoAction)
+
+  @@map("bets")
+}
+
+model Category {
+  slug            String           @id
+  name            String
+  nominations     Nomination[]
+  yearsCategories YearToCategory[]
+
+  @@map("categories")
+}
+
+model Film {
+  imdbId      String       @id @map("imdb_id")
+  name        String
+  releaseDate DateTime?    @map("release_date") @db.Date
+  posterUrl   String?      @map("poster_url")
+  nominations Nomination[]
+
+  @@map("films")
+}
+
+model Group {
+  id      Int      @id @default(autoincrement())
+  players Player[]
+
+  @@map("groups")
+}
+
+model Nomination {
+  id         Int      @id @default(autoincrement())
+  yearId     Int      @map("year_id")
+  categoryId String   @map("category_id")
+  nominee    String?
+  won        Boolean  @default(false)
+  decided    Boolean  @default(false)
+  filmId     String   @map("film_id")
+  category   Category @relation(fields: [categoryId], references: [slug], onDelete: NoAction)
+  film       Film     @relation(fields: [filmId], references: [imdbId], onDelete: NoAction)
+  year       Year     @relation(fields: [yearId], references: [year], onDelete: NoAction)
+  bets       Bet[]
+
+  @@map("nominations")
+}
+
+model Player {
+  id          Int     @id @default(autoincrement())
+  name        String
+  auth0UserId String? @map("auth0_user_id")
+  groupId     Int?    @map("group_id")
+  groups      Group?  @relation(fields: [groupId], references: [id], onDelete: NoAction)
+  bets        Bet[]
+
+  @@map("players")
+}
+
+model Year {
+  year            Int              @id
+  name            String
+  date            DateTime         @db.Date
+  bettingOpen     Boolean          @default(true) @map("betting_open")
+  nominations     Nomination[]
+  yearsCategories YearToCategory[]
+
+  @@map("years")
+}
+
+model YearToCategory {
+  categoryId String   @map("category_id")
+  yearId     Int      @map("year_id")
+  categories Category @relation(fields: [categoryId], references: [slug], onDelete: NoAction)
+  years      Year     @relation(fields: [yearId], references: [year], onDelete: NoAction)
+
+  @@unique([categoryId, yearId], map: "years_categories_category_id_year_id_idx")
+  @@map("years_categories")
+}

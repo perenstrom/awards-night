@@ -1,55 +1,44 @@
-const YEAR_TYPE = Symbol();
-export type YearId = string & { TYPE: typeof YEAR_TYPE };
 export interface Year {
-  id: YearId;
   year: number;
   name: string;
   date: string;
   bettingOpen: boolean;
-  categories: CategoryId[];
-  nominations: NominationId[];
+  categories: string[];
+  nominations: number[];
 }
 
-export type NormalizedYears = Record<YearId, Year>;
+export type NormalizedYears = Record<number, Year>;
 
-const NOMINATION_TYPE = Symbol();
-export type NominationId = string & { TYPE: typeof NOMINATION_TYPE };
 export interface Nomination {
-  id: NominationId;
-  year: YearId;
-  category: CategoryId;
+  id: number;
+  year: number;
+  category: string;
   won: boolean;
-  film: FilmId;
+  film: string;
   nominee: string;
   decided: boolean;
 }
 
-export type NormalizedNominations = Record<NominationId, Nomination>;
+export type NormalizedNominations = Record<number, Nomination>;
 
-export type NominationBets = Record<NominationId, BetId[]>;
+export type NominationBets = Record<number, number[]>;
 
-const CATEGORY_TYPE = Symbol();
-export type CategoryId = string & { TYPE: typeof CATEGORY_TYPE };
 export interface Category {
-  id: CategoryId;
   slug: string;
   name: string;
-  nominations: NominationId[];
+  nominations: number[];
   previousCategory: string | null;
   nextCategory: string | null;
 }
 
-export type NormalizedCategories = Record<CategoryId, Category>;
+export type NormalizedCategories = Record<string, Category>;
 
-const FILM_TYPE = Symbol();
-export type FilmId = string & { TYPE: typeof FILM_TYPE };
 interface BaseFilm {
   name: string;
   poster: string;
   releaseDate?: string;
 }
 export interface Film extends BaseFilm {
-  id: FilmId;
   imdbId: string;
 }
 export type ExternalFilm = Omit<Film, 'id'>;
@@ -57,32 +46,25 @@ export interface TmdbFilmResult extends BaseFilm {
   tmdbId: number;
 }
 
-export type NormalizedFilms = Record<FilmId, Film>;
+export type NormalizedFilms = Record<string, Film>;
 
-const BET_TYPE = Symbol();
-export type BetId = string & { TYPE: typeof BET_TYPE };
 export interface Bet {
-  id: BetId;
-  player: PlayerId;
-  nomination: NominationId;
+  id: number;
+  player: number;
+  nomination: number;
 }
 
-export type NormalizedBets = Record<BetId, Bet>;
+export type NormalizedBets = Record<number, Bet>;
 
-const PLAYER_TYPE = Symbol();
-export type PlayerId = string & { TYPE: typeof PLAYER_TYPE };
 export interface Player {
-  id: PlayerId;
+  id: number;
   name: string;
   correct: number;
-  bets: BetId[];
-  group: GroupId;
+  bets: number[];
+  group: number;
 }
 
-export type NormalizedPlayers = Record<PlayerId, Player>;
-
-const GROUP_TYPE = Symbol();
-export type GroupId = string & { TYPE: typeof GROUP_TYPE };
+export type NormalizedPlayers = Record<number, Player>;
 
 export interface NominationMeta {
   completedCategories: number;
