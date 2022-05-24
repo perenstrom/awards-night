@@ -3,36 +3,36 @@ import {
   NominationBets,
   NormalizedBets,
   NormalizedNominations,
-  NormalizedPlayers
+  Player
 } from 'types/nominations';
 
 export const addPlayersWinnings = (
+  players: Player[],
   categories: Category[],
   nominations: NormalizedNominations,
   nominationBets: NominationBets,
-  bets: NormalizedBets,
-  normalizedPlayers: NormalizedPlayers
-): NormalizedPlayers => {
-  const newPlayers: NormalizedPlayers = {};
-  (Object.keys(normalizedPlayers) as string[]).forEach((playerId) => {
-    newPlayers[parseInt(playerId, 10)] = {
-      ...normalizedPlayers[parseInt(playerId, 10)],
-      correct: 0
-    };
-  });
+  bets: NormalizedBets
+): Player[] => {
+  // Record<PlayerId, number>
+  const playerWins: Record<number, number> = {};
 
   categories.forEach((category) => {
     category.nominations.forEach((n) => {
       if (nominations[n].won) {
-        const winningBets = (nominationBets?.[n] ?? []);
+        const winningBets = nominationBets?.[n] ?? [];
         winningBets.forEach((bet) => {
-          newPlayers[bets[bet].player].correct !== undefined
-            ? newPlayers[bets[bet].player].correct++
-            : (newPlayers[bets[bet].player].correct = 0);
+          playerWins[bets[bet].player] !== undefined
+            ? playerWins[bets[bet].player]++
+            : (playerWins[bets[bet].player] = 1);
         });
       }
     });
   });
+
+  const newPlayers: Player[] = players.map((player) => ({
+    ...player,
+    correct: playerWins[player.id] || 0
+  }));
 
   return newPlayers;
 };
