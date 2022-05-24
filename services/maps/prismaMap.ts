@@ -1,10 +1,22 @@
 import {
   Category as PrismaCategory,
   Film as PrismaFilm,
-  Nomination as PrismaNomination
+  Nomination as PrismaNomination,
+  Bet as PrismaBet,
+  Player as PrismaPlayer
 } from '@prisma/client';
-import { YearWithNominationsAndCategories } from 'services/prisma/prisma.types';
-import { Category, Film, Nomination, Year } from 'types/nominations';
+import {
+  PlayerWithBets,
+  YearWithNominationsAndCategories
+} from 'services/prisma/prisma.types';
+import {
+  Bet,
+  Category,
+  Film,
+  Nomination,
+  Player,
+  Year
+} from 'types/nominations';
 
 export const prismaMap = {
   year: {
@@ -45,6 +57,33 @@ export const prismaMap = {
       name: filmResponse.name,
       poster: filmResponse.posterUrl || '',
       releaseDate: filmResponse.releaseDate?.toDateString() || ''
+    })
+  },
+  bet: {
+    fromPrisma: (betResponse: PrismaBet): Bet => ({
+      id: betResponse.id,
+      player: betResponse.playerId,
+      nomination: betResponse.nominationId
+    })
+  },
+  player: {
+    fromPrisma: (playerResponse: PrismaPlayer): Player => ({
+      id: playerResponse.id,
+      auth0UserId: playerResponse.auth0UserId,
+      name: playerResponse.name,
+      correct: 0,
+      bets: [],
+      group: playerResponse.groupId
+    })
+  },
+  playerWithBets: {
+    fromPrisma: (playerResponse: PlayerWithBets): Player => ({
+      id: playerResponse.id,
+      auth0UserId: playerResponse.auth0UserId,
+      name: playerResponse.name,
+      correct: 0,
+      bets: playerResponse.bets.map((b) => b.id),
+      group: playerResponse.groupId
     })
   }
 };

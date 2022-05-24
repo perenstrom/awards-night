@@ -1,9 +1,16 @@
 import { getBets, getPlayers } from 'services/airtable';
 import { getNominationBets } from 'services/airtable/nominations';
+import { getBetsForNominations } from 'services/prisma/bets';
 import {
+  getPlayersForGroup,
+  getPlayersWithBetsForGroup
+} from 'services/prisma/players';
+import { Context } from 'services/prisma/prisma.types';
+import {
+  Bet,
   BettingData,
-  GroupId,
   NominationBets,
+  NominationData,
   NormalizedBets,
   NormalizedCategories,
   NormalizedNominations,
@@ -13,13 +20,51 @@ import {
 } from 'types/nominations';
 import { addPlayersWinnings } from 'utils/nominations';
 
+const calculateNominationBets = (bets: Bet[]) => {
+  let nominationBets: NominationBets = {};
+  bets.forEach((bet) => {
+    if (nominationBets[bet.nomination]) {
+      nominationBets[bet.nomination].push(bet.id);
+    } else {
+      nominationBets[bet.nomination] = [bet.id];
+    }
+  });
+
+  return nominationBets;
+};
+
 export const getBettingData = async (
-  year: Year,
-  categories: NormalizedCategories,
-  nominations: NormalizedNominations,
-  group: GroupId
+  nominationData: NominationData,
+  group: number,
+  ctx: Context
 ): Promise<BettingData> => {
-  const nominationBets = await getNominationBets(year.nominations);
+  const { bettingOpen } = nominationData.year;
+
+  if (bettingOpen) {
+    const players = await getPlayersForGroup(group, ctx);
+    return {
+      bets: [],
+      players: players,
+      nominationBets: {}
+    };
+  } else {
+    const players = await getPlayersWithBetsForGroup(group, ctx);
+    const bets = await getBetsForNominations(
+      nominationData.year.nominations,
+      ctx
+    );
+
+    const nominationBets = calculateNominationBets(bets);
+
+    return {
+      bets: bets,
+      players: players,
+      nominationBets: nominationBets
+    };
+  }
+
+  // TODO: Write tests for this and rewrite
+  /* const nominationBets = await getNominationBets(year.nominations);
   const betsToFetch = Object.values(nominationBets).flat();
   const bets = await getBets(betsToFetch);
   const players = await getPlayers(bets.map((b) => b.player));
@@ -30,7 +75,7 @@ export const getBettingData = async (
   const betsInGroup = bets.filter((b) => playerIds.includes(b.player));
   const betIds = betsInGroup.map((bet) => bet.id);
 
-  const nominationBetsInGroup: NominationBets = {};
+  const nominationBetsInGroup: NominationBets = {}; 
 
   if (!year.bettingOpen) {
     betsInGroup.forEach((bet) => {
@@ -73,11 +118,5 @@ export const getBettingData = async (
       normalizedBets,
       rawNormalizedPlayers
     );
-  }
-
-  return {
-    bets: normalizedBets,
-    players: normalizedPlayers,
-    nominationBets: nominationBetsInGroup
-  };
+  }*/
 };

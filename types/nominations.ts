@@ -21,6 +21,7 @@ export interface Nomination {
 
 export type NormalizedNominations = Record<number, Nomination>;
 
+// Record<NominationId, BetId[]>
 export type NominationBets = Record<number, number[]>;
 
 export interface Category {
@@ -61,7 +62,8 @@ export interface Player {
   name: string;
   correct: number;
   bets: number[];
-  group: number;
+  group?: number | null;
+  auth0UserId?: string | null;
 }
 
 export type NormalizedPlayers = Record<number, Player>;
@@ -79,7 +81,7 @@ export interface NominationData {
 }
 
 export interface BettingData {
-  bets: NormalizedBets;
-  players: NormalizedPlayers;
+  bets: Bet[];
+  players: Player[];
   nominationBets: NominationBets;
 }
