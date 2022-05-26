@@ -1,7 +1,6 @@
 import { atom, selector } from 'recoil';
 import {
   Category,
-  CategoryId,
   NormalizedBets,
   NormalizedCategories,
   NormalizedNominations,
@@ -39,7 +38,7 @@ export const categoriesState = selector<Category[]>({
   get: ({ get }) => {
     const normalizedCategories = get(normalizedCategoriesState);
     return normalizedCategories
-      ? (Object.entries(normalizedCategories) as [CategoryId, Category][]).map(
+      ? (Object.entries(normalizedCategories) as [number, Category][]).map(
           (c) => c[1]
         )
       : [];

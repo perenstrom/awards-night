@@ -10,15 +10,7 @@ import { Nullable, PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
-import {
-  Category,
-  CategoryId,
-  TmdbFilmResult,
-  Film,
-  FilmId,
-  Year
-} from 'types/nominations';
-import { getCategories, getFilms, getYears } from 'services/airtable';
+import { Category, TmdbFilmResult, Film, Year } from 'types/nominations';
 import { saveNominations } from 'lib/saveNominations';
 import { PostBody } from 'types/admin.types';
 import { AddFilm } from 'components/admin/AddFilm';
@@ -118,9 +110,9 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
       case 'addNominations':
         const { category, year, films, nominees } = parsedBody;
         addNominationsMessage = await saveNominations({
-          category: category as CategoryId,
+          category: category,
           year: parseInt(year, 10),
-          films: films as FilmId[],
+          films: films,
           nominees
         });
         break;

@@ -6,7 +6,6 @@ import {
 import { Year } from 'types/nominations';
 import React from 'react';
 import Head from 'next/head';
-import { getYears } from 'services/airtable';
 import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
 

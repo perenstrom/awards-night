@@ -1,21 +1,18 @@
-import AirtableError from 'airtable/lib/airtable_error';
 import { isAuthorized } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createBet, deleteBet, getBets, updateBet } from 'services/airtable';
-import { BetId, NominationId, PlayerId } from 'types/nominations';
 
 interface PostRequestBody {
-  playerId: string;
-  nominationId: string;
+  playerId: number;
+  nominationId: number;
 }
 
 interface PatchRequestBody {
-  betId: string;
-  nominationId: string;
+  betId: number;
+  nominationId: number;
 }
 
 interface DeleteRequestBody {
-  betId: string;
+  betId: number;
 }
 
 const bets = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -23,7 +20,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
     return new Promise((resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
 
-      if (!isAuthorized(req, res, playerId as PlayerId)) {
+      if (!isAuthorized(req, res, playerId)) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }
@@ -33,8 +30,8 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         resolve('');
       } else {
         createBet({
-          player: playerId as PlayerId,
-          nomination: nominationId as NominationId
+          player: playerId,
+          nomination: nominationId
         })
           .then((bet) => {
             res.status(200).json(bet);
@@ -53,7 +50,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both betId and nominationId must be provided');
         resolve('');
       } else {
-        const fullBetResult = await getBets([betId as BetId]);
+        const fullBetResult = await getBets([betId]);
         const fullBet = fullBetResult[0];
 
         if (!isAuthorized(req, res, fullBet.player)) {
@@ -61,7 +58,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
           resolve('');
         }
 
-        updateBet(betId as BetId, nominationId as NominationId)
+        updateBet(betId, nominationId)
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');
@@ -79,7 +76,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('BetId must be provided');
         resolve('');
       } else {
-        const fullBetResult = await getBets([betId as BetId]);
+        const fullBetResult = await getBets([betId]);
         const fullBet = fullBetResult[0];
 
         if (!isAuthorized(req, res, fullBet.player)) {
@@ -87,7 +84,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
           resolve('');
         }
 
-        deleteBet(betId as BetId)
+        deleteBet(betId)
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');

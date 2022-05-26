@@ -3,9 +3,7 @@ import {
   UserProfile,
   withApiAuthRequired
 } from '@auth0/nextjs-auth0';
-import AirtableError from 'airtable/lib/airtable_error';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getPlayerByAuth0Id } from 'services/airtable';
 
 const getPlayer = async (
   req: NextApiRequest,

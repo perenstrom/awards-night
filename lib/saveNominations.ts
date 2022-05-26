@@ -1,13 +1,5 @@
-import { getYear, updateYear } from 'services/airtable';
-import {
-  getCategories,
-  getNominationsByCategoryAndYear,
-  createNominations
-} from 'services/airtable';
 import {
   Category,
-  CategoryId,
-  FilmId,
   Nomination,
   Year
 } from 'types/nominations';
@@ -16,9 +8,9 @@ import { getGenericErrorMessage } from 'utils/statusMessages';
 import { triggerDeploy } from 'utils/triggerDeploy';
 
 export const saveNominations = async (data: {
-  category: CategoryId;
+  category: number;
   year: number;
-  films: FilmId[];
+  films: number[];
   nominees: string[];
 }): Promise<StatusMessage> => {
   const { category, year, films, nominees } = data;

@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { styled } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { getCategories, getYears } from 'services/airtable';
 import {
   Category,
   Nomination,

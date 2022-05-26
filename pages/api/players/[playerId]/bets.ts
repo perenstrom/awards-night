@@ -1,19 +1,17 @@
 import { isAuthorized } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getBetsForPlayer } from 'services/airtable';
-import { PlayerId } from 'types/nominations';
 
 const playerBets = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     return new Promise((resolve) => {
       const { playerId } = req.query;
 
-      if (!isAuthorized(req, res, playerId as PlayerId)) {
+      if (!isAuthorized(req, res, playerId)) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }
 
-      getBetsForPlayer(playerId as PlayerId)
+      getBetsForPlayer(playerId)
         .then((bets) => {
           res.status(200).json(bets);
           resolve('');

@@ -1,6 +1,5 @@
 import { ExternalFilm, Film } from 'types/nominations';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
-import { getFilmByImdb, createFilm } from 'services/airtable';
 import {
   getFilmByImdb as getFilmFromTmdbByImdbId,
   getFilm as getFilmFromTmdbByTmdbId

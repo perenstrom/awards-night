@@ -1,4 +1,3 @@
-import { getNominations } from 'services/airtable';
 import { NormalizedNominations, Year } from 'types/nominations';
 
 export const refreshNominations = async (

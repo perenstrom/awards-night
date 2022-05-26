@@ -5,7 +5,6 @@ import {
   Category,
   Nomination,
   NominationData,
-  NominationId,
   NormalizedNominations
 } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
@@ -29,7 +28,7 @@ const AdminYearPage: NextPage<Props> = ({
     useState<NormalizedNominations>(initialNominations);
 
   const updateNomination = async (
-    nominationId: NominationId,
+    nominationId: number,
     category: Category
   ) => {
     const winningNominationsInCategory = category.nominations.filter(

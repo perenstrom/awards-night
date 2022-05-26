@@ -5,10 +5,8 @@ import {
 } from '@auth0/nextjs-auth0';
 import { getNominationData } from 'lib/getNominationData';
 import {
-  BetId,
   Category,
   NominationData,
-  NominationId,
   Player
 } from 'types/nominations';
 import React, { useState, useEffect } from 'react';
@@ -22,7 +20,6 @@ import {
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import Head from 'next/head';
-import { getYears } from 'services/airtable';
 import { ParsedUrlQuery } from 'querystring';
 import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
@@ -43,7 +40,7 @@ const DashboardPage: NextPage<Props> = ({
   nominations,
   films
 }) => {
-  const [bets, setBets] = useState<Record<NominationId, BetId>>({});
+  const [bets, setBets] = useState<Record<number, number>>({});
   const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
@@ -57,7 +54,7 @@ const DashboardPage: NextPage<Props> = ({
     fetchDataAsync();
   }, []);
 
-  const updateBet = async (nominationId: NominationId, category: Category) => {
+  const updateBet = async (nominationId: number, category: Category) => {
     if (!player) {
       throw new Error('Trying to update bets for undefined player');
     }
@@ -73,14 +70,14 @@ const DashboardPage: NextPage<Props> = ({
 
     if (nominationsWithExistingBets[0] === nominationId) {
       // Removing bet
-      const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
+      const existingBet = bets[nominationsWithExistingBets[0]];
       await deleteBet(existingBet);
       const newBets = { ...bets };
       delete newBets[nominationsWithExistingBets[0]];
       setBets(newBets);
     } else if (nominationsWithExistingBets.length > 0) {
       // Updating bet in category
-      const existingBet = bets[nominationsWithExistingBets[0]] as BetId;
+      const existingBet = bets[nominationsWithExistingBets[0]];
       const updatedBet = await updateBetApi(existingBet, nominationId);
       const newBets = { ...bets };
       newBets[nominationId] = updatedBet.id;

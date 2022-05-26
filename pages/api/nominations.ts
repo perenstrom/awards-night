@@ -2,24 +2,19 @@ import { refreshNominations } from 'lib/refreshNominations';
 import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getYear, updateNomination } from 'services/airtable';
-import { airtableMap } from 'services/maps/airtableMap';
 import {
-  CategoryId,
-  FilmId,
   Nomination,
-  NominationId
 } from 'types/nominations';
 
 interface PatchRequestBody {
-  nominationId: NominationId;
+  nominationId: number;
   nomination: Nomination;
 }
 
 interface PostRequestBody {
-  category: CategoryId;
+  category: number;
   year: number;
-  films: FilmId[];
+  films: number[];
   nominees: string[];
 }
 

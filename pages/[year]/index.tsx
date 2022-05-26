@@ -5,7 +5,6 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
-import { getYears } from 'services/airtable';
 import { NominationData } from 'types/nominations';
 import { RequiredBy } from 'types/utilityTypes';
 
