@@ -13,9 +13,7 @@ import {
   Player,
   NominationMeta,
   Year,
-  NominationData,
-  BetId,
-  CategoryId
+  NominationData
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -35,6 +33,7 @@ import { getNominationData } from 'lib/getNominationData';
 import { getBettingData, getLoggedInPlayer } from 'services/local';
 import { useUser } from '@auth0/nextjs-auth0';
 import { Nullable } from 'types/utilityTypes';
+import { prismaContext } from 'lib/prisma';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -83,10 +82,15 @@ const CategoryPage: NextPage<Props> = ({
         try {
           const player = await getLoggedInPlayer();
           const bettingData = await getBettingData({
-            categories: initialCategories,
-            nominations: initialNominations,
-            playerId: player.id,
-            year: year
+            nominationData: {
+              year,
+              categories: normalizedCategories,
+              nominations,
+              films,
+              meta
+            },
+            group: player.group || 0,
+            playerId: player.id
           });
           setBets(bettingData.bets);
           setPlayers(bettingData.players);
@@ -98,8 +102,12 @@ const CategoryPage: NextPage<Props> = ({
     };
     fetchDataAsync();
   }, [
+    films,
     initialCategories,
     initialNominations,
+    meta,
+    nominations,
+    normalizedCategories,
     setBets,
     setNominationBets,
     setPlayers,
@@ -112,12 +120,12 @@ const CategoryPage: NextPage<Props> = ({
     categories[0]?.slug ??
     Object.keys(initialCategories)[0];
   const category: Category = normalizedCategories
-    ? normalizedCategories[currentSlug as CategoryId]
-    : initialCategories[currentSlug as CategoryId];
+    ? normalizedCategories[currentSlug]
+    : initialCategories[currentSlug];
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     nominations ? nominations[n] : initialNominations[n]
   );
-  const categoryBetIds: BetId[] = categoryNominations.flatMap(
+  const categoryBetIds: number[] = categoryNominations.flatMap(
     (n) => nominationBets?.[n.id] || []
   );
   const categoryBets = bets
@@ -180,7 +188,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   }
 
   const nominationData: Nullable<NominationData> = await getNominationData(
-    parseInt(context.params.year, 10)
+    parseInt(context.params.year, 10),
+    prismaContext
   );
   if (!nominationData) {
     throw new Error('Error when fetching nomination data');

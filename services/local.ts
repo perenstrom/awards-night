@@ -1,17 +1,10 @@
 import {
   Bet,
-  BetId,
   BettingData,
-  CategoryId,
-  FilmId,
   Nomination,
-  NominationId,
-  NormalizedCategories,
-  NormalizedNominations,
+  NominationData,
   Player,
-  PlayerId,
-  TmdbFilmResult,
-  Year
+  TmdbFilmResult
 } from 'types/nominations';
 import { StatusMessage } from 'types/utilityTypes';
 
@@ -21,8 +14,8 @@ export const defaultHeaders = {
 };
 
 export const createBet = async (
-  playerId: PlayerId,
-  nominationId: NominationId
+  playerId: number,
+  nominationId: number
 ): Promise<Bet> => {
   const url = '/api/bets';
   const options: RequestInit = {
@@ -48,22 +41,21 @@ export const getLoggedInPlayer = async (): Promise<Player> => {
 };
 
 export const getBetsForPlayer = async (
-  playerId: PlayerId
-): Promise<Record<NominationId, BetId>> => {
+  playerId: number
+): Promise<Record<number, number>> => {
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
     method: 'GET',
     headers: defaultHeaders
   };
 
-  return apiResult<Record<NominationId, BetId>>(url, options);
+  return apiResult<Record<number, number>>(url, options);
 };
 
 export const getBettingData = async (data: {
-  year: Year;
-  categories: NormalizedCategories;
-  nominations: NormalizedNominations;
-  playerId: PlayerId;
+  nominationData: NominationData;
+  group: number;
+  playerId: number;
 }): Promise<BettingData> => {
   const url = `/api/bets/bettingdata`;
 
@@ -77,8 +69,8 @@ export const getBettingData = async (data: {
 };
 
 export const updateBet = async (
-  betId: BetId,
-  nominationId: NominationId
+  betId: number,
+  nominationId: number
 ): Promise<Bet> => {
   const url = '/api/bets';
   const options: RequestInit = {
@@ -93,7 +85,7 @@ export const updateBet = async (
   return apiResult<Bet>(url, options);
 };
 
-export const deleteBet = async (betId: BetId): Promise<BetId> => {
+export const deleteBet = async (betId: number): Promise<number> => {
   const url = '/api/bets';
   const options: RequestInit = {
     method: 'DELETE',
@@ -103,13 +95,13 @@ export const deleteBet = async (betId: BetId): Promise<BetId> => {
     })
   };
 
-  return apiResult<BetId>(url, options);
+  return apiResult<number>(url, options);
 };
 
 export const createNominations = async (data: {
-  category: CategoryId;
+  category: number;
   year: number;
-  films: FilmId[];
+  films: number[];
   nominees: string[];
 }): Promise<StatusMessage> => {
   const url = '/api/nominations';
@@ -123,7 +115,7 @@ export const createNominations = async (data: {
 };
 
 export const updateNomination = async (
-  nominationId: NominationId,
+  nominationId: number,
   nomination: Partial<Nomination>
 ): Promise<Nomination> => {
   const url = '/api/nominations';
