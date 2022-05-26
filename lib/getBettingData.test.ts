@@ -269,12 +269,12 @@ describe('getBettingData', () => {
         {
           id: 5,
           player: 1,
-          nomination: 11
+          nomination: 12
         },
         {
           id: 6,
           player: 2,
-          nomination: 11
+          nomination: 12
         }
       ],
       players: [
@@ -282,7 +282,7 @@ describe('getBettingData', () => {
           id: 1,
           auth0UserId: 'user1',
           name: 'Player 1',
-          correct: 1,
+          correct: 2,
           bets: [3, 5],
           group: 1
         },
@@ -290,7 +290,7 @@ describe('getBettingData', () => {
           id: 2,
           auth0UserId: 'user2',
           name: 'Player 2',
-          correct: 2,
+          correct: 1,
           bets: [4, 6],
           group: 1
         }
@@ -298,7 +298,7 @@ describe('getBettingData', () => {
       nominationBets: {
         1: [3],
         4: [4],
-        11: [5, 6]
+        12: [5, 6]
       }
     };
 

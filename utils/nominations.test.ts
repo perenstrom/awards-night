@@ -1,7 +1,6 @@
 import {
+  Bet,
   Category,
-  NominationBets,
-  NormalizedBets,
   NormalizedNominations,
   NormalizedPlayers,
   Player
@@ -95,15 +94,6 @@ const nominations: NormalizedNominations = {
   }
 };
 
-const nominationBets: NominationBets = {
-  1: [1, 2],
-  2: [],
-  3: [3],
-  4: [4],
-  5: [],
-  6: []
-};
-
 const players: Player[] = [
   {
     id: 1,
@@ -121,29 +111,28 @@ const players: Player[] = [
   }
 ];
 
-const bets: NormalizedBets = {
-  1: {
+const bets: Bet[] = [
+  {
     id: 1,
     nomination: 1,
     player: 1
   },
-  2: {
+  {
     id: 2,
     nomination: 1,
     player: 2
   },
-  3: {
+  {
     id: 3,
     nomination: 3,
     player: 1
   },
-  4: {
+  {
     id: 4,
     nomination: 4,
     player: 2
   }
-};
-
+];
 describe('calculateCompletedCategories', () => {
   it('returns correct number of completed categories', async () => {
     const completedCategories = calculateCompletedCategories(
@@ -175,9 +164,7 @@ describe('calculatePlayerWinnings', () => {
 
     const enhancedPlayers: NormalizedPlayers = addPlayersWinnings(
       players,
-      categories,
       nominations,
-      nominationBets,
       bets
     );
     expect(enhancedPlayers).toEqual(expectedPlayers);

@@ -47,7 +47,7 @@ export const getPlayersWithBetsResponseFixture = (
           {
             id: 5,
             playerId: 1,
-            nominationId: 11
+            nominationId: 12
           }
         ],
         groupId: 1
@@ -65,7 +65,7 @@ export const getPlayersWithBetsResponseFixture = (
           {
             id: 6,
             playerId: 2,
-            nominationId: 11
+            nominationId: 12
           }
         ],
         groupId: 1
@@ -80,7 +80,7 @@ export const getPlayersWithBetsResponseFixture = (
           {
             id: 7,
             playerId: 3,
-            nominationId: 11
+            nominationId: 12
           }
         ],
         groupId: 1

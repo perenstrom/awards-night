@@ -15,12 +15,12 @@ export const getBetsResponseFixture = (): Bet[] => {
     {
       id: 5,
       playerId: 1,
-      nominationId: 11
+      nominationId: 12
     },
     {
       id: 6,
       playerId: 2,
-      nominationId: 11
+      nominationId: 12
     }
   ];
 
