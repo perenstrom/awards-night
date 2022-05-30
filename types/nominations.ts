@@ -42,7 +42,6 @@ interface BaseFilm {
 export interface Film extends BaseFilm {
   imdbId: string;
 }
-export type ExternalFilm = Omit<Film, 'id'>;
 export interface TmdbFilmResult extends BaseFilm {
   tmdbId: number;
 }

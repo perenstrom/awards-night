@@ -80,6 +80,12 @@ export const prismaMap = {
       name: filmResponse.name,
       poster: filmResponse.posterUrl || '',
       releaseDate: filmResponse.releaseDate?.toDateString() || ''
+    }),
+    toPrisma: (film: Film): Prisma.FilmCreateInput => ({
+      imdbId: film.imdbId,
+      name: film.name,
+      posterUrl: film.poster,
+      releaseDate: film.releaseDate
     })
   },
   bet: {

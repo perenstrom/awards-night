@@ -30,7 +30,7 @@ export const NominationFields: React.FC<Props> = ({
             fullWidth
           >
             {availableFilms.map((film) => (
-              <option key={film.id} value={film.id}>
+              <option key={film.imdbId} value={film.imdbId}>
                 {film.name}
               </option>
             ))}
