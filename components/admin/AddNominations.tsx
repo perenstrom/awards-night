@@ -119,7 +119,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                 select
               >
                 {availableYears.map((year) => (
-                  <option key={year.id} value={year.year}>
+                  <option key={year.year} value={year.year}>
                     {year.year}
                   </option>
                 ))}
@@ -137,7 +137,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                   select
                 >
                   {availableCategories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.slug} value={category.slug}>
                       {category.name}
                     </option>
                   ))}

@@ -3,9 +3,11 @@ import {
   Film as PrismaFilm,
   Nomination as PrismaNomination,
   Bet as PrismaBet,
-  Player as PrismaPlayer
+  Player as PrismaPlayer,
+  Prisma
 } from '@prisma/client';
 import {
+  CategoryWithNominations,
   PlayerWithBets,
   YearWithNominationsAndCategories
 } from 'services/prisma/prisma.types';
@@ -17,6 +19,7 @@ import {
   Player,
   Year
 } from 'types/nominations';
+import { PartialBy } from 'types/utilityTypes';
 
 export const prismaMap = {
   year: {
@@ -38,7 +41,17 @@ export const prismaMap = {
       nominations: [],
       previousCategory: null,
       nextCategory: null
-    })
+    }),
+    withNominations: {
+      fromPrisma: (
+        categoryResponse: CategoryWithNominations
+      ): { category: Category; nominations: Nomination[] } => ({
+        category: prismaMap.category.fromPrisma(categoryResponse),
+        nominations: categoryResponse.nominations.map((n) =>
+          prismaMap.nomination.fromPrisma(n)
+        )
+      })
+    }
   },
   nomination: {
     fromPrisma: (nominationResponse: PrismaNomination): Nomination => ({
@@ -49,6 +62,16 @@ export const prismaMap = {
       film: nominationResponse.filmId,
       nominee: nominationResponse.nominee || '',
       decided: nominationResponse.decided
+    }),
+    toPrisma: (
+      nomination: PartialBy<Nomination, 'id'>
+    ): Prisma.NominationCreateManyInput => ({
+      yearId: nomination.year,
+      categoryId: nomination.category,
+      nominee: nomination.nominee,
+      won: nomination.won,
+      decided: nomination.decided,
+      filmId: nomination.film
     })
   },
   film: {

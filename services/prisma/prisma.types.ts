@@ -12,6 +12,13 @@ const playerWithBets = Prisma.validator<Prisma.PlayerArgs>()({
 });
 export type PlayerWithBets = Prisma.PlayerGetPayload<typeof playerWithBets>;
 
+const categoryWithNominations = Prisma.validator<Prisma.CategoryArgs>()({
+  include: { nominations: true }
+});
+export type CategoryWithNominations = Prisma.CategoryGetPayload<
+  typeof categoryWithNominations
+>;
+
 export type Context = {
   prisma: PrismaClient;
 };

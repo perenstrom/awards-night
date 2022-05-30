@@ -25,14 +25,8 @@ export const getYear = async (
   }
 };
 
-export const getYears = async (
-  years: number[],
-  ctx: Context
-): Promise<Year[]> => {
+export const getYears = async (ctx: Context): Promise<Year[]> => {
   const result = await ctx.prisma.year.findMany({
-    where: {
-      year: { in: years }
-    },
     include: {
       nominations: true,
       yearsCategories: true
@@ -43,5 +37,32 @@ export const getYears = async (
     return [];
   } else {
     return result.map((year) => prismaMap.year.fromPrisma(year));
+  }
+};
+
+export const connectCategoryToYear = async (
+  category: string,
+  year: number,
+  ctx: Context
+): Promise<boolean> => {
+  const result = await ctx.prisma.yearToCategory.create({
+    data: {
+      categories: {
+        connect: {
+          slug: category
+        }
+      },
+      years: {
+        connect: {
+          year: year
+        }
+      }
+    }
+  });
+
+  if (result) {
+    return true;
+  } else {
+    return false;
   }
 };

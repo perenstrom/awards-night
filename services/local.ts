@@ -99,9 +99,9 @@ export const deleteBet = async (betId: number): Promise<number> => {
 };
 
 export const createNominations = async (data: {
-  category: number;
+  category: string;
   year: number;
-  films: number[];
+  films: string[];
   nominees: string[];
 }): Promise<StatusMessage> => {
   const url = '/api/nominations';

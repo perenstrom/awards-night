@@ -33,6 +33,7 @@ import { getBettingData, getLoggedInPlayer } from 'services/local';
 import { useUser } from '@auth0/nextjs-auth0';
 import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
+import { getCategories, getYears } from 'services/prisma';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -218,11 +219,11 @@ export const initializeRecoilState = (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const years = await getYears();
+  const years = await getYears(prismaContext);
 
   const paths = [];
   for (const year of years) {
-    const categories = await getCategories(year.categories);
+    const categories = await getCategories(year.categories, prismaContext);
     paths.push(
       categories.map((category) => ({
         params: { year: year.year.toString(), category: category.slug }
