@@ -69,6 +69,23 @@ export const getBetsForNominations = async (
   }
 };
 
+export const getBetsForPlayer = async (
+  playerId: number,
+  ctx: Context
+): Promise<Bet[]> => {
+  const result = await ctx.prisma.bet.findMany({
+    where: {
+      playerId: playerId
+    }
+  });
+
+  if (!result || result.length === 0) {
+    return [];
+  } else {
+    return result.map((bet) => prismaMap.bet.fromPrisma(bet));
+  }
+};
+
 export const updateBet = async (
   betId: number,
   nominationId: number,
