@@ -6,7 +6,9 @@ import {
   NormalizedNominations,
   NormalizedPlayers,
   NominationMeta,
-  NominationBets
+  NominationBets,
+  Player,
+  Bet
 } from 'types/nominations';
 import {
   calculateCompletedCategories,
@@ -38,7 +40,7 @@ export const categoriesState = selector<Category[]>({
   get: ({ get }) => {
     const normalizedCategories = get(normalizedCategoriesState);
     return normalizedCategories
-      ? (Object.entries(normalizedCategories) as [number, Category][]).map(
+      ? (Object.entries(normalizedCategories) as [string, Category][]).map(
           (c) => c[1]
         )
       : [];
@@ -77,18 +79,14 @@ export const playerState = selector<NormalizedPlayers>({
   key: 'normalizedPlayersState',
   get: ({ get }) => {
     const players = get(rawPlayersState);
-    const categories = get(categoriesState);
     const nominations = get(nominationsState);
-    const nominationBets = get(nominationBetsState);
     const bets = get(betsState);
 
     if (players) {
       return addPlayersWinnings(
-        categories,
+        (Object.entries(players) as [string, Player][]).map((c) => c[1]),
         nominations,
-        nominationBets,
-        bets,
-        players
+        (Object.entries(bets) as [string, Bet][]).map((c) => c[1])
       );
     } else {
       return players;
