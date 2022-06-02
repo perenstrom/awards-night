@@ -33,8 +33,9 @@ export const getFilm = (tmdbId: string): Promise<Nullable<ExternalFilm>> => {
     });
 };
 
-export const getFilmByImdb = (imdbId: string): Promise<Nullable<ExternalFilm>> =>
-  getFilm(imdbId);
+export const getFilmByImdb = (
+  imdbId: string
+): Promise<Nullable<ExternalFilm>> => getFilm(imdbId);
 
 export const searchFilms = (
   searchString: string
