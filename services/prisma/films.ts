@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prismaMap } from 'services/maps/prismaMap';
 
 import type { Film } from 'types/nominations';
@@ -25,11 +26,15 @@ export const getFilms = async (
   films: string[],
   ctx: Context
 ): Promise<Film[]> => {
-  const result = await ctx.prisma.film.findMany({
-    where: {
-      imdbId: { in: films }
-    }
-  });
+  const args: Prisma.FilmFindManyArgs =
+    films.length > 0
+      ? {
+          where: {
+            imdbId: { in: films }
+          }
+        }
+      : {};
+  const result = await ctx.prisma.film.findMany(args);
 
   if (result.length === 0) {
     return [];

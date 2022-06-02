@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prismaMap } from 'services/maps/prismaMap';
 
 import type { Category, Nomination } from 'types/nominations';
@@ -7,11 +8,15 @@ export const getCategories = async (
   categories: string[],
   ctx: Context
 ): Promise<Category[]> => {
-  const result = await ctx.prisma.category.findMany({
-    where: {
-      slug: { in: categories }
-    }
-  });
+  const args: Prisma.CategoryFindManyArgs =
+    categories.length > 0
+      ? {
+          where: {
+            slug: { in: categories }
+          }
+        }
+      : {};
+  const result = await ctx.prisma.category.findMany(args);
 
   if (result.length === 0) {
     return [];

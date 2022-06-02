@@ -60,26 +60,3 @@ export const updateNomination = async (
     throw error;
   }
 };
-
-/* export const updateNomination = async (
-  nominationId: NominationId,
-  nomination: Partial<NominationRecord>
-): Promise<Nomination> => {
-  console.log(
-    `Updating nomination:\n${JSON.stringify(
-      { nominationId, ...nomination },
-      null,
-      2
-    )}`
-  );
-
-  return new Promise((resolve, reject) => {
-    nominationsBase
-      .update(nominationId, nomination)
-      .then((result) => resolve(airtableMap.nomination.fromAirtable(result)))
-      .catch((error) => {
-        reject(error);
-        console.error(error);
-      });
-  });
-}; */

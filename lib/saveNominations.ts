@@ -50,16 +50,16 @@ export const saveNominations = async (data: {
 }): Promise<StatusMessage> => {
   const { category, year, films, nominees } = data;
 
-  const { data: fetchedData, success: fetchSuccess } = await getData({
+  const result = await getData({
     category,
     year
   });
 
-  if (!fetchSuccess) {
+  if (!result.success) {
     return getGenericErrorMessage();
   }
 
-  const { fullYear, fullCategory, existingNominations } = fetchedData;
+  const { fullYear, fullCategory, existingNominations } = result.data;
 
   if (existingNominations.length > 0) {
     return {

@@ -1,5 +1,7 @@
 import { isAuthorized } from 'lib/authorization';
+import { prismaContext } from 'lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createBet, deleteBet, getBet, updateBet } from 'services/prisma/bets';
 
 interface PostRequestBody {
   playerId: number;
@@ -29,10 +31,13 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both playerId and nominationId must be provided');
         resolve('');
       } else {
-        createBet({
-          player: playerId,
-          nomination: nominationId
-        })
+        createBet(
+          {
+            player: playerId,
+            nomination: nominationId
+          },
+          prismaContext
+        )
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');
@@ -48,17 +53,21 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
       const { betId, nominationId }: PatchRequestBody = req.body;
       if (!betId || !nominationId) {
         res.status(400).end('Both betId and nominationId must be provided');
-        resolve('');
+        return resolve('');
       } else {
-        const fullBetResult = await getBets([betId]);
-        const fullBet = fullBetResult[0];
+        const fullBet = await getBet(betId, prismaContext);
+
+        if (!fullBet) {
+          res.status(400).end('Failed to fetch bet');
+          return resolve('');
+        }
 
         if (!isAuthorized(req, res, fullBet.player)) {
           res.status(401).end('Unauthorized.');
-          resolve('');
+          return resolve('');
         }
 
-        updateBet(betId, nominationId)
+        updateBet(betId, nominationId, prismaContext)
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');
@@ -76,26 +85,27 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('BetId must be provided');
         resolve('');
       } else {
-        const fullBetResult = await getBets([betId]);
-        const fullBet = fullBetResult[0];
+        const fullBet = await getBet(betId, prismaContext);
+
+        if (!fullBet) {
+          res.status(400).end('Failed to fetch bet');
+          return resolve('');
+        }
 
         if (!isAuthorized(req, res, fullBet.player)) {
           res.status(401).end('Unauthorized.');
-          resolve('');
+          return resolve('');
         }
 
-        deleteBet(betId)
+        deleteBet(betId, prismaContext)
           .then((bet) => {
             res.status(200).json(bet);
-            resolve('');
+            return resolve('');
           })
           .catch((error) => {
-            if (error instanceof AirtableError) {
-              res.status(error.statusCode).end(error.message);
-            } else {
-              res.status(500).end('Internal server error');
-              return reject('');
-            }
+            console.log(error);
+            res.status(500).end('Internal server error');
+            return reject('');
           });
       }
     });

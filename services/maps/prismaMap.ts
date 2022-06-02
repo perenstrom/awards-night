@@ -93,6 +93,18 @@ export const prismaMap = {
       id: betResponse.id,
       player: betResponse.playerId,
       nomination: betResponse.nominationId
+    }),
+    toPrisma: (bet: PartialBy<Bet, 'id'>): Prisma.BetCreateInput => ({
+      nomination: {
+        connect: {
+          id: bet.nomination
+        }
+      },
+      player: {
+        connect: {
+          id: bet.player
+        }
+      }
     })
   },
   player: {
