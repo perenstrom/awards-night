@@ -62,7 +62,7 @@ model Nomination {
 model Player {
   id          Int     @id @default(autoincrement())
   name        String
-  auth0UserId String? @map("auth0_user_id")
+  auth0UserId String? @unique @map("auth0_user_id")
   groupId     Int?    @map("group_id")
   groups      Group?  @relation(fields: [groupId], references: [id], onDelete: NoAction)
   bets        Bet[]

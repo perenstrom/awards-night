@@ -3,7 +3,9 @@ import {
   UserProfile,
   withApiAuthRequired
 } from '@auth0/nextjs-auth0';
+import { prismaContext } from 'lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getPlayerByAuth0Id } from 'services/prisma/players';
 
 const getPlayer = async (
   req: NextApiRequest,
@@ -20,7 +22,7 @@ const getPlayer = async (
         return resolve();
       }
 
-      getPlayerByAuth0Id(auth0id as string)
+      getPlayerByAuth0Id(auth0id, prismaContext)
         .then((player) => {
           if (player) {
             res.status(200).json(player);
@@ -31,12 +33,8 @@ const getPlayer = async (
           }
         })
         .catch((error) => {
-          if (error instanceof AirtableError) {
-            res.status(500).end(error.message);
-          } else {
-            console.log(error);
-            res.status(500).end('Internal server error');
-          }
+          console.log(error);
+          res.status(500).end('Internal server error');
           return resolve();
         });
     } else {
