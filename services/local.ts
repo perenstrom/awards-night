@@ -40,16 +40,14 @@ export const getLoggedInPlayer = async (): Promise<Player> => {
   return apiResult<Player>(url, options);
 };
 
-export const getBetsForPlayer = async (
-  playerId: number
-): Promise<Record<number, number>> => {
+export const getBetsForPlayer = async (playerId: number): Promise<Bet[]> => {
   const url = `/api/players/${playerId}/bets`;
   const options: RequestInit = {
     method: 'GET',
     headers: defaultHeaders
   };
 
-  return apiResult<Record<number, number>>(url, options);
+  return apiResult<Bet[]>(url, options);
 };
 
 export const getBettingData = async (data: {

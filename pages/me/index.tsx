@@ -8,6 +8,8 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
+import { getYears } from 'services/prisma';
+import { prismaContext } from 'lib/prisma';
 
 interface Props {
   years: Year[];
@@ -46,7 +48,7 @@ const DashboardPage: NextPage<Props> = ({ years }) => {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const years = await getYears();
+  const years = await getYears(prismaContext);
 
   return {
     props: { years }

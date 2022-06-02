@@ -4,11 +4,7 @@ import {
   WithPageAuthRequiredProps
 } from '@auth0/nextjs-auth0';
 import { getNominationData } from 'lib/getNominationData';
-import {
-  Category,
-  NominationData,
-  Player
-} from 'types/nominations';
+import { Bet, Category, NominationData, Player } from 'types/nominations';
 import React, { useState, useEffect } from 'react';
 import {
   createBet,
@@ -25,6 +21,8 @@ import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 import { RequiredBy } from 'types/utilityTypes';
 import Link from 'next/link';
+import { prismaContext } from 'lib/prisma';
+import { getYears } from 'services/prisma';
 
 const Loading = styled('span')`
   font-size: 1rem;
@@ -34,13 +32,25 @@ const Loading = styled('span')`
 type Props = NominationData;
 type State = 'idle' | 'loading' | 'saving';
 
+const getBetForNomination = (bets: Bet[], nominationId: number) => {
+  const filteredBets = bets.filter((bet) => bet.nomination === nominationId);
+
+  if (filteredBets.length > 1) {
+    throw new Error('More than one bet for the requested nomination');
+  } else if (filteredBets.length === 0) {
+    return null;
+  } else {
+    return filteredBets[0];
+  }
+};
+
 const DashboardPage: NextPage<Props> = ({
   year,
   categories,
   nominations,
   films
 }) => {
-  const [bets, setBets] = useState<Record<number, number>>({});
+  const [bets, setBets] = useState<Bet[]>([]);
   const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
@@ -61,7 +71,7 @@ const DashboardPage: NextPage<Props> = ({
 
     setState('saving');
     const nominationsWithExistingBets = category.nominations.filter(
-      (nominationId) => Object.keys(bets).includes(nominationId)
+      (nominationId) => bets.map((b) => b.nomination).includes(nominationId)
     );
 
     if (nominationsWithExistingBets.length > 1) {
@@ -70,23 +80,29 @@ const DashboardPage: NextPage<Props> = ({
 
     if (nominationsWithExistingBets[0] === nominationId) {
       // Removing bet
-      const existingBet = bets[nominationsWithExistingBets[0]];
-      await deleteBet(existingBet);
-      const newBets = { ...bets };
-      delete newBets[nominationsWithExistingBets[0]];
+      const existingBet = getBetForNomination(
+        bets,
+        nominationsWithExistingBets[0]
+      );
+      if (!existingBet) {
+        throw new Error('No bet found');
+      }
+      await deleteBet(existingBet.id);
+      const newBets = bets.filter((bet) => bet.id !== existingBet.id);
       setBets(newBets);
     } else if (nominationsWithExistingBets.length > 0) {
       // Updating bet in category
       const existingBet = bets[nominationsWithExistingBets[0]];
-      const updatedBet = await updateBetApi(existingBet, nominationId);
-      const newBets = { ...bets };
-      newBets[nominationId] = updatedBet.id;
-      delete newBets[nominationsWithExistingBets[0]];
+      const updatedBet = await updateBetApi(existingBet.id, nominationId);
+      const newBets = bets.filter((bet) => bet.id !== existingBet.id);
+      newBets.push(updatedBet);
       setBets(newBets);
     } else {
       // First bet in category
       const savedBet = await createBet(player.id, nominationId);
-      setBets({ ...bets, [nominationId]: savedBet.id });
+      const newBets = [...bets];
+      newBets.push(savedBet);
+      setBets(newBets);
     }
 
     setState('idle');
@@ -111,7 +127,7 @@ const DashboardPage: NextPage<Props> = ({
         </Typography>
         {!year.bettingOpen && <p>Betting is closed</p>}
         {(Object.values(categories) as Category[]).map((category) => (
-          <div key={category.id}>
+          <div key={category.slug}>
             <Typography variant="h2">{category.name}</Typography>
             <CategoryBets>
               {category.nominations.map((nominationId) => {
@@ -126,7 +142,7 @@ const DashboardPage: NextPage<Props> = ({
                     filmName={films[nomination.film].name}
                     poster={films[nomination.film].poster}
                     nominee={nomination.nominee}
-                    activeBet={Object.keys(bets).includes(nomination.id)}
+                    activeBet={!!getBetForNomination(bets, nomination.id)}
                     bettingOpen={year.bettingOpen}
                     onClick={state === 'idle' ? updateBet : () => null}
                   />
@@ -148,7 +164,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
   const nominationData = await getNominationData(
-    parseInt((context as RequiredBy<typeof context, 'params'>).params.year, 10)
+    parseInt((context as RequiredBy<typeof context, 'params'>).params.year, 10),
+    prismaContext
   );
   if (!nominationData) {
     throw new Error('Error when fetching nomination data');
@@ -160,7 +177,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const years = await getYears();
+  const years = await getYears(prismaContext);
   const paths = years.map((year) => ({
     params: { year: year.year.toString() }
   }));
