@@ -55,9 +55,15 @@ const DashboardPage: NextPage<Props> = ({
   const [state, setState] = useState<State>('loading');
   useEffect(() => {
     const fetchDataAsync = async () => {
-      const player = await getLoggedInPlayer();
-      const bets = await getBetsForPlayer(player.id);
-      setPlayer(player);
+      const playerResult = await getLoggedInPlayer();
+      if (!playerResult.success) {
+        console.log(playerResult.error);
+        setState('idle');
+        return;
+      }
+
+      const bets = await getBetsForPlayer(playerResult.data.id);
+      setPlayer(playerResult.data);
       setBets(bets);
       setState('idle');
     };

@@ -6,7 +6,9 @@ import {
   Player,
   TmdbFilmResult
 } from 'types/nominations';
-import { StatusMessage } from 'types/utilityTypes';
+import { Maybe, StatusMessage } from 'types/utilityTypes';
+import { ERROR_CODES, getError } from 'utils/errors';
+import { createError, createSuccess } from 'utils/maybeHelper';
 
 export const defaultHeaders = {
   Accept: 'application/json',
@@ -27,10 +29,15 @@ export const createBet = async (
     })
   };
 
-  return apiResult<Bet>(url, options);
+  const result = await apiResult<Bet>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
-export const getLoggedInPlayer = async (): Promise<Player> => {
+export const getLoggedInPlayer = async (): Promise<Maybe<Player>> => {
   const url = `/api/players/me`;
   const options: RequestInit = {
     method: 'GET',
@@ -47,7 +54,12 @@ export const getBetsForPlayer = async (playerId: number): Promise<Bet[]> => {
     headers: defaultHeaders
   };
 
-  return apiResult<Bet[]>(url, options);
+  const result = await apiResult<Bet[]>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const getBettingData = async (data: {
@@ -63,7 +75,12 @@ export const getBettingData = async (data: {
     body: JSON.stringify(data)
   };
 
-  return apiResult<BettingData>(url, options);
+  const result = await apiResult<BettingData>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const updateBet = async (
@@ -80,7 +97,12 @@ export const updateBet = async (
     })
   };
 
-  return apiResult<Bet>(url, options);
+  const result = await apiResult<Bet>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const deleteBet = async (betId: number): Promise<number> => {
@@ -93,7 +115,12 @@ export const deleteBet = async (betId: number): Promise<number> => {
     })
   };
 
-  return apiResult<number>(url, options);
+  const result = await apiResult<number>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const createNominations = async (data: {
@@ -109,7 +136,12 @@ export const createNominations = async (data: {
     body: JSON.stringify(data)
   };
 
-  return apiResult<StatusMessage>(url, options);
+  const result = await apiResult<StatusMessage>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const updateNomination = async (
@@ -126,7 +158,12 @@ export const updateNomination = async (
     })
   };
 
-  return apiResult<Nomination>(url, options);
+  const result = await apiResult<Nomination>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
@@ -139,7 +176,12 @@ export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
     })
   };
 
-  return apiResult<StatusMessage>(url, options);
+  const result = await apiResult<StatusMessage>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const createFilmByTmdb = async (
@@ -154,7 +196,12 @@ export const createFilmByTmdb = async (
     })
   };
 
-  return apiResult<StatusMessage>(url, options);
+  const result = await apiResult<StatusMessage>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
 export const searchFilms = async (query: string): Promise<TmdbFilmResult[]> => {
@@ -164,23 +211,33 @@ export const searchFilms = async (query: string): Promise<TmdbFilmResult[]> => {
     headers: defaultHeaders
   };
 
-  return apiResult<TmdbFilmResult[]>(url, options);
+  const result = await apiResult<TmdbFilmResult[]>(url, options);
+  if (result.success) {
+    return result.data;
+  } else {
+    throw new Error(result.error.message);
+  }
 };
 
-const apiResult = <K>(url: RequestInfo, options: RequestInit): Promise<K> =>
-  new Promise((resolve, reject) => {
+const apiResult = <K>(
+  url: RequestInfo,
+  options: RequestInit
+): Promise<Maybe<K>> =>
+  new Promise((resolve) => {
     fetch(url, options)
       .then((response) => {
         if (response.status === 200) {
-          resolve(response.json());
+          resolve(createSuccess<K>(response.json() as unknown as K));
+        } else if (response.status === 404) {
+          resolve(createError(getError(ERROR_CODES.API_RESULT_404)));
         } else {
-          process.env.NODE_ENV === 'development' &&
-            console.error(response.status);
-          reject(response.status);
+          resolve(createError(getError(ERROR_CODES.API_RESULT_UNHANDLED_CODE)));
         }
       })
       .catch((error) => {
         console.error(error);
-        reject(error);
+        resolve(
+          createError(getError(ERROR_CODES.API_RESULT_UNHANDLED_EXCEPTION))
+        );
       });
   });
