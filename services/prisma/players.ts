@@ -45,6 +45,7 @@ export const getPlayerByAuth0Id = async (
   auth0Id: string,
   ctx: Context
 ): Promise<Nullable<Player>> => {
+  console.log(`Finding player with auth0id ${auth0Id}`);
   const result = await ctx.prisma.player.findUnique({
     where: {
       auth0UserId: auth0Id

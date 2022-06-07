@@ -227,12 +227,17 @@ const apiResult = <K>(
     fetch(url, options)
       .then((response) => {
         if (response.status === 200) {
-          resolve(createSuccess<K>(response.json() as unknown as K));
+          return response.json();
+        } else if (response.status === 401) {
+          resolve(createError(getError(ERROR_CODES.API_RESULT_401)));
         } else if (response.status === 404) {
           resolve(createError(getError(ERROR_CODES.API_RESULT_404)));
         } else {
           resolve(createError(getError(ERROR_CODES.API_RESULT_UNHANDLED_CODE)));
         }
+      })
+      .then((response) => {
+        resolve(createSuccess<K>(response as unknown as K));
       })
       .catch((error) => {
         console.error(error);

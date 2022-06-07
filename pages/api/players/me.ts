@@ -14,10 +14,10 @@ const getPlayer = async (
   return new Promise((resolve) => {
     if (req.method === 'GET') {
       const { user } = <{ user: UserProfile }>getSession(req, res);
-
       const { sub: auth0id } = user;
 
       if (!auth0id) {
+        console.log('No auth0id found on user session');
         res.status(404).end();
         return resolve();
       }
@@ -28,6 +28,7 @@ const getPlayer = async (
             res.status(200).json(player);
             return resolve();
           } else {
+            console.log(`No player matching auth0id ${auth0id}`);
             res.status(404).end();
             return resolve();
           }
