@@ -1,3 +1,5 @@
+import { NumberRecord } from './utilityTypes';
+
 export interface Year {
   year: number;
   name: string;
@@ -7,7 +9,7 @@ export interface Year {
   nominations: number[];
 }
 
-export type NormalizedYears = Record<number, Year>;
+export type NormalizedYears = NumberRecord<Year>;
 
 export interface Nomination {
   id: number;
@@ -19,10 +21,10 @@ export interface Nomination {
   decided: boolean;
 }
 
-export type NormalizedNominations = Record<number, Nomination>;
+export type NormalizedNominations = NumberRecord<Nomination>;
 
 // Record<NominationId, BetId[]>
-export type NominationBets = Record<number, number[]>;
+export type NominationBets = NumberRecord<number[]>;
 
 export interface Category {
   slug: string;
@@ -55,7 +57,7 @@ export interface Bet {
   nomination: number;
 }
 
-export type NormalizedBets = Record<number, Bet>;
+export type NormalizedBets = NumberRecord<Bet>;
 
 export interface Player {
   id: number;
@@ -66,7 +68,7 @@ export interface Player {
   auth0UserId?: string | null;
 }
 
-export type NormalizedPlayers = Record<number, Player>;
+export type NormalizedPlayers = NumberRecord<Player>;
 
 export interface NominationMeta {
   completedCategories: number;

@@ -6,6 +6,11 @@ export type RequiredBy<T, K extends keyof T> = Omit<T, K> &
 export type AnyObject = { [key: string]: any };
 export type Nullable<T> = T | null | undefined;
 
+export type NumberRecord<T> = {
+  length?: undefined;
+  [n: number]: T;
+}
+
 export type PropsWithUser<T> = T & { user: UserProfile };
 
 export type Severity = 'error' | 'warning' | 'info' | 'success';

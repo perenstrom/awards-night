@@ -9,7 +9,6 @@ import {
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  Player,
   NominationMeta,
   Year,
   NominationData
@@ -26,7 +25,8 @@ import {
   normalizedCategoriesState,
   playerState,
   metaState,
-  nominationBetsState
+  nominationBetsState,
+  normalizedPlayersState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
 import { getBettingData, getLoggedInPlayer } from 'services/local';
@@ -34,6 +34,7 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
 import { getCategories, getYears } from 'services/prisma';
+import { normalizeBets } from 'utils/normalizer';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -72,6 +73,7 @@ const CategoryPage: NextPage<Props> = ({
 
   const [bets, setBets] = useRecoilState(betsState);
   const [players, setPlayers] = useRecoilState(playerState);
+  const normalizedPlayers = useRecoilValue(normalizedPlayersState);
   const [nominationBets, setNominationBets] =
     useRecoilState(nominationBetsState);
 
@@ -81,6 +83,10 @@ const CategoryPage: NextPage<Props> = ({
       if (user) {
         try {
           const player = await getLoggedInPlayer();
+          if (!player.success) {
+            throw new Error(player.error.message);
+          }
+
           const bettingData = await getBettingData({
             nominationData: {
               year,
@@ -89,10 +95,11 @@ const CategoryPage: NextPage<Props> = ({
               films,
               meta
             },
-            group: player.group || 0,
-            playerId: player.id
+            group: player.data.group || 0,
+            playerId: player.data.id
           });
-          setBets(bettingData.bets);
+
+          setBets(normalizeBets(bettingData.bets));
           setPlayers(bettingData.players);
           setNominationBets(bettingData.nominationBets);
         } catch (error) {
@@ -156,19 +163,13 @@ const CategoryPage: NextPage<Props> = ({
           nominations={categoryNominations}
           films={films}
           bets={categoryBets}
-          players={players}
+          players={normalizedPlayers}
         />
         <PlayerStandings
           completedCategories={
             meta ? meta.completedCategories : initialMeta.completedCategories
           }
-          players={
-            players
-              ? (Object.values(players).sort(
-                  (a, b) => a.correct - b.correct
-                ) as Player[])
-              : []
-          }
+          players={players}
           bettingOpen={bettingOpen}
         />
       </GridContainer>

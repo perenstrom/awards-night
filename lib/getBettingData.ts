@@ -41,6 +41,7 @@ export const getBettingData = async (
     };
   } else {
     const players = await getPlayersWithBetsForGroup(group, ctx);
+    const playingPlayers = players.filter((player) => player.bets.length > 0);
     const bets = await getBetsForNominations(
       nominationData.year.nominations,
       ctx
@@ -49,7 +50,7 @@ export const getBettingData = async (
     const nominationBets = calculateNominationBets(bets);
 
     const playersWithWins = addPlayersWinnings(
-      players,
+      playingPlayers,
       nominationData.nominations,
       bets
     );

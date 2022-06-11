@@ -4,6 +4,7 @@ import {
   NormalizedNominations,
   Player
 } from 'types/nominations';
+import { NumberRecord } from 'types/utilityTypes';
 
 export const addPlayersWinnings = (
   players: Player[],
@@ -11,7 +12,7 @@ export const addPlayersWinnings = (
   bets: Bet[]
 ): Player[] => {
   // Record<PlayerId, number>
-  const playerWins: Record<number, number> = {};
+  const playerWins: NumberRecord<number> = {};
 
   bets.forEach((bet) => {
     if (nominations[bet.nomination].won) {

@@ -56,8 +56,7 @@ export const isAuthorized = (
 ) => {
   const session = <{ user: UserProfile }>getSession(req, res);
   const user = session?.user ?? null;
-  console.log(JSON.stringify(user, null, 2));
-  console.log(playerId);
+
   return user?.[playerIdKey] === playerId;
 };
 
