@@ -13,7 +13,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
   try {
     film = await getFilm(imdbId, prismaContext);
   } catch (error) {
-    // Airtable error
+    // Prisma error
     console.error(error);
     return getGenericErrorMessage();
   }
@@ -41,7 +41,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
     try {
       savedFilm = await createFilm(filmDetails, prismaContext);
     } catch (error) {
-      // Error in airtable call
+      // Error in prisma call
       console.error(error);
       return getGenericErrorMessage();
     }
@@ -86,7 +86,7 @@ export const saveFilmByTmdbId = async (
   try {
     film = await getFilm(filmDetails.imdbId, prismaContext);
   } catch (error) {
-    // Airtable error
+    // Prisma error
     console.error(error);
     return getGenericErrorMessage();
   }
@@ -97,7 +97,7 @@ export const saveFilmByTmdbId = async (
     try {
       savedFilm = await createFilm(filmDetails, prismaContext);
     } catch (error) {
-      // Error in airtable call
+      // Error in prisma call
       console.error(error);
       return getGenericErrorMessage();
     }

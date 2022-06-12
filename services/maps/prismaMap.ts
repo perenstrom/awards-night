@@ -85,7 +85,7 @@ export const prismaMap = {
       imdbId: film.imdbId,
       name: film.name,
       posterUrl: film.poster,
-      releaseDate: film.releaseDate
+      releaseDate: film.releaseDate && new Date(film.releaseDate)
     })
   },
   bet: {

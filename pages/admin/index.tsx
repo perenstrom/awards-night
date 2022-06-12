@@ -161,9 +161,13 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     props: {
       statusMessages: {
         general: generalStatusMessages,
-        searchAndAddFilms: searchAndAddFilmsMessage,
-        addFilms: addFilmMessage,
-        addNominations: addNominationsMessage
+        ...(searchAndAddFilmsMessage
+          ? { searchAndAddFilms: searchAndAddFilmsMessage }
+          : {}),
+        ...(addFilmMessage ? { addFilms: addFilmMessage } : {}),
+        ...(addNominationsMessage
+          ? { addNominations: addNominationsMessage }
+          : {})
       },
       availableCategories,
       availableYears,

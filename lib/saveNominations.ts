@@ -95,7 +95,7 @@ export const saveNominations = async (data: {
   try {
     const nominationsToSave = films.map<PartialBy<Nomination, 'id'>>(
       (filmId, index) => ({
-        category: fullCategory?.slug,
+        category: fullCategory.slug,
         film: filmId,
         nominee: nominees[index],
         won: false,

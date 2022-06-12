@@ -1205,28 +1205,28 @@ best-documentary-short	2022
 -- Name: bets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: perenstrom
 --
 
-SELECT pg_catalog.setval('public.bets_id_seq', 1, false);
+SELECT pg_catalog.setval('public.bets_id_seq', 568, false);
 
 
 --
 -- Name: groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: perenstrom
 --
 
-SELECT pg_catalog.setval('public.groups_id_seq', 1, false);
+SELECT pg_catalog.setval('public.groups_id_seq', 5, false);
 
 
 --
 -- Name: nominations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: perenstrom
 --
 
-SELECT pg_catalog.setval('public.nominations_id_seq', 1, false);
+SELECT pg_catalog.setval('public.nominations_id_seq', 367, false);
 
 
 --
 -- Name: players_id_seq; Type: SEQUENCE SET; Schema: public; Owner: perenstrom
 --
 
-SELECT pg_catalog.setval('public.players_id_seq', 1, false);
+SELECT pg_catalog.setval('public.players_id_seq', 13, false);
 
 
 --
