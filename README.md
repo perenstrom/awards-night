@@ -11,4 +11,4 @@ Each player has their own page for entering their predictions. When the ceremony
 Each category is displayed on its own, and updated every few seconds to check winners. The page shows all player predictions and overall standing (correct out of decided categories).
 
 ## Technology
-Oscar Night uses AirTable as a backend for a NextJS frontend application. Movie posters are fetched from The Movie DB API.
+Oscar Night uses NextJS for both frontend and backend functionality. Data is stored in PostgreSQL and accessed via PrismaJS. Movie posters are fetched from The Movie DB API.
