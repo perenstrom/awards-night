@@ -1,0 +1,130 @@
+import {
+  Category as PrismaCategory,
+  Film as PrismaFilm,
+  Nomination as PrismaNomination,
+  Bet as PrismaBet,
+  Player as PrismaPlayer,
+  Prisma
+} from '@prisma/client';
+import {
+  CategoryWithNominations,
+  PlayerWithBets,
+  YearWithNominationsAndCategories
+} from 'services/prisma/prisma.types';
+import {
+  Bet,
+  Category,
+  Film,
+  Nomination,
+  Player,
+  Year
+} from 'types/nominations';
+import { PartialBy } from 'types/utilityTypes';
+
+export const prismaMap = {
+  year: {
+    fromPrisma: (yearResponse: YearWithNominationsAndCategories): Year => ({
+      year: yearResponse.year,
+      name: yearResponse.name,
+      date: yearResponse.date.toISOString(),
+      bettingOpen: yearResponse.bettingOpen,
+      categories: yearResponse.yearsCategories.map(
+        (yearCat) => yearCat.categoryId
+      ),
+      nominations: yearResponse.nominations.map((nom) => nom.id)
+    })
+  },
+  category: {
+    fromPrisma: (categoryResponse: PrismaCategory): Category => ({
+      slug: categoryResponse.slug,
+      name: categoryResponse.name,
+      nominations: [],
+      previousCategory: null,
+      nextCategory: null
+    }),
+    withNominations: {
+      fromPrisma: (
+        categoryResponse: CategoryWithNominations
+      ): { category: Category; nominations: Nomination[] } => ({
+        category: prismaMap.category.fromPrisma(categoryResponse),
+        nominations: categoryResponse.nominations.map((n) =>
+          prismaMap.nomination.fromPrisma(n)
+        )
+      })
+    }
+  },
+  nomination: {
+    fromPrisma: (nominationResponse: PrismaNomination): Nomination => ({
+      id: nominationResponse.id,
+      year: nominationResponse.yearId,
+      category: nominationResponse.categoryId,
+      won: nominationResponse.won,
+      film: nominationResponse.filmId,
+      nominee: nominationResponse.nominee || '',
+      decided: nominationResponse.decided
+    }),
+    toPrisma: (
+      nomination: PartialBy<Nomination, 'id'>
+    ): Prisma.NominationCreateManyInput => ({
+      yearId: nomination.year,
+      categoryId: nomination.category,
+      nominee: nomination.nominee,
+      won: nomination.won,
+      decided: nomination.decided,
+      filmId: nomination.film
+    })
+  },
+  film: {
+    fromPrisma: (filmResponse: PrismaFilm): Film => ({
+      imdbId: filmResponse.imdbId,
+      name: filmResponse.name,
+      poster: filmResponse.posterUrl || '',
+      releaseDate: filmResponse.releaseDate?.toDateString() || ''
+    }),
+    toPrisma: (film: Film): Prisma.FilmCreateInput => ({
+      imdbId: film.imdbId,
+      name: film.name,
+      posterUrl: film.poster,
+      releaseDate: film.releaseDate && new Date(film.releaseDate)
+    })
+  },
+  bet: {
+    fromPrisma: (betResponse: PrismaBet): Bet => ({
+      id: betResponse.id,
+      player: betResponse.playerId,
+      nomination: betResponse.nominationId
+    }),
+    toPrisma: (bet: PartialBy<Bet, 'id'>): Prisma.BetCreateInput => ({
+      nomination: {
+        connect: {
+          id: bet.nomination
+        }
+      },
+      player: {
+        connect: {
+          id: bet.player
+        }
+      }
+    })
+  },
+  player: {
+    fromPrisma: (playerResponse: PrismaPlayer): Player => ({
+      id: playerResponse.id,
+      auth0UserId: playerResponse.auth0UserId,
+      name: playerResponse.name,
+      correct: 0,
+      bets: [],
+      group: playerResponse.groupId
+    })
+  },
+  playerWithBets: {
+    fromPrisma: (playerResponse: PlayerWithBets): Player => ({
+      id: playerResponse.id,
+      auth0UserId: playerResponse.auth0UserId,
+      name: playerResponse.name,
+      correct: 0,
+      bets: playerResponse.bets.map((b) => b.id),
+      group: playerResponse.groupId
+    })
+  }
+};

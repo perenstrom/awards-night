@@ -1,21 +1,20 @@
-import AirtableError from 'airtable/lib/airtable_error';
 import { isAuthorized } from 'lib/authorization';
+import { prismaContext } from 'lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createBet, deleteBet, getBets, updateBet } from 'services/airtable';
-import { BetId, NominationId, PlayerId } from 'types/nominations';
+import { createBet, deleteBet, getBet, updateBet } from 'services/prisma/bets';
 
 interface PostRequestBody {
-  playerId: string;
-  nominationId: string;
+  playerId: number;
+  nominationId: number;
 }
 
 interface PatchRequestBody {
-  betId: string;
-  nominationId: string;
+  betId: number;
+  nominationId: number;
 }
 
 interface DeleteRequestBody {
-  betId: string;
+  betId: number;
 }
 
 const bets = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -23,7 +22,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
     return new Promise((resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
 
-      if (!isAuthorized(req, res, playerId as PlayerId)) {
+      if (!isAuthorized(req, res, playerId)) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }
@@ -32,10 +31,13 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('Both playerId and nominationId must be provided');
         resolve('');
       } else {
-        createBet({
-          player: playerId as PlayerId,
-          nomination: nominationId as NominationId
-        })
+        createBet(
+          {
+            player: playerId,
+            nomination: nominationId
+          },
+          prismaContext
+        )
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');
@@ -51,17 +53,21 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
       const { betId, nominationId }: PatchRequestBody = req.body;
       if (!betId || !nominationId) {
         res.status(400).end('Both betId and nominationId must be provided');
-        resolve('');
+        return resolve('');
       } else {
-        const fullBetResult = await getBets([betId as BetId]);
-        const fullBet = fullBetResult[0];
+        const fullBet = await getBet(betId, prismaContext);
+
+        if (!fullBet) {
+          res.status(400).end('Failed to fetch bet');
+          return resolve('');
+        }
 
         if (!isAuthorized(req, res, fullBet.player)) {
           res.status(401).end('Unauthorized.');
-          resolve('');
+          return resolve('');
         }
 
-        updateBet(betId as BetId, nominationId as NominationId)
+        updateBet(betId, nominationId, prismaContext)
           .then((bet) => {
             res.status(200).json(bet);
             resolve('');
@@ -79,26 +85,27 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).end('BetId must be provided');
         resolve('');
       } else {
-        const fullBetResult = await getBets([betId as BetId]);
-        const fullBet = fullBetResult[0];
+        const fullBet = await getBet(betId, prismaContext);
+
+        if (!fullBet) {
+          res.status(400).end('Failed to fetch bet');
+          return resolve('');
+        }
 
         if (!isAuthorized(req, res, fullBet.player)) {
           res.status(401).end('Unauthorized.');
-          resolve('');
+          return resolve('');
         }
 
-        deleteBet(betId as BetId)
+        deleteBet(betId, prismaContext)
           .then((bet) => {
             res.status(200).json(bet);
-            resolve('');
+            return resolve('');
           })
           .catch((error) => {
-            if (error instanceof AirtableError) {
-              res.status(error.statusCode).end(error.message);
-            } else {
-              res.status(500).end('Internal server error');
-              return reject('');
-            }
+            console.log(error);
+            res.status(500).end('Internal server error');
+            return reject('');
           });
       }
     });

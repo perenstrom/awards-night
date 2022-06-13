@@ -1,4 +1,7 @@
 # Changelog
+## 4.0.0
+* Replace Airtable with Prisma + PostgreSQL.
+
 ## 3.8.5
 * Activate Typescript Strict
 

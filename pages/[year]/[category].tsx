@@ -3,19 +3,15 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { styled } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { getCategories, getYears } from 'services/airtable';
 import {
   Category,
   Nomination,
   NormalizedCategories,
   NormalizedFilms,
   NormalizedNominations,
-  Player,
   NominationMeta,
   Year,
-  NominationData,
-  BetId,
-  CategoryId
+  NominationData
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
 import { Category as CategoryComponent } from 'components/Category';
@@ -29,12 +25,16 @@ import {
   normalizedCategoriesState,
   playerState,
   metaState,
-  nominationBetsState
+  nominationBetsState,
+  normalizedPlayersState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
 import { getBettingData, getLoggedInPlayer } from 'services/local';
 import { useUser } from '@auth0/nextjs-auth0';
 import { Nullable } from 'types/utilityTypes';
+import { prismaContext } from 'lib/prisma';
+import { getCategories, getYears } from 'services/prisma';
+import { normalizeBets } from 'utils/normalizer';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -73,6 +73,7 @@ const CategoryPage: NextPage<Props> = ({
 
   const [bets, setBets] = useRecoilState(betsState);
   const [players, setPlayers] = useRecoilState(playerState);
+  const normalizedPlayers = useRecoilValue(normalizedPlayersState);
   const [nominationBets, setNominationBets] =
     useRecoilState(nominationBetsState);
 
@@ -82,13 +83,23 @@ const CategoryPage: NextPage<Props> = ({
       if (user) {
         try {
           const player = await getLoggedInPlayer();
+          if (!player.success) {
+            throw new Error(player.error.message);
+          }
+
           const bettingData = await getBettingData({
-            categories: initialCategories,
-            nominations: initialNominations,
-            playerId: player.id,
-            year: year
+            nominationData: {
+              year,
+              categories: normalizedCategories,
+              nominations,
+              films,
+              meta
+            },
+            group: player.data.group || 0,
+            playerId: player.data.id
           });
-          setBets(bettingData.bets);
+
+          setBets(normalizeBets(bettingData.bets));
           setPlayers(bettingData.players);
           setNominationBets(bettingData.nominationBets);
         } catch (error) {
@@ -98,8 +109,12 @@ const CategoryPage: NextPage<Props> = ({
     };
     fetchDataAsync();
   }, [
+    films,
     initialCategories,
     initialNominations,
+    meta,
+    nominations,
+    normalizedCategories,
     setBets,
     setNominationBets,
     setPlayers,
@@ -112,12 +127,12 @@ const CategoryPage: NextPage<Props> = ({
     categories[0]?.slug ??
     Object.keys(initialCategories)[0];
   const category: Category = normalizedCategories
-    ? normalizedCategories[currentSlug as CategoryId]
-    : initialCategories[currentSlug as CategoryId];
+    ? normalizedCategories[currentSlug]
+    : initialCategories[currentSlug];
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     nominations ? nominations[n] : initialNominations[n]
   );
-  const categoryBetIds: BetId[] = categoryNominations.flatMap(
+  const categoryBetIds: number[] = categoryNominations.flatMap(
     (n) => nominationBets?.[n.id] || []
   );
   const categoryBets = bets
@@ -148,19 +163,13 @@ const CategoryPage: NextPage<Props> = ({
           nominations={categoryNominations}
           films={films}
           bets={categoryBets}
-          players={players}
+          players={normalizedPlayers}
         />
         <PlayerStandings
           completedCategories={
             meta ? meta.completedCategories : initialMeta.completedCategories
           }
-          players={
-            players
-              ? (Object.values(players).sort(
-                  (a, b) => a.correct - b.correct
-                ) as Player[])
-              : []
-          }
+          players={players}
           bettingOpen={bettingOpen}
         />
       </GridContainer>
@@ -180,7 +189,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   }
 
   const nominationData: Nullable<NominationData> = await getNominationData(
-    parseInt(context.params.year, 10)
+    parseInt(context.params.year, 10),
+    prismaContext
   );
   if (!nominationData) {
     throw new Error('Error when fetching nomination data');
@@ -210,11 +220,11 @@ export const initializeRecoilState = (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const years = await getYears();
+  const years = await getYears(prismaContext);
 
   const paths = [];
   for (const year of years) {
-    const categories = await getCategories(year.categories);
+    const categories = await getCategories(year.categories, prismaContext);
     paths.push(
       categories.map((category) => ({
         params: { year: year.year.toString(), category: category.slug }

@@ -1,25 +1,26 @@
-import { ExternalFilm, Film } from 'types/nominations';
+import { Film } from 'types/nominations';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
-import { getFilmByImdb, createFilm } from 'services/airtable';
 import {
   getFilmByImdb as getFilmFromTmdbByImdbId,
   getFilm as getFilmFromTmdbByTmdbId
 } from 'services/tmdb';
 import { getGenericErrorMessage, getStatusMessage } from 'utils/statusMessages';
+import { createFilm, getFilm } from 'services/prisma/films';
+import { prismaContext } from './prisma';
 
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
   let film: Nullable<Film>;
   try {
-    film = await getFilmByImdb(imdbId);
+    film = await getFilm(imdbId, prismaContext);
   } catch (error) {
-    // Airtable error
+    // Prisma error
     console.error(error);
     return getGenericErrorMessage();
   }
 
   if (!film) {
     // Film is not already in the system
-    let filmDetails: Nullable<ExternalFilm> = null;
+    let filmDetails: Nullable<Film> = null;
     try {
       filmDetails = await getFilmFromTmdbByImdbId(imdbId);
     } catch (error) {
@@ -38,9 +39,9 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
     let savedFilm = null;
     try {
-      savedFilm = await createFilm(filmDetails);
+      savedFilm = await createFilm(filmDetails, prismaContext);
     } catch (error) {
-      // Error in airtable call
+      // Error in prisma call
       console.error(error);
       return getGenericErrorMessage();
     }
@@ -62,7 +63,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 export const saveFilmByTmdbId = async (
   tmdbId: string
 ): Promise<StatusMessage> => {
-  let filmDetails: Nullable<ExternalFilm> = null;
+  let filmDetails: Nullable<Film> = null;
   try {
     filmDetails = await getFilmFromTmdbByTmdbId(tmdbId);
   } catch (error) {
@@ -83,9 +84,9 @@ export const saveFilmByTmdbId = async (
 
   let film: Nullable<Film>;
   try {
-    film = await getFilmByImdb(filmDetails.imdbId);
+    film = await getFilm(filmDetails.imdbId, prismaContext);
   } catch (error) {
-    // Airtable error
+    // Prisma error
     console.error(error);
     return getGenericErrorMessage();
   }
@@ -94,9 +95,9 @@ export const saveFilmByTmdbId = async (
     // Film is not already in the system
     let savedFilm = null;
     try {
-      savedFilm = await createFilm(filmDetails);
+      savedFilm = await createFilm(filmDetails, prismaContext);
     } catch (error) {
-      // Error in airtable call
+      // Error in prisma call
       console.error(error);
       return getGenericErrorMessage();
     }

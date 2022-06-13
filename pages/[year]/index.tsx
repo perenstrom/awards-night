@@ -1,11 +1,12 @@
 import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
+import { prismaContext } from 'lib/prisma';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
-import { getYears } from 'services/airtable';
+import { getYears } from 'services/prisma';
 import { NominationData } from 'types/nominations';
 import { RequiredBy } from 'types/utilityTypes';
 
@@ -49,7 +50,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   const year = context.params.year;
 
   const nominationData = await getNominationData(
-    parseInt((context as RequiredBy<typeof context, 'params'>).params.year, 10)
+    parseInt((context as RequiredBy<typeof context, 'params'>).params.year, 10),
+    prismaContext
   );
   if (!nominationData) {
     throw new Error('Error when fetching nomination data');
@@ -64,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const years = await getYears();
+  const years = await getYears(prismaContext);
   const paths = years.map((year) => ({
     params: { year: year.year.toString() }
   }));

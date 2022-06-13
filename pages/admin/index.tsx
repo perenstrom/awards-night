@@ -10,21 +10,15 @@ import { Nullable, PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';
 import { withAdminRequired } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
-import {
-  Category,
-  CategoryId,
-  TmdbFilmResult,
-  Film,
-  FilmId,
-  Year
-} from 'types/nominations';
-import { getCategories, getFilms, getYears } from 'services/airtable';
+import { Category, TmdbFilmResult, Film, Year } from 'types/nominations';
 import { saveNominations } from 'lib/saveNominations';
 import { PostBody } from 'types/admin.types';
 import { AddFilm } from 'components/admin/AddFilm';
 import { AddNominations } from 'components/admin/AddNominations';
 import { AddFilmBySearch } from 'components/admin/AddFilmBySearch';
 import { searchFilms } from 'services/tmdb';
+import { getCategories, getFilms, getYears } from 'services/prisma';
+import { prismaContext } from 'lib/prisma';
 
 type Props = {
   statusMessages?: {
@@ -118,9 +112,9 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
       case 'addNominations':
         const { category, year, films, nominees } = parsedBody;
         addNominationsMessage = await saveNominations({
-          category: category as CategoryId,
+          category: category,
           year: parseInt(year, 10),
-          films: films as FilmId[],
+          films: films,
           nominees
         });
         break;
@@ -139,21 +133,23 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   }
 
   // All:
-  const availableCategories = await getCategories().catch(() => {
-    generalStatusMessages.push({
-      severity: 'error',
-      message: 'Failed to fetch categories.'
-    });
-    return [];
-  });
-  const availableYears = await getYears().catch(() => {
+  const availableCategories = await getCategories([], prismaContext).catch(
+    () => {
+      generalStatusMessages.push({
+        severity: 'error',
+        message: 'Failed to fetch categories.'
+      });
+      return [];
+    }
+  );
+  const availableYears = await getYears(prismaContext).catch(() => {
     generalStatusMessages.push({
       severity: 'error',
       message: 'Failed to fetch years.'
     });
     return [];
   });
-  const availableFilms = await getFilms().catch(() => {
+  const availableFilms = await getFilms([], prismaContext).catch(() => {
     generalStatusMessages.push({
       severity: 'error',
       message: 'Failed to fetch films.'
@@ -165,9 +161,13 @@ const getMyServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
     props: {
       statusMessages: {
         general: generalStatusMessages,
-        searchAndAddFilms: searchAndAddFilmsMessage,
-        addFilms: addFilmMessage,
-        addNominations: addNominationsMessage
+        ...(searchAndAddFilmsMessage
+          ? { searchAndAddFilms: searchAndAddFilmsMessage }
+          : {}),
+        ...(addFilmMessage ? { addFilms: addFilmMessage } : {}),
+        ...(addNominationsMessage
+          ? { addNominations: addNominationsMessage }
+          : {})
       },
       availableCategories,
       availableYears,

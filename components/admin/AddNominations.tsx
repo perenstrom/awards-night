@@ -8,7 +8,7 @@ import {
   Paper
 } from '@mui/material';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
-import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
+import { Category, Film, Year } from 'types/nominations';
 import { AddNominationsFields } from 'types/admin.types';
 import { Alert } from '@mui/material';
 import { NominationFields } from './NominationFields';
@@ -66,9 +66,9 @@ export const AddNominations: React.FC<Props> = (props) => {
       new FormData(event.currentTarget)
     );
     const saveNominationsResult = await createNominations({
-      category: formData.category as CategoryId,
+      category: formData.category,
       year: parseInt(formData.year, 10),
-      films: formData.films as FilmId[],
+      films: formData.films,
       nominees: formData.nominees
     });
     setStatusMessage(saveNominationsResult);
@@ -119,7 +119,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                 select
               >
                 {availableYears.map((year) => (
-                  <option key={year.id} value={year.year}>
+                  <option key={year.year} value={year.year}>
                     {year.year}
                   </option>
                 ))}
@@ -137,7 +137,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                   select
                 >
                   {availableCategories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.slug} value={category.slug}>
                       {category.name}
                     </option>
                   ))}

@@ -38,28 +38,35 @@ const NominatedFilmComponent: React.FC<Props> = ({
   bets,
   players
 }) => {
-  const bettingPlayers = bets
-    ? bets.map((bet) => (
-        <Stack
-          direction="row"
-          component="ul"
-          spacing={1}
-          padding={0}
-          margin={1}
-          justifyContent="center"
-          flexWrap="wrap"
-          key={bet.id}
-        >
-          <Chip
-            color="success"
-            size="small"
-            component="li"
-            sx={{ marginBottom: '0.5rem' }}
-            label={players[bet.player].name}
-          />
-        </Stack>
-      ))
-    : null;
+  let bettingPlayers;
+  try {
+    bettingPlayers = bets && players
+      ? bets.map((bet) => (
+          <Stack
+            direction="row"
+            component="ul"
+            spacing={1}
+            padding={0}
+            margin={1}
+            justifyContent="center"
+            flexWrap="wrap"
+            key={bet.id}
+          >
+            <Chip
+              color="success"
+              size="small"
+              component="li"
+              sx={{ marginBottom: '0.5rem' }}
+              label={players[bet.player].name}
+            />
+          </Stack>
+        ))
+      : null;
+  } catch (error) {
+    console.log(error);
+    console.log(bets);
+    console.log(players);
+  }
 
   const poster =
     film.poster ?? `https://via.placeholder.com/342x513.png?text=${film.name}`;

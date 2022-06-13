@@ -2,24 +2,21 @@ import { refreshNominations } from 'lib/refreshNominations';
 import { saveNominations } from 'lib/saveNominations';
 import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getYear, updateNomination } from 'services/airtable';
-import { airtableMap } from 'services/maps/airtableMap';
-import {
-  CategoryId,
-  FilmId,
-  Nomination,
-  NominationId
-} from 'types/nominations';
+import { Nomination } from 'types/nominations';
+import { prismaContext } from 'lib/prisma';
+import { getYear } from 'services/prisma';
+import { prismaMap } from 'services/maps/prismaMap';
+import { updateNomination } from 'services/prisma/nominations';
 
 interface PatchRequestBody {
-  nominationId: NominationId;
+  nominationId: number;
   nomination: Nomination;
 }
 
 interface PostRequestBody {
-  category: CategoryId;
+  category: string;
   year: number;
-  films: FilmId[];
+  films: string[];
   nominees: string[];
 }
 
@@ -27,7 +24,10 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { year } = req.query;
     try {
-      const fullYear = await getYear(parseInt(year as string, 10));
+      const fullYear = await getYear(
+        parseInt(year as string, 10),
+        prismaContext
+      );
       if (fullYear) {
         const nominations = await refreshNominations(fullYear);
 
@@ -55,7 +55,8 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         updateNomination(
           nominationId,
-          airtableMap.nomination.toAirtable(nomination)
+          prismaMap.nomination.toPrisma(nomination),
+          prismaContext
         )
           .then((nomination) => {
             res.status(200).json(nomination);

@@ -70,7 +70,9 @@ const FrontPage: NextPage<Props> = () => {
     const fetchDataAsync = async () => {
       try {
         const player = await getLoggedInPlayer();
-        setPlayer(player);
+        if (player.success) {
+          setPlayer(player.data);
+        }
       } catch (_) {}
       setState('idle');
     };
