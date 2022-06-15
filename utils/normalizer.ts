@@ -12,6 +12,10 @@ import {
 } from 'types/nominations';
 
 export const normalizeBets = (bets: Bet[]) => {
+  if (bets.length === 0) {
+    return null;
+  }
+
   const normalizedBets: NormalizedBets = {};
 
   bets.forEach((bet) => {
@@ -22,6 +26,10 @@ export const normalizeBets = (bets: Bet[]) => {
 };
 
 export const normalizeNominations = (nominations: Nomination[]) => {
+  if (nominations.length === 0) {
+    return null;
+  }
+
   const normalizedNominations: NormalizedNominations = {};
 
   nominations.forEach((nomination) => {
@@ -32,6 +40,10 @@ export const normalizeNominations = (nominations: Nomination[]) => {
 };
 
 export const normalizeFilms = (films: Film[]) => {
+  if (films.length === 0) {
+    return null;
+  }
+
   const normalizedFilms: NormalizedFilms = {};
 
   films.forEach((film) => {
@@ -42,6 +54,10 @@ export const normalizeFilms = (films: Film[]) => {
 };
 
 export const normalizePlayers = (players: Player[]) => {
+  if (players.length === 0) {
+    return null;
+  }
+
   const normalizedPlayers: NormalizedPlayers = {};
 
   players.forEach((player) => {
@@ -52,6 +68,10 @@ export const normalizePlayers = (players: Player[]) => {
 };
 
 export const normalizeCategories = (categories: Category[]) => {
+  if (categories.length === 0) {
+    return null;
+  }
+
   const normalizedCategories: NormalizedCategories = {};
 
   categories.forEach((category) => {

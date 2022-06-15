@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Bet, Film, Nomination, NormalizedPlayers } from 'types/nominations';
 import { Chip, Stack, styled } from '@mui/material';
 import { defaultStyledOptions } from 'utils/mui';
+import { Nullable } from 'types/utilityTypes';
 
 interface WrapperProps {
   readonly winner: boolean;
@@ -29,7 +30,7 @@ interface Props {
   nomination: Nomination;
   film: Film;
   bets: Bet[];
-  players: NormalizedPlayers;
+  players: Nullable<NormalizedPlayers>;
 }
 
 const NominatedFilmComponent: React.FC<Props> = ({

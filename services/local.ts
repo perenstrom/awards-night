@@ -144,6 +144,18 @@ export const createNominations = async (data: {
   }
 };
 
+export const getNominations = async (
+  year: number
+): Promise<Maybe<Nomination[]>> => {
+  const url = `/api/nominations?year=${year}`;
+  const options: RequestInit = {
+    method: 'GET',
+    headers: defaultHeaders
+  };
+
+  return apiResult<Nomination[]>(url, options);
+};
+
 export const updateNomination = async (
   nominationId: number,
   nomination: Partial<Nomination>

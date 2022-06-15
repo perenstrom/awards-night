@@ -8,68 +8,93 @@ import {
   NominationMeta,
   NominationBets,
   Player,
-  Bet
+  Bet,
+  Nomination
 } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import {
   calculateCompletedCategories,
   addPlayersWinnings
 } from 'utils/nominations';
-import { normalizePlayers } from 'utils/normalizer';
+import {
+  normalizeBets,
+  normalizeCategories,
+  normalizeNominations,
+  normalizePlayers
+} from 'utils/normalizer';
 
-export const betsState = atom<NormalizedBets>({
+// Bets
+export const betsState = atom<Bet[]>({
   key: 'betsState',
-  default: {}
+  default: []
 });
 
-export const nominationsState = atom<NormalizedNominations>({
+export const normalizedBetsState = selector<Nullable<NormalizedBets>>({
+  key: 'normalizedBetsState',
+  get: ({ get }) => normalizeBets(get(betsState))
+});
+
+// Nominations
+export const nominationsState = atom<Nomination[]>({
   key: 'nominationsState',
-  default: {}
+  default: []
 });
 
+export const normalizedNominationsState = selector<
+  Nullable<NormalizedNominations>
+>({
+  key: 'normalizedNominationsState',
+  get: ({ get }) => {
+    const nominations = get(nominationsState);
+    //debugger;
+    return normalizeNominations(nominations);
+  }
+});
+
+// Nomination bets
 export const nominationBetsState = atom<NominationBets>({
   key: 'nominationBetsState',
   default: {}
 });
 
-export const normalizedCategoriesState = atom<NormalizedCategories>({
-  key: 'normalizedCategoriesState',
-  default: {}
-});
-
-export const categoriesState = selector<Category[]>({
+// Categories
+export const categoriesState = atom<Category[]>({
   key: 'categoriesState',
-  get: ({ get }) => {
-    const normalizedCategories = get(normalizedCategoriesState);
-    return normalizedCategories
-      ? (Object.entries(normalizedCategories) as [string, Category][]).map(
-          (c) => c[1]
-        )
-      : [];
-  }
+  default: []
 });
 
+export const normalizedCategoriesState = selector<
+  Nullable<NormalizedCategories>
+>({
+  key: 'normalizedCategoriesState',
+  get: ({ get }) => normalizeCategories(get(categoriesState))
+});
+
+// Meta
 export const metaState = selector<NominationMeta>({
   key: 'metaState',
   get: ({ get }) => {
     const categories = get(categoriesState);
-    const nominations = get(nominationsState);
+    const nominations = get(normalizedNominationsState);
+
+    if (categories.length === 0 || !nominations) {
+      return {
+        completedCategories: 0
+      };
+    }
+
     const completedCategories = calculateCompletedCategories(
       categories,
       nominations
     );
 
-    if (categories.length === 0) {
-      return {
-        completedCategories: 0
-      };
-    } else {
-      return {
-        completedCategories: completedCategories
-      };
-    }
+    return {
+      completedCategories: completedCategories
+    };
   }
 });
 
+// Players
 const rawPlayersState = atom<Player[]>({
   key: 'rawPlayersState',
   default: [],
@@ -80,10 +105,10 @@ export const playerState = selector<Player[]>({
   key: 'playersState',
   get: ({ get }) => {
     const players = get(rawPlayersState);
-    const nominations = get(nominationsState);
+    const nominations = get(normalizedNominationsState);
     const bets = get(betsState);
 
-    if (players) {
+    if (players && nominations) {
       const playersWithWins = addPlayersWinnings(
         (Object.entries(players) as [string, Player][]).map((c) => c[1]),
         nominations,
@@ -100,7 +125,7 @@ export const playerState = selector<Player[]>({
   }
 });
 
-export const normalizedPlayersState = selector<NormalizedPlayers>({
+export const normalizedPlayersState = selector<Nullable<NormalizedPlayers>>({
   key: 'normalizedPlayersState',
   get: ({ get }) => normalizePlayers(get(playerState))
 });

@@ -98,7 +98,13 @@ const DashboardPage: NextPage<Props> = ({
       setBets(newBets);
     } else if (nominationsWithExistingBets.length > 0) {
       // Updating bet in category
-      const existingBet = bets[nominationsWithExistingBets[0]];
+      const existingBet = getBetForNomination(
+        bets,
+        nominationsWithExistingBets[0]
+      );
+      if (!existingBet) {
+        throw new Error('No bet found');
+      }
       const updatedBet = await updateBetApi(existingBet.id, nominationId);
       const newBets = bets.filter((bet) => bet.id !== existingBet.id);
       newBets.push(updatedBet);

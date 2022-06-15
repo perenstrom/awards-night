@@ -21,20 +21,24 @@ import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import {
   betsState,
   categoriesState,
-  nominationsState,
+  normalizedNominationsState,
   normalizedCategoriesState,
   playerState,
   metaState,
   nominationBetsState,
-  normalizedPlayersState
+  normalizedPlayersState,
+  nominationsState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
-import { getBettingData, getLoggedInPlayer } from 'services/local';
+import {
+  getBettingData,
+  getLoggedInPlayer,
+  getNominations
+} from 'services/local';
 import { useUser } from '@auth0/nextjs-auth0';
 import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
 import { getCategories, getYears } from 'services/prisma';
-import { normalizeBets } from 'utils/normalizer';
 
 const GridContainer = styled('div')`
   display: grid;
@@ -66,11 +70,22 @@ const CategoryPage: NextPage<Props> = ({
   const router = useRouter();
   const { category: slug } = router.query;
 
+  // Nomination data
   const [nominations, setNominations] = useRecoilState(nominationsState);
+  if (!nominations.length) {
+    setNominations(Object.values(initialNominations));
+  }
+  const normalizedNominations = useRecoilValue(normalizedNominationsState);
+
+  const [categories, setCategories] = useRecoilState(categoriesState);
+  if (!categories.length) {
+    setCategories(Object.values(initialCategories));
+  }
   const normalizedCategories = useRecoilValue(normalizedCategoriesState);
-  const categories = useRecoilValue(categoriesState);
+
   const meta = useRecoilValue(metaState);
 
+  // Bet data
   const [bets, setBets] = useRecoilState(betsState);
   const [players, setPlayers] = useRecoilState(playerState);
   const normalizedPlayers = useRecoilValue(normalizedPlayersState);
@@ -80,7 +95,12 @@ const CategoryPage: NextPage<Props> = ({
   const { user } = useUser();
   useEffect(() => {
     const fetchDataAsync = async () => {
-      if (user) {
+      if (
+        user &&
+        normalizedCategories &&
+        normalizedNominations &&
+        !bets.length
+      ) {
         try {
           const player = await getLoggedInPlayer();
           if (!player.success) {
@@ -91,7 +111,7 @@ const CategoryPage: NextPage<Props> = ({
             nominationData: {
               year,
               categories: normalizedCategories,
-              nominations,
+              nominations: normalizedNominations,
               films,
               meta
             },
@@ -99,7 +119,7 @@ const CategoryPage: NextPage<Props> = ({
             playerId: player.data.id
           });
 
-          setBets(normalizeBets(bettingData.bets));
+          setBets(bettingData.bets);
           setPlayers(bettingData.players);
           setNominationBets(bettingData.nominationBets);
         } catch (error) {
@@ -109,12 +129,11 @@ const CategoryPage: NextPage<Props> = ({
     };
     fetchDataAsync();
   }, [
+    bets.length,
     films,
-    initialCategories,
-    initialNominations,
     meta,
-    nominations,
     normalizedCategories,
+    normalizedNominations,
     setBets,
     setNominationBets,
     setPlayers,
@@ -130,7 +149,7 @@ const CategoryPage: NextPage<Props> = ({
     ? normalizedCategories[currentSlug]
     : initialCategories[currentSlug];
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
-    nominations ? nominations[n] : initialNominations[n]
+    normalizedNominations ? normalizedNominations[n] : initialNominations[n]
   );
   const categoryBetIds: number[] = categoryNominations.flatMap(
     (n) => nominationBets?.[n.id] || []
@@ -139,10 +158,12 @@ const CategoryPage: NextPage<Props> = ({
     ? Object.values(bets).filter((b) => categoryBetIds.includes(b.id))
     : [];
 
-  const refreshNominations = useCallback(() => {
-    fetch(`/api/nominations?year=${year.year}`)
-      .then((result) => result.json())
-      .then(setNominations);
+  const refreshNominations = useCallback(async () => {
+    const nominationsResult = await getNominations(year.year);
+
+    if (nominationsResult.success) {
+      setNominations(nominationsResult.data);
+    }
   }, [setNominations, year.year]);
   useEffect(() => {
     if (!bettingOpen) {
@@ -215,8 +236,9 @@ export const initializeRecoilState = (
   pageProps: Props
 ) => {
   const { nominations, categories } = pageProps;
-  set(nominationsState, nominations);
-  set(normalizedCategoriesState, categories);
+
+  set(nominationsState, Object.values(nominations));
+  set(categoriesState, Object.values(categories));
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
