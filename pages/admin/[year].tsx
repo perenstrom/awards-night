@@ -5,7 +5,6 @@ import {
   Category,
   Nomination,
   NominationData,
-  NominationId,
   NormalizedNominations
 } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
@@ -16,6 +15,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { withAdminRequired } from 'lib/authorization';
 import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
+import { prismaContext } from 'lib/prisma';
 
 type Props = NominationData;
 
@@ -28,10 +28,7 @@ const AdminYearPage: NextPage<Props> = ({
   const [nominations, setNominations] =
     useState<NormalizedNominations>(initialNominations);
 
-  const updateNomination = async (
-    nominationId: NominationId,
-    category: Category
-  ) => {
+  const updateNomination = async (nominationId: number, category: Category) => {
     const winningNominationsInCategory = category.nominations.filter(
       (n) => nominations[n].won
     );
@@ -117,7 +114,7 @@ const AdminYearPage: NextPage<Props> = ({
       <MainContainer>
         <Typography variant="h1">Admin page for {year.year}</Typography>
         {(Object.values(categories) as Category[]).map((category) => (
-          <div key={category.id}>
+          <div key={category.slug}>
             <Typography variant="h2">{category.name}</Typography>
             <CategoryBets>
               {category.nominations.map((nominationId) => {
@@ -154,9 +151,18 @@ interface Params extends ParsedUrlQuery {
 const getMyServerSideProps: GetServerSideProps<Props, Params> = async (
   context
 ) => {
+  if (!context?.params?.year) {
+    throw new Error('No year in params');
+  }
+
   const nominationData = await getNominationData(
-    parseInt(context.params.year, 10)
+    parseInt(context?.params?.year, 10),
+    prismaContext
   );
+
+  if (!nominationData) {
+    throw new Error('Error when fetching nomination data');
+  }
 
   return {
     props: nominationData

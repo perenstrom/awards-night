@@ -1,13 +1,9 @@
-import { getNominations } from 'services/airtable';
-import { NormalizedNominations, Year } from 'types/nominations';
+import { getNominations } from 'services/prisma';
+import { Nomination, Year } from 'types/nominations';
+import { prismaContext } from './prisma';
 
-export const refreshNominations = async (
-  year: Year
-): Promise<NormalizedNominations> => {
-  const nominations = await getNominations(year.nominations);
+export const refreshNominations = async (year: Year): Promise<Nomination[]> => {
+  const nominations = await getNominations(year.nominations, prismaContext);
 
-  const normalizedNominations: NormalizedNominations = {};
-  nominations.forEach((n) => (normalizedNominations[n.id] = n));
-
-  return normalizedNominations;
+  return nominations;
 };

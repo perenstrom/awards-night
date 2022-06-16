@@ -7,8 +7,8 @@ import {
   Button,
   Paper
 } from '@mui/material';
-import { StatusMessage } from 'types/utilityTypes';
-import { Category, CategoryId, Film, FilmId, Year } from 'types/nominations';
+import { Nullable, StatusMessage } from 'types/utilityTypes';
+import { Category, Film, Year } from 'types/nominations';
 import { AddNominationsFields } from 'types/admin.types';
 import { Alert } from '@mui/material';
 import { NominationFields } from './NominationFields';
@@ -34,7 +34,8 @@ export const AddNominations: React.FC<Props> = (props) => {
     availableFilms
   } = props;
 
-  const [statusMessage, setStatusMessage] = useState(parentStatusMessage);
+  const [statusMessage, setStatusMessage] =
+    useState<Nullable<StatusMessage>>(parentStatusMessage);
 
   const nominationCountElement = useRef<HTMLInputElement>(null);
   const [nominationCount, setNominationCount] = useState(
@@ -44,7 +45,7 @@ export const AddNominations: React.FC<Props> = (props) => {
     event
   ) => {
     event.preventDefault();
-    const nominationCount = nominationCountElement.current.value;
+    const nominationCount = nominationCountElement.current?.value;
 
     if (nominationCount) {
       setNominationCount(parseInt(nominationCount, 10));
@@ -54,27 +55,28 @@ export const AddNominations: React.FC<Props> = (props) => {
   const [addNominationsStatus, setAddNominationsStatus] = useState<
     'idle' | 'loading'
   >('idle');
-  const onAddNominationsSubmit: React.FormEventHandler<HTMLFormElement> =
-    async (event) => {
-      event.preventDefault();
-      const target = event.currentTarget;
-      setAddNominationsStatus('loading');
-      setStatusMessage(null);
-      const formData = parseFormData<AddNominationsFields>(
-        new FormData(event.currentTarget)
-      );
-      const saveNominationsResult = await createNominations({
-        category: formData.category as CategoryId,
-        year: parseInt(formData.year, 10),
-        films: formData.films as FilmId[],
-        nominees: formData.nominees
-      });
-      setStatusMessage(saveNominationsResult);
-      if (saveNominationsResult.severity !== 'error') {
-        target.reset();
-      }
-      setAddNominationsStatus('idle');
-    };
+  const onAddNominationsSubmit: React.FormEventHandler<
+    HTMLFormElement
+  > = async (event) => {
+    event.preventDefault();
+    const target = event.currentTarget;
+    setAddNominationsStatus('loading');
+    setStatusMessage(null);
+    const formData = parseFormData<AddNominationsFields>(
+      new FormData(event.currentTarget)
+    );
+    const saveNominationsResult = await createNominations({
+      category: formData.category,
+      year: parseInt(formData.year, 10),
+      films: formData.films,
+      nominees: formData.nominees
+    });
+    setStatusMessage(saveNominationsResult);
+    if (saveNominationsResult.severity !== 'error') {
+      target.reset();
+    }
+    setAddNominationsStatus('idle');
+  };
 
   const renderNominationFields = (availableFilms: Film[], count: number) => {
     let elements: ReactElement[] = [];
@@ -117,7 +119,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                 select
               >
                 {availableYears.map((year) => (
-                  <option key={year.id} value={year.year}>
+                  <option key={year.year} value={year.year}>
                     {year.year}
                   </option>
                 ))}
@@ -135,7 +137,7 @@ export const AddNominations: React.FC<Props> = (props) => {
                   select
                 >
                   {availableCategories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.slug} value={category.slug}>
                       {category.name}
                     </option>
                   ))}

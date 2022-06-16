@@ -1,36 +1,31 @@
 import {
-  BetId,
+  Bet,
   Category,
-  NominationBets,
-  NormalizedBets,
   NormalizedNominations,
-  NormalizedPlayers
+  Player
 } from 'types/nominations';
+import { NumberRecord } from 'types/utilityTypes';
 
 export const addPlayersWinnings = (
-  categories: Category[],
+  players: Player[],
   nominations: NormalizedNominations,
-  nominationBets: NominationBets,
-  bets: NormalizedBets,
-  normalizedPlayers: NormalizedPlayers
-): NormalizedPlayers => {
-  const newPlayers: NormalizedPlayers = {};
-  Object.keys(normalizedPlayers).forEach((playerId) => {
-    newPlayers[playerId] = { ...normalizedPlayers[playerId], correct: 0 };
+  bets: Bet[]
+): Player[] => {
+  // Record<PlayerId, number>
+  const playerWins: NumberRecord<number> = {};
+
+  bets.forEach((bet) => {
+    if (nominations[bet.nomination].won) {
+      playerWins[bet.player]
+        ? (playerWins[bet.player] += 1)
+        : (playerWins[bet.player] = 1);
+    }
   });
 
-  categories.forEach((category) => {
-    category.nominations.forEach((n) => {
-      if (nominations[n].won) {
-        const winningBets = (nominationBets?.[n] ?? []) as BetId[];
-        winningBets.forEach((bet) => {
-          newPlayers[bets[bet].player].correct !== undefined
-            ? newPlayers[bets[bet].player].correct++
-            : (newPlayers[bets[bet].player].correct = 0);
-        });
-      }
-    });
-  });
+  const newPlayers: Player[] = players.map((player) => ({
+    ...player,
+    correct: playerWins[player.id] || 0
+  }));
 
   return newPlayers;
 };

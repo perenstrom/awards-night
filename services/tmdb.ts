@@ -1,7 +1,8 @@
 import { ExternalFilm, TmdbFilmResult } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import { MovieDetails, MovieResult, MovieSearchResults } from './tmdb.types';
 
-export const getPoster = (imdbId: string): Promise<string> => {
+export const getPoster = (imdbId: string): Promise<Nullable<string>> => {
   return fetch(
     `${process.env.TMDB_BASE_URL}/movie/${imdbId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
   )
@@ -13,7 +14,7 @@ export const getPoster = (imdbId: string): Promise<string> => {
     });
 };
 
-export const getFilm = (tmdbId: string): Promise<ExternalFilm> => {
+export const getFilm = (tmdbId: string): Promise<Nullable<ExternalFilm>> => {
   return fetch(
     `${process.env.TMDB_BASE_URL}/movie/${tmdbId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
   )
@@ -32,8 +33,9 @@ export const getFilm = (tmdbId: string): Promise<ExternalFilm> => {
     });
 };
 
-export const getFilmByImdb = (imdbId: string): Promise<ExternalFilm> =>
-  getFilm(imdbId);
+export const getFilmByImdb = (
+  imdbId: string
+): Promise<Nullable<ExternalFilm>> => getFilm(imdbId);
 
 export const searchFilms = (
   searchString: string
@@ -56,8 +58,8 @@ export const searchFilms = (
 };
 
 const formatTmdbFilm = (film: MovieDetails): ExternalFilm => ({
-  imdbId: film.imdb_id,
-  name: film.title,
+  imdbId: film.imdb_id || '',
+  name: film.title || '',
   poster: `${process.env.TMDB_POSTER_BASE_URL}${film.poster_path}`,
   releaseDate: film.release_date
 });

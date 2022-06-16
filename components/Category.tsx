@@ -7,6 +7,7 @@ import {
 } from 'types/nominations';
 import { NominatedFilm } from './NominatedFilm';
 import { styled } from '@mui/material';
+import { Nullable } from 'types/utilityTypes';
 
 const FilmList = styled('ul')`
   display: flex;
@@ -21,7 +22,7 @@ interface Props {
   nominations: Nomination[];
   films: NormalizedFilms;
   bets: Bet[];
-  players: NormalizedPlayers;
+  players: Nullable<NormalizedPlayers>;
 }
 
 const CategoryComponent: React.FC<Props> = ({

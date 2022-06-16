@@ -1,94 +1,121 @@
 import { atom, selector } from 'recoil';
 import {
   Category,
-  CategoryId,
   NormalizedBets,
   NormalizedCategories,
   NormalizedNominations,
   NormalizedPlayers,
   NominationMeta,
-  NominationBets
+  NominationBets,
+  Player,
+  Bet,
+  Nomination
 } from 'types/nominations';
+import { Nullable } from 'types/utilityTypes';
 import {
   calculateCompletedCategories,
   addPlayersWinnings
 } from 'utils/nominations';
+import {
+  normalizeBets,
+  normalizeCategories,
+  normalizeNominations,
+  normalizePlayers
+} from 'utils/normalizer';
 
-export const betsState = atom<NormalizedBets>({
+// Bets
+export const betsState = atom<Bet[]>({
   key: 'betsState',
-  default: null
+  default: []
 });
 
-export const nominationsState = atom<NormalizedNominations>({
+export const normalizedBetsState = selector<Nullable<NormalizedBets>>({
+  key: 'normalizedBetsState',
+  get: ({ get }) => normalizeBets(get(betsState))
+});
+
+// Nominations
+export const nominationsState = atom<Nomination[]>({
   key: 'nominationsState',
-  default: null
+  default: []
 });
 
-export const nominationBetsState = atom<NominationBets>({
-  key: 'nominationBetsState',
-  default: null
-});
-
-export const normalizedCategoriesState = atom<NormalizedCategories>({
-  key: 'normalizedCategoriesState',
-  default: null
-});
-
-export const categoriesState = selector<Category[]>({
-  key: 'categoriesState',
+export const normalizedNominationsState = selector<
+  Nullable<NormalizedNominations>
+>({
+  key: 'normalizedNominationsState',
   get: ({ get }) => {
-    const normalizedCategories = get(normalizedCategoriesState);
-    return normalizedCategories
-      ? (Object.entries(normalizedCategories) as [CategoryId, Category][]).map(
-          (c) => c[1]
-        )
-      : [];
+    const nominations = get(nominationsState);
+    //debugger;
+    return normalizeNominations(nominations);
   }
 });
 
+// Nomination bets
+export const nominationBetsState = atom<NominationBets>({
+  key: 'nominationBetsState',
+  default: {}
+});
+
+// Categories
+export const categoriesState = atom<Category[]>({
+  key: 'categoriesState',
+  default: []
+});
+
+export const normalizedCategoriesState = selector<
+  Nullable<NormalizedCategories>
+>({
+  key: 'normalizedCategoriesState',
+  get: ({ get }) => normalizeCategories(get(categoriesState))
+});
+
+// Meta
 export const metaState = selector<NominationMeta>({
   key: 'metaState',
   get: ({ get }) => {
     const categories = get(categoriesState);
-    const nominations = get(nominationsState);
+    const nominations = get(normalizedNominationsState);
+
+    if (categories.length === 0 || !nominations) {
+      return {
+        completedCategories: 0
+      };
+    }
+
     const completedCategories = calculateCompletedCategories(
       categories,
       nominations
     );
 
-    if (categories.length === 0) {
-      return null;
-    } else {
-      return {
-        completedCategories: completedCategories
-      };
-    }
+    return {
+      completedCategories: completedCategories
+    };
   }
 });
 
-const rawPlayersState = atom<NormalizedPlayers>({
+// Players
+const rawPlayersState = atom<Player[]>({
   key: 'rawPlayersState',
-  default: null,
+  default: [],
   dangerouslyAllowMutability: true
 });
 
-export const playerState = selector<NormalizedPlayers>({
-  key: 'normalizedPlayersState',
+export const playerState = selector<Player[]>({
+  key: 'playersState',
   get: ({ get }) => {
     const players = get(rawPlayersState);
-    const categories = get(categoriesState);
-    const nominations = get(nominationsState);
-    const nominationBets = get(nominationBetsState);
+    const nominations = get(normalizedNominationsState);
     const bets = get(betsState);
 
-    if (players) {
-      return addPlayersWinnings(
-        categories,
+    if (players && nominations) {
+      const playersWithWins = addPlayersWinnings(
+        (Object.entries(players) as [string, Player][]).map((c) => c[1]),
         nominations,
-        nominationBets,
-        bets,
-        players
+        (Object.entries(bets) as [string, Bet][]).map((c) => c[1])
       );
+
+      return playersWithWins.sort((a, b) => a.correct - b.correct);
     } else {
       return players;
     }
@@ -96,4 +123,9 @@ export const playerState = selector<NormalizedPlayers>({
   set: ({ set }, newValue) => {
     set(rawPlayersState, newValue);
   }
+});
+
+export const normalizedPlayersState = selector<Nullable<NormalizedPlayers>>({
+  key: 'normalizedPlayersState',
+  get: ({ get }) => normalizePlayers(get(playerState))
 });

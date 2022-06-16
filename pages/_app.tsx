@@ -12,6 +12,7 @@ import {
   initializeRecoilState,
   route as categoryRoute
 } from './[year]/[category]';
+import { AppProps } from 'next/dist/shared/lib/router/router';
 
 const clientSideEmotionCache = createCache({ key: 'css', prepend: true });
 
@@ -19,7 +20,7 @@ function MyApp({
   Component,
   pageProps,
   emotionCache = clientSideEmotionCache
-}) {
+}: AppProps) {
   const router = useRouter();
 
   // Initialize recoil state based on route and pageProps

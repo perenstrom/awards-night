@@ -1,31 +1,40 @@
 import { isAuthorized } from 'lib/authorization';
+import { prismaContext } from 'lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getBetsForPlayer } from 'services/airtable';
-import { PlayerId } from 'types/nominations';
+import { getBetsForPlayer } from 'services/prisma/bets';
 
-const playerBets = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'GET') {
-    return new Promise((resolve) => {
-      const { playerId } = req.query;
+interface GetRequestQuery {
+  playerId: string;
+}
 
-      if (!isAuthorized(req, res, playerId as PlayerId)) {
+const playerBets = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  return new Promise((resolve) => {
+    if (req.method === 'GET') {
+      const { playerId } = req.query as unknown as GetRequestQuery;
+      const parsedPlayerId = parseInt(playerId, 10);
+
+      if (!isAuthorized(req, res, parsedPlayerId)) {
         res.status(401).end('Unauthorized.');
-        resolve('');
+        return resolve();
       }
 
-      getBetsForPlayer(playerId as PlayerId)
+      getBetsForPlayer(parsedPlayerId, prismaContext)
         .then((bets) => {
           res.status(200).json(bets);
-          resolve('');
+          return resolve();
         })
         .catch((error) => {
           res.status(500).end(error);
-          return resolve('');
+          return resolve();
         });
-    });
-  } else {
-    res.status(404).end();
-  }
+    } else {
+      res.status(404).end();
+      return resolve();
+    }
+  });
 };
 
 export default playerBets;

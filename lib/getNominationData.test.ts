@@ -1,68 +1,131 @@
-import { YearId } from 'types/nominations';
-
-import { mockRequests } from '__test__/test-utils';
-import { getNormalizedCategoriesFixture } from '__test__/__fixtures__/getNormalizedCategoriesFixture';
-import { getNormalizedNominationsFixture } from '__test__/__fixtures__/getNormalizedNominationsFixture';
+import type { Context } from 'services/prisma/prisma.types';
+import { MockContext, createMockContext } from '__test__/__mocks__/prisma';
+import { getCategoriesResponseFixture } from '__test__/__fixtures__/prisma/getCategoriesResponse';
+import { getFilmsResponseFixture } from '__test__/__fixtures__/prisma/getFilmsResponse';
+import { getNominationsResponseFixture } from '__test__/__fixtures__/prisma/getNominationsResponse';
+import { getYearResponseFixture } from '__test__/__fixtures__/prisma/getYearsResponse';
 
 import { getNominationData } from './getNominationData';
 
+import type { NominationData } from 'types/nominations';
+
 describe('getNominationData', () => {
-  mockRequests();
+  let mockCtx: MockContext;
+  let ctx: Context;
+
+  beforeEach(() => {
+    mockCtx = createMockContext();
+    ctx = mockCtx as unknown as Context;
+  });
 
   it('returns correct nomination data for a year, without bets (betting open)', async () => {
-    const year = 2020;
-    const nominationData = await getNominationData(year);
+    mockCtx.prisma.year.findUnique.mockResolvedValue(
+      getYearResponseFixture(2020)
+    );
+    mockCtx.prisma.category.findMany.mockResolvedValue(
+      getCategoriesResponseFixture(2020)
+    );
+    mockCtx.prisma.nomination.findMany.mockResolvedValue(
+      getNominationsResponseFixture(2020)
+    );
+    mockCtx.prisma.film.findMany.mockResolvedValue(
+      getFilmsResponseFixture(2020)
+    );
 
-    const expectedNominationData = {
+    const year = 2020;
+    const nominationData = await getNominationData(year, ctx);
+
+    const expectedNominationData: NominationData = {
       year: {
-        id: '2020-id' as YearId,
-        name: '92rd Academy Awards',
+        name: '92nd Academy Awards',
         year: 2020,
-        date: '2020-04-25T22:00:00.000Z',
+        date: '2020-02-10T00:00:00.000Z',
         bettingOpen: true,
-        categories: ['best-adapted-screenplay-id', 'best-picture-id'],
-        nominations: [
-          'nomination-2020-best-adapted-screenplay-1',
-          'nomination-2020-best-adapted-screenplay-2',
-          'nomination-2020-best-picture-1',
-          'nomination-2020-best-picture-2'
-        ]
+        categories: ['best-supporting-actor', 'best-hair-and-makeup'],
+        nominations: [123, 124, 128, 129]
       },
-      categories: getNormalizedCategoriesFixture(2020),
-      nominations: getNormalizedNominationsFixture([
-        'nomination-2020-best-adapted-screenplay-1',
-        'nomination-2020-best-adapted-screenplay-2',
-        'nomination-2020-best-picture-1',
-        'nomination-2020-best-picture-2'
-      ]),
+      categories: {
+        'best-hair-and-makeup': {
+          slug: 'best-hair-and-makeup',
+          name: 'Best Hair and Makeup',
+          nextCategory: 'best-supporting-actor',
+          previousCategory: null,
+          nominations: [128, 129]
+        },
+        'best-supporting-actor': {
+          slug: 'best-supporting-actor',
+          name: 'Best Supporting Actor',
+          nextCategory: null,
+          previousCategory: 'best-hair-and-makeup',
+          nominations: [123, 124]
+        }
+      },
+      nominations: {
+        123: {
+          id: 123,
+          year: 2020,
+          category: 'best-supporting-actor',
+          nominee: 'Tom Hanks',
+          won: false,
+          decided: false,
+          film: 'tt3224458'
+        },
+        124: {
+          id: 124,
+          year: 2020,
+          category: 'best-supporting-actor',
+          nominee: 'Brad Pitt',
+          won: false,
+          decided: false,
+          film: 'tt7131622'
+        },
+        128: {
+          id: 128,
+          year: 2020,
+          category: 'best-hair-and-makeup',
+          nominee: '',
+          won: false,
+          decided: false,
+          film: 'tt8579674'
+        },
+        129: {
+          id: 129,
+          year: 2020,
+          category: 'best-hair-and-makeup',
+          nominee: '',
+          won: false,
+          decided: false,
+          film: 'tt6394270'
+        }
+      },
       films: {
-        'citizen-kane': {
-          id: 'citizen-kane',
-          imdbId: 'imdb-ck',
-          name: 'Citizen Kane',
-          poster: 'http://image.tmdb.org/t/p/w342/citizen-kane.jpg',
-          releaseDate: '1941-05-01'
+        tt3224458: {
+          imdbId: 'tt3224458',
+          name: 'A Beautiful Day in the Neighborhood',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/p9vCAVhDK375XyobVcKqzqzsUHE.jpg'
         },
-        moana: {
-          id: 'moana',
-          imdbId: 'imdb-m',
-          name: 'Moana',
-          poster: 'http://image.tmdb.org/t/p/w342/moana.jpg',
-          releaseDate: '2016-11-14'
+        tt7131622: {
+          imdbId: 'tt7131622',
+          name: 'Once Upon a Time… in Hollywood',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/8j58iEBw9pOXFD2L0nt0ZXeHviB.jpg'
         },
-        'the-matrix': {
-          id: 'the-matrix',
-          imdbId: 'imdb-tm',
-          name: 'The Matrix',
-          poster: 'http://image.tmdb.org/t/p/w342/the-matrix.jpg',
-          releaseDate: '1999-03-24'
+        tt8579674: {
+          imdbId: 'tt8579674',
+          name: '1917',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/iZf0KyrE25z1sage4SYFLCCrMi9.jpg'
         },
-        'bridget-jones': {
-          id: 'bridget-jones',
-          imdbId: 'imdb-bj',
-          name: 'Bridget Jones',
-          poster: 'http://image.tmdb.org/t/p/w342/bridget-jones.jpg',
-          releaseDate: '2001-04-04'
+        tt6394270: {
+          imdbId: 'tt6394270',
+          name: 'Bombshell',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/gbPfvwBqbiHpQkYZQvVwB6MVauV.jpg'
         }
       },
       meta: {
@@ -74,59 +137,113 @@ describe('getNominationData', () => {
   });
 
   it('returns correct nomination data for a year, with bets (betting closed)', async () => {
-    const year = 2021;
-    const nominationData = await getNominationData(year);
+    mockCtx.prisma.year.findUnique.mockResolvedValue(
+      getYearResponseFixture(2021)
+    );
+    mockCtx.prisma.category.findMany.mockResolvedValue(
+      getCategoriesResponseFixture(2021)
+    );
+    mockCtx.prisma.nomination.findMany.mockResolvedValue(
+      getNominationsResponseFixture(2021)
+    );
+    mockCtx.prisma.film.findMany.mockResolvedValue(
+      getFilmsResponseFixture(2021)
+    );
 
-    const expectedNominationData = {
+    const year = 2021;
+    const nominationData = await getNominationData(year, ctx);
+
+    const expectedNominationData: NominationData = {
       year: {
-        id: '2021-id' as YearId,
         name: '93rd Academy Awards',
         year: 2021,
-        date: '2021-04-25T22:00:00.000Z',
+        date: '2021-04-26T00:00:00.000Z',
         bettingOpen: false,
-        categories: ['best-animated-short-id', 'best-picture-id'],
-        nominations: [
-          'nomination-2021-best-animated-short-1',
-          'nomination-2021-best-animated-short-2',
-          'nomination-2021-best-picture-1',
-          'nomination-2021-best-picture-2'
-        ]
+        categories: ['best-picture', 'best-supporting-actress'],
+        nominations: [1, 4, 11, 12]
       },
-      categories: getNormalizedCategoriesFixture(2021),
-      nominations: getNormalizedNominationsFixture([
-        'nomination-2021-best-animated-short-1',
-        'nomination-2021-best-animated-short-2',
-        'nomination-2021-best-picture-1',
-        'nomination-2021-best-picture-2'
-      ]),
+      categories: {
+        'best-picture': {
+          slug: 'best-picture',
+          name: 'Best Picture',
+          previousCategory: null,
+          nextCategory: 'best-supporting-actress',
+          nominations: [1, 4]
+        },
+        'best-supporting-actress': {
+          slug: 'best-supporting-actress',
+          name: 'Best Supporting Actress',
+          previousCategory: 'best-picture',
+          nextCategory: null,
+          nominations: [11, 12]
+        }
+      },
+      nominations: {
+        1: {
+          id: 1,
+          year: 2021,
+          category: 'best-picture',
+          nominee: '',
+          won: true,
+          decided: true,
+          film: 'tt9770150'
+        },
+        4: {
+          id: 4,
+          year: 2021,
+          category: 'best-picture',
+          nominee: '',
+          won: false,
+          decided: true,
+          film: 'tt10272386'
+        },
+        11: {
+          id: 11,
+          year: 2021,
+          category: 'best-supporting-actress',
+          nominee: 'Maria Bakalova',
+          won: false,
+          decided: true,
+          film: 'tt13143964'
+        },
+        12: {
+          id: 12,
+          year: 2021,
+          category: 'best-supporting-actress',
+          nominee: 'Glenn Close',
+          won: true,
+          decided: true,
+          film: 'tt6772802'
+        }
+      },
       films: {
-        failsafe: {
-          id: 'failsafe',
-          imdbId: 'imdb-fs',
-          name: 'Failsafe',
-          poster: 'http://image.tmdb.org/t/p/w342/failsafe.jpg',
-          releaseDate: '1964-09-15'
+        tt9770150: {
+          imdbId: 'tt9770150',
+          name: 'Nomadland',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/fmHBjfiMb7cP0cikF17LoA8E1bp.jpg'
         },
-        'twelve-angry-men': {
-          id: 'twelve-angry-men',
-          imdbId: 'imdb-tam',
-          name: 'Twelve Angry Men',
-          poster: 'http://image.tmdb.org/t/p/w342/twelve-angry-men.jpg',
-          releaseDate: '1957-04-10'
+        tt10618286: {
+          imdbId: 'tt10618286',
+          name: 'Mank',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/1VF9IcI4Vyrd2oYrVp0oNuPeE70.jpg'
         },
-        'legally-blond': {
-          id: 'legally-blond',
-          imdbId: 'imdb-lb',
-          name: 'Legally Blond',
-          poster: 'http://image.tmdb.org/t/p/w342/legally-blond.jpg',
-          releaseDate: '2001-06-26'
+        tt13143964: {
+          imdbId: 'tt13143964',
+          name: 'Borat Subsequent Moviefilm',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/kwh9dYvZLn7yJ9nfU5sPj2h9O7l.jpg'
         },
-        'legally-blond-2': {
-          id: 'legally-blond-2',
-          imdbId: 'imdb-lb2',
-          name: 'Legally Blond 2',
-          poster: 'http://image.tmdb.org/t/p/w342/legally-blond-2.jpg',
-          releaseDate: '2003-06-30'
+        tt10706602: {
+          imdbId: 'tt10706602',
+          name: 'Collective',
+          releaseDate: '',
+          poster:
+            'https://image.tmdb.org/t/p/w342/oR93n0CAn2GznyHDFSRTp0J1t8c.jpg'
         }
       },
       meta: {

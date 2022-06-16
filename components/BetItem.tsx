@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Typography, styled } from '@mui/material';
-import { Category, NominationId } from 'types/nominations';
+import { Category } from 'types/nominations';
 import { defaultStyledOptions } from 'utils/mui';
 
 const getBackgroundColor = (
@@ -22,6 +22,8 @@ const getBackgroundColor = (
     return 'rgb(187, 162, 103)';
   } else if (!activeBet && !won) {
     // White
+    return 'rgb(238, 238, 238)';
+  } else {
     return 'rgb(238, 238, 238)';
   }
 };
@@ -98,7 +100,7 @@ const Frame = styled('span')`
 
 interface Props {
   category: Category;
-  nominationId: NominationId;
+  nominationId: number;
   won: boolean;
   decided: boolean;
   filmName: string;
@@ -106,7 +108,7 @@ interface Props {
   nominee: string;
   activeBet?: boolean;
   bettingOpen?: boolean;
-  onClick: (nominationId: NominationId, category: Category) => void;
+  onClick: (nominationId: number, category: Category) => void;
 }
 
 export const BetItemComponent: React.FC<Props> = ({

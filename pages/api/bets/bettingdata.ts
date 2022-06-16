@@ -1,42 +1,33 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import { isAuthorized } from 'lib/authorization';
 import { getBettingData } from 'lib/getBettingData';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { getPlayers } from 'services/airtable';
-import {
-  NormalizedCategories,
-  NormalizedNominations,
-  PlayerId,
-  Year
-} from 'types/nominations';
+import { prismaContext } from 'lib/prisma';
+
+import type { NominationData } from 'types/nominations';
 
 interface PostRequestBody {
-  year: Year;
-  categories: NormalizedCategories;
-  nominations: NormalizedNominations;
-  playerId: PlayerId;
+  nominationData: NominationData;
+  group: number;
+  playerId: number;
 }
 
 const bettingData = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     return new Promise(async (resolve) => {
-      const { year, categories, nominations, playerId }: PostRequestBody =
-        req.body;
+      const { nominationData, group, playerId }: PostRequestBody = req.body;
 
-      if (!isAuthorized(req, res, playerId as PlayerId)) {
+      if (!isAuthorized(req, res, playerId)) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }
 
-      if (!year || !categories || !nominations || !playerId) {
+      if (!nominationData || !group || !playerId) {
         res
           .status(400)
-          .end('Year, categories, nominations and playerId must be provided');
+          .end('NominationData, group and playerId must be provided');
         resolve('');
       } else {
-        const playersResult = await getPlayers([playerId]);
-        const player = playersResult[0];
-
-        getBettingData(year, categories, nominations, player.group)
+        getBettingData(nominationData, group, prismaContext)
           .then((bettingData) => {
             res.status(200).json(bettingData);
             resolve('');

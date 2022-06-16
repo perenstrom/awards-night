@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Bet, Film, Nomination, NormalizedPlayers } from 'types/nominations';
 import { Chip, Stack, styled } from '@mui/material';
 import { defaultStyledOptions } from 'utils/mui';
+import { Nullable } from 'types/utilityTypes';
 
 interface WrapperProps {
   readonly winner: boolean;
@@ -29,7 +30,7 @@ interface Props {
   nomination: Nomination;
   film: Film;
   bets: Bet[];
-  players: NormalizedPlayers;
+  players: Nullable<NormalizedPlayers>;
 }
 
 const NominatedFilmComponent: React.FC<Props> = ({
@@ -38,28 +39,35 @@ const NominatedFilmComponent: React.FC<Props> = ({
   bets,
   players
 }) => {
-  const bettingPlayers = bets
-    ? bets.map((bet) => (
-        <Stack
-          direction="row"
-          component="ul"
-          spacing={1}
-          padding={0}
-          margin={1}
-          justifyContent="center"
-          flexWrap="wrap"
-          key={bet.id}
-        >
-          <Chip
-            color="success"
-            size="small"
-            component="li"
-            sx={{ marginBottom: '0.5rem' }}
-            label={players[bet.player].name}
-          />
-        </Stack>
-      ))
-    : null;
+  let bettingPlayers;
+  try {
+    bettingPlayers = bets && players
+      ? bets.map((bet) => (
+          <Stack
+            direction="row"
+            component="ul"
+            spacing={1}
+            padding={0}
+            margin={1}
+            justifyContent="center"
+            flexWrap="wrap"
+            key={bet.id}
+          >
+            <Chip
+              color="success"
+              size="small"
+              component="li"
+              sx={{ marginBottom: '0.5rem' }}
+              label={players[bet.player].name}
+            />
+          </Stack>
+        ))
+      : null;
+  } catch (error) {
+    console.log(error);
+    console.log(bets);
+    console.log(players);
+  }
 
   const poster =
     film.poster ?? `https://via.placeholder.com/342x513.png?text=${film.name}`;

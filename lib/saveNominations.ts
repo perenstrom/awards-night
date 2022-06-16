@@ -1,28 +1,65 @@
-import { getYear, updateYear } from 'services/airtable';
-import {
-  getCategories,
-  getNominationsByCategoryAndYear,
-  createNominations,
-} from 'services/airtable';
-import { CategoryId, FilmId, Nomination } from 'types/nominations';
-import { PartialBy, StatusMessage } from 'types/utilityTypes';
+import { getYear } from 'services/prisma';
+import { getCategoriesWithNominationsForYear } from 'services/prisma/categories';
+import { createNominations } from 'services/prisma/nominations';
+import { connectCategoryToYear } from 'services/prisma/years';
 import { getGenericErrorMessage } from 'utils/statusMessages';
 import { triggerDeploy } from 'utils/triggerDeploy';
+import { prismaContext } from './prisma';
+
+import type { Nomination } from 'types/nominations';
+import type { PartialBy, StatusMessage } from 'types/utilityTypes';
+
+const getData = async (data: { category: string; year: number }) => {
+  const { category, year } = data;
+
+  try {
+    const fullYear = await getYear(year, prismaContext);
+    if (!fullYear) {
+      throw new Error('Null year');
+    }
+
+    const fullCategoryResult = await getCategoriesWithNominationsForYear(
+      [category],
+      year,
+      prismaContext
+    );
+    const fullCategory = fullCategoryResult[0].category;
+    const existingNominations = fullCategoryResult[0].nominations;
+
+    return {
+      success: true as const,
+      data: {
+        fullYear,
+        fullCategory,
+        existingNominations
+      }
+    };
+  } catch (error) {
+    return {
+      success: false as const,
+      data: null
+    };
+  }
+};
 
 export const saveNominations = async (data: {
-  category: CategoryId;
+  category: string;
   year: number;
-  films: FilmId[];
+  films: string[];
   nominees: string[];
 }): Promise<StatusMessage> => {
   const { category, year, films, nominees } = data;
-  const fullYear = await getYear(year);
-  const fullCategoryResult = await getCategories([category]);
-  const fullCategory = fullCategoryResult[0];
-  const existingNominations = await getNominationsByCategoryAndYear(
-    fullCategory.slug,
+
+  const result = await getData({
+    category,
     year
-  );
+  });
+
+  if (!result.success) {
+    return getGenericErrorMessage();
+  }
+
+  const { fullYear, fullCategory, existingNominations } = result.data;
 
   if (existingNominations.length > 0) {
     return {
@@ -45,32 +82,38 @@ export const saveNominations = async (data: {
     };
   }
 
-  const categorySavedOnYear = fullYear.categories.includes(fullCategory.id);
+  const categorySavedOnYear = fullYear.categories.includes(fullCategory.slug);
   if (!categorySavedOnYear) {
-    await updateYear(fullYear.id, {
-      categories: fullYear.categories.concat([fullCategory.id])
-    }).catch(() => {
-      getGenericErrorMessage();
-    });
+    await connectCategoryToYear(fullCategory.slug, year, prismaContext).catch(
+      () => {
+        getGenericErrorMessage();
+      }
+    );
   }
 
-  let savedNominations = null;
+  let saveNominationsResult = false;
   try {
-    savedNominations = await createNominations(
-      films.map<PartialBy<Nomination, 'id' | 'decided'>>((filmId, index) => ({
-        category: fullCategory.id,
+    const nominationsToSave = films.map<PartialBy<Nomination, 'id'>>(
+      (filmId, index) => ({
+        category: fullCategory.slug,
         film: filmId,
         nominee: nominees[index],
         won: false,
-        year: fullYear.id
-      }))
+        year: year,
+        decided: false
+      })
+    );
+
+    saveNominationsResult = await createNominations(
+      nominationsToSave,
+      prismaContext
     );
   } catch (error) {
     console.log(error);
     return getGenericErrorMessage();
   }
 
-  if (savedNominations) {
+  if (saveNominationsResult) {
     await triggerDeploy();
     return {
       severity: 'success',
