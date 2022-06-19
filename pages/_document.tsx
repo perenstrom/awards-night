@@ -18,7 +18,8 @@ export default class MyDocument extends Document {
     /* eslint-disable */
     ctx.renderPage = () =>
       originalRenderPage({
-        enhanceApp: (App: any) => (props) => <App emotionCache={cache} {...props} />
+        enhanceApp: (App: any) => (props) =>
+          <App emotionCache={cache} {...props} />
       });
     /* eslint-enable */
 
@@ -69,8 +70,8 @@ export default class MyDocument extends Document {
           />
           <link rel="manifest" href="/site.webmanifest" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#bba267" />
-          <meta name="msapplication-TileColor" content="#000000" />
-          <meta name="theme-color" content="#ffffff" />
+          <meta name="msapplication-TileColor" content="#bba267" />
+          <meta name="theme-color" content="#bba267" />
         </Head>
         <body>
           <Main />
