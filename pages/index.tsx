@@ -82,7 +82,7 @@ const FrontPage: NextPage<Props> = () => {
   return (
     <div>
       <Head>
-        <title>Oscar Night – Social prediction for the Academy Awards</title>
+        <title>Awards Night – Social prediction for the Academy Awards</title>
       </Head>
       <HeroWrapper>
         <Login ready={state === 'idle'}>
@@ -98,7 +98,7 @@ const FrontPage: NextPage<Props> = () => {
               fontSize="4.5rem"
               textAlign="center"
             >
-              <TitleShadow>Oscar Night</TitleShadow>
+              <TitleShadow>Awards Night</TitleShadow>
             </Typography>
             <Typography
               color="white"
@@ -187,7 +187,7 @@ const FrontPage: NextPage<Props> = () => {
             Get access!
           </Typography>
           <Typography variant="body1" pt="1rem">
-            Oscar Night is currently under development and in closed alpha. If
+            Awards Night is currently under development and in closed alpha. If
             you want to be a part of the alpha testing, send me an e-mail at{' '}
             <a href="mailto:hello@oscarnight.app">hello@oscarnight.app</a>.
           </Typography>

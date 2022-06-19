@@ -7,4 +7,4 @@ set -ex
 
 # Seeding command
 
-psql -d oscar_night -f ./prisma/seed-data.sql
+psql -d awards_night -f ./prisma/seed-data.sql

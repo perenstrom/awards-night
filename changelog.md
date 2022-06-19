@@ -1,4 +1,10 @@
 # Changelog
+## 4.0.2
+* Re-brand to Awards Night
+
+## 4.0.1
+* Bug fixes
+
 ## 4.0.0
 * Replace Airtable with Prisma + PostgreSQL.
 
