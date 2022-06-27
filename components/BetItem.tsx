@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Typography, styled } from '@mui/material';
 import { Category } from 'types/nominations';
 import { defaultStyledOptions } from 'utils/mui';
+import { FilmPoster } from './FilmPoster';
 
 const getBackgroundColor = (
   activeBet: boolean,
@@ -63,41 +64,6 @@ const InnerWrapper = styled('div')`
   padding-bottom: 0.5rem;
 `;
 
-const PosterWrapper = styled('div')`
-  position: relative;
-  overflow: hidden;
-`;
-
-const PosterInnerWrapper = styled('div')`
-  position: relative;
-`;
-
-const Poster = styled('img')`
-  display: block;
-  border-radius: 4px;
-`;
-
-const Frame = styled('span')`
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
-  background-image: linear-gradient(
-    90deg,
-    hsla(0, 0%, 100%, 0) 0,
-    hsla(0, 0%, 100%, 0.8) 50%,
-    hsla(0, 0%, 100%, 0)
-  );
-  background-repeat: no-repeat;
-  background-clip: padding-box;
-  background-size: 100% 1px;
-`;
-
 interface Props {
   category: Category;
   nominationId: number;
@@ -132,12 +98,7 @@ export const BetItemComponent: React.FC<Props> = ({
       bettingOpen={bettingOpen}
       onClick={bettingOpen ? () => onClick(nominationId, category) : () => null}
     >
-      <PosterWrapper>
-        <PosterInnerWrapper>
-          <Poster src={poster} width="48" height="72" />
-          <Frame></Frame>
-        </PosterInnerWrapper>
-      </PosterWrapper>
+      <FilmPoster poster={poster} />
       <InnerWrapper>
         <Typography variant="h3">{filmName}</Typography>
         {nominee && <Typography>{nominee}</Typography>}
