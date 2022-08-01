@@ -63,6 +63,10 @@ export default class MyDocument extends Document {
             rel="stylesheet"
           />
           <link
+            href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital@0;1&display=swap"
+            rel="stylesheet"
+          />
+          <link
             rel="apple-touch-icon"
             sizes="180x180"
             href="/apple-touch-icon.png"

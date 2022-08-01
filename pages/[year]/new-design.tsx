@@ -11,18 +11,18 @@ const MainWrapper = styled('div')`
 `;
 
 const Sidebar = styled('div')`
-  flex-basis: 18%;
+  flex-basis: 20em;
   background: #363636;
   flex-grow: 0;
 `;
 
 const Main = styled('div')`
-  width: 376px;
   background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
   flex-grow: 1;
 
   display: flex;
   flex-direction: column;
+  flex-basis: 100%;
   padding: 3em;
 `;
 

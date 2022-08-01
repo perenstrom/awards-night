@@ -50,21 +50,29 @@ const Nomination = styled(
     'poster bets';
   grid-gap: 0.5em;
 
-  div {
-    background: lightgreen;
-  }
+  color: #e5e7f8;
+  font-family: 'Inter', sans-serif;
 
   #poster {
     grid-area: poster;
   }
   #title {
     grid-area: title;
+
+    font-size: 1.3em;
+    font-weight: 700;
+    line-height: 1;
+    padding-top: 0.3em;
   }
   #nominee {
     grid-area: nominee;
+    font-family: 'Charis SIL', serif;
+    font-style: italic;
   }
   #bets {
     grid-area: bets;
+    display: flex;
+    gap: 0.5em;
   }
 `;
 
@@ -82,9 +90,28 @@ export const NominatedFilm: React.FC<NominationsProps> = ({
       <div id="poster">
         <Image src="https://image.tmdb.org/t/p/w342/y89kFMNYXNKMdlZjR2yg7nQtcQH.jpg" />
       </div>
-      <div id="title">title</div>
-      <div id="nominee">nominee</div>
-      <div id="bets">bets</div>
+      <div id="title">Everything everywhere all at once</div>
+      <div id="nominee">Michelle Yeoh</div>
+      <div id="bets">
+        <BetIcon>P</BetIcon>
+        <BetIcon>J</BetIcon>
+      </div>
     </Nomination>
   );
 };
+
+const BetIcon = styled('div')`
+  border-radius: 50%;
+  background-color: #ef8b2c;
+  color: white;
+  width: 1.4em;
+  height: 1.4em;
+  margin-bottom: 0.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.4em;
+`;
