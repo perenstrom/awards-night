@@ -8,6 +8,7 @@ interface Size {
 }
 interface NominationsProps {
   readonly size: Size | null;
+  readonly visible?: boolean;
 }
 
 const getSize = (size: Size) => {
@@ -27,11 +28,13 @@ const getSize = (size: Size) => {
 
 const Nomination = styled(
   'div',
-  defaultStyledOptions<NominationsProps>(['size'])
+  defaultStyledOptions<NominationsProps>(['size', 'visible'])
 )<NominationsProps>`
   aspect-ratio: 9 / 4;
-  width: ${({ size }) => (size ? getSize(size).width : '40%')};
-  height: ${({ size }) => (size ? getSize(size).height : '25%')};
+  width: ${({ size }) => (size ? getSize(size).width : '0px')};
+  height: ${({ size }) => (size ? getSize(size).height : '0px')};
+  opacity: ${({ visible }) => (visible ? '100%' : '0%')};
+  transition: opacity 0.2s ease-in-out;
   box-sizing: border-box;
   background: #2c2c2c;
   border-radius: 8px;
@@ -70,9 +73,12 @@ const Image = styled('img')`
   width: 100%;
 `;
 
-export const NominatedFilm: React.FC<NominationsProps> = ({ size }) => {
+export const NominatedFilm: React.FC<NominationsProps> = ({
+  size,
+  visible = false
+}) => {
   return (
-    <Nomination size={size}>
+    <Nomination size={size} visible={visible}>
       <div id="poster">
         <Image src="https://image.tmdb.org/t/p/w342/y89kFMNYXNKMdlZjR2yg7nQtcQH.jpg" />
       </div>

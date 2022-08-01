@@ -1,8 +1,7 @@
 import { styled } from '@mui/material/styles';
-import { FilmPoster } from 'components/FilmPoster';
 import { NominatedFilm } from 'components/NominatedFilmDashboard';
 import { NextPage } from 'next';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MainWrapper = styled('div')`
   display: flex;
@@ -90,6 +89,15 @@ const getNominationSize = (): Size | null => {
 
 const NewDesignPage: NextPage<{}> = () => {
   const nominationSize = getNominationSize();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (nominationSize) {
+      const timeOut = setTimeout(() => setVisible(true), 100);
+
+      return () => clearTimeout(timeOut);
+    }
+  }, [nominationSize]);
 
   return (
     <MainWrapper>
@@ -97,11 +105,11 @@ const NewDesignPage: NextPage<{}> = () => {
       <Main>
         <Heading>Best Actress</Heading>
         <NominationsArea id={AREA_ID}>
-          <NominatedFilm size={nominationSize} />
-          <NominatedFilm size={nominationSize} />
-          <NominatedFilm size={nominationSize} />
-          <NominatedFilm size={nominationSize} />
-          <NominatedFilm size={nominationSize} />
+          <NominatedFilm size={nominationSize} visible={visible} />
+          <NominatedFilm size={nominationSize} visible={visible} />
+          <NominatedFilm size={nominationSize} visible={visible} />
+          <NominatedFilm size={nominationSize} visible={visible} />
+          <NominatedFilm size={nominationSize} visible={visible} />
         </NominationsArea>
       </Main>
     </MainWrapper>
