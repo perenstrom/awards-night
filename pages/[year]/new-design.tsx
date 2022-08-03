@@ -7,7 +7,6 @@ const MainWrapper = styled('div')`
   display: flex;
   height: 100%;
   width: 100%;
-  font-size: 16px;
 `;
 
 const Sidebar = styled('div')`
@@ -100,7 +99,7 @@ const NewDesignPage: NextPage<{}> = () => {
   }, [nominationSize]);
 
   return (
-    <MainWrapper>
+    <MainWrapper style={{ fontSize: nominationSize?.restrictedBy === 'height' ? '2vh' : '1.3333vw'}}>
       <Sidebar>Sidebar</Sidebar>
       <Main>
         <Heading>Best Actress</Heading>

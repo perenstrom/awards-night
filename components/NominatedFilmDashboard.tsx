@@ -63,6 +63,7 @@ const Nomination = styled(
     font-weight: 700;
     line-height: 1;
     padding-top: 0.3em;
+    padding-right: 1em;
   }
   #nominee {
     grid-area: nominee;
