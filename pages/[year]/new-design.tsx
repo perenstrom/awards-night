@@ -1,10 +1,19 @@
-import { styled } from '@mui/material/styles';
-import { LeaderboardItem } from 'components/LeaderboardItem';
-import { LeaderboardItemSmall } from 'components/LeaderboardItemSmall';
-import { LeaderboardItemRest } from 'components/LeaderboardItemSmallRest';
-import { NominatedFilm } from 'components/NominatedFilmDashboard';
+import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import React, { useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
+
+import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
+import { LeaderboardItemSmall } from 'components/presentationMode/LeaderboardItemSmall';
+import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItemSmallRest';
+import { NominatedFilm } from 'components/presentationMode/NominatedFilm';
+
+const AREA_ID = 'nominations-area';
+
+interface Size {
+  width: number;
+  height: number;
+  restrictedBy: 'height' | 'width';
+}
 
 const MainWrapper = styled('div')`
   display: flex;
@@ -20,6 +29,64 @@ const Sidebar = styled('div')`
   overflow: hidden;
 
   padding: 2em 1em 1em 1em;
+
+  font-family: 'Inter', sans-serif;
+`;
+
+const Leaderboard = styled('ol')`
+  margin: 0 0 0.5em 0;
+  padding: 0;
+
+  color: #ffffff;
+  text-shadow: 1px 0px 3px rgb(0, 0, 0), -1px 0px 3px rgb(0, 0, 0);
+  font-weight: 700;
+
+  ol& {
+    counter-reset: position;
+  }
+
+  & li {
+    margin-bottom: 0;
+    padding: 0.2em 0.5em;
+
+    display: flex;
+    gap: 0.5em;
+    justify-content: space-between;
+    align-items: baseline;
+
+    overflow: hidden;
+
+    font-size: 0.8em;
+    border-radius: 0.5em;
+  }
+`;
+
+const LeaderboardOverflow = styled('li')`
+  li& {
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5em;
+
+    font-size: 1em;
+  }
+`;
+
+const Categories = styled('ul')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.8em;
+  color: #e5e7f8;
+  line-height: 1.5;
+  margin: 0 0 0.5em 0;
+  padding: 0;
+  list-style: none;
+`;
+
+const Category = styled('li')`
+  padding: 0;
+  //color: #EF8B2C;
 `;
 
 const Main = styled('div')`
@@ -59,43 +126,6 @@ const SubHeadingSmall = styled('h2')`
   margin: 1em 0 0.2em;
 `;
 
-const Leaderboard = styled('ol')`
-  margin: 0 0 0.5em 0;
-  padding: 0;
-
-  ol& {
-    counter-reset: position;
-  }
-`;
-
-const LeaderboardOverflow = styled('li')`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5em;
-`;
-
-const Categories = styled('ul')`
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 0.8em;
-  color: #e5e7f8;
-  line-height: 1.5;
-  margin: 0 0 0.5em 0;
-  padding: 0;
-  list-style: none;
-`;
-
-const Category = styled('li')`
-  padding: 0;
-  //color: #EF8B2C;
-`;
-
-interface Size {
-  width: number;
-  height: number;
-  restrictedBy: 'height' | 'width';
-}
-
 const NominationsArea = styled('div')`
   height: 100%;
   font-size: 1em;
@@ -107,8 +137,6 @@ const NominationsArea = styled('div')`
   align-content: flex-start;
   justify-content: flex-start;
 `;
-
-const AREA_ID = 'nominations-area';
 
 const getNominationSize = (): Size | null => {
   if (typeof window !== 'undefined') {
@@ -165,7 +193,11 @@ const NewDesignPage: NextPage<{}> = () => {
         <SubHeading>Leaderboard</SubHeading>
         <Leaderboard>
           <LeaderboardItem name="Per" correct={7} total={10} />
-          <LeaderboardItem name="Jobjörn Folkesson asdf" correct={6} total={10} />
+          <LeaderboardItem
+            name="Jobjörn Folkesson asdf"
+            correct={6}
+            total={10}
+          />
           <LeaderboardItem name="Hedvig" correct={5} total={10} />
           <LeaderboardItem name="Henrik" correct={4} total={10} />
           <LeaderboardOverflow>

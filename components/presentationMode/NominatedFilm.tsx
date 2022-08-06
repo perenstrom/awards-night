@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles';
+
 import { defaultStyledOptions } from 'utils/mui';
 
 interface Size {
@@ -6,6 +7,7 @@ interface Size {
   height: number;
   restrictedBy: 'height' | 'width';
 }
+
 interface NominationsProps {
   readonly size: Size | null;
   readonly visible?: boolean;
@@ -52,32 +54,12 @@ const Nomination = styled(
   color: #e5e7f8;
   font-family: 'Inter', sans-serif;
 
-  #poster {
-    grid-area: poster;
-  }
-  #title {
-    grid-area: title;
-
-    font-size: 1.5em;
-    font-weight: 700;
-    line-height: 1.2;
-    padding: 0.3em 1em 0 0.6em;
-  }
-  #nominee {
-    grid-area: nominee;
-    font-family: 'Charis SIL', serif;
-    font-style: italic;
-    font-size: 1.3em;
-    line-height: 1.2;
-    padding: 0.2em 1em 0 0.6em;
-  }
   #bets {
-    grid-area: bets;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6em;
-    padding: 0 1em 0 0.7em;
   }
+`;
+
+const Poster = styled('div')`
+  grid-area: poster;
 `;
 
 const Image = styled('img')`
@@ -85,26 +67,31 @@ const Image = styled('img')`
   width: 100%;
 `;
 
-export const NominatedFilm: React.FC<NominationsProps> = ({
-  size,
-  visible = false
-}) => {
-  return (
-    <Nomination size={size} visible={visible}>
-      <div id="poster">
-        <Image src="https://image.tmdb.org/t/p/w342/y89kFMNYXNKMdlZjR2yg7nQtcQH.jpg" />
-      </div>
-      <div id="title">Everything everywhere all at once</div>
-      <div id="nominee">Michelle Yeoh</div>
-      <div id="bets">
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-      </div>
-    </Nomination>
-  );
-};
+const Title = styled('div')`
+  grid-area: title;
+
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0.3em 1em 0 0.6em;
+`;
+
+const Nominee = styled('div')`
+  grid-area: nominee;
+  font-family: 'Charis SIL', serif;
+  font-style: italic;
+  font-size: 1.3em;
+  line-height: 1.2;
+  padding: 0.2em 1em 0 0.6em;
+`;
+
+const Bets = styled('div')`
+  grid-area: bets;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  padding: 0 1em 0 0.7em;
+`;
 
 const BetIcon = styled('div')`
   border-radius: 50%;
@@ -120,3 +107,24 @@ const BetIcon = styled('div')`
   font-weight: 500;
   font-size: 1.6em;
 `;
+
+export const NominatedFilm: React.FC<NominationsProps> = ({
+  size,
+  visible = false
+}) => {
+  return (
+    <Nomination size={size} visible={visible}>
+      <Poster>
+        <Image src="https://image.tmdb.org/t/p/w342/y89kFMNYXNKMdlZjR2yg7nQtcQH.jpg" />
+      </Poster>
+      <Title>Everything everywhere all at once</Title>
+      <Nominee>Michelle Yeoh</Nominee>
+      <Bets>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+      </Bets>
+    </Nomination>
+  );
+};
