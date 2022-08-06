@@ -1,4 +1,7 @@
 import { styled } from '@mui/material/styles';
+import { LeaderboardItem } from 'components/LeaderboardItem';
+import { LeaderboardItemSmall } from 'components/LeaderboardItemSmall';
+import { LeaderboardItemRest } from 'components/LeaderboardItemSmallRest';
 import { NominatedFilm } from 'components/NominatedFilmDashboard';
 import { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -13,6 +16,10 @@ const Sidebar = styled('div')`
   flex-basis: 20em;
   background: #363636;
   flex-grow: 0;
+  border-right: 0.5px solid #696b7e;
+  overflow: hidden;
+
+  padding: 2em 1em 1em 1em;
 `;
 
 const Main = styled('div')`
@@ -33,6 +40,54 @@ const Heading = styled('h1')`
   color: #e5e7f8;
   margin: 0;
   padding-bottom: 0.2em;
+`;
+
+const SubHeading = styled('h2')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1.7em;
+  color: #e5e7f8;
+  margin: 0;
+  padding-bottom: 0.2em;
+`;
+
+const SubHeadingSmall = styled('h2')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1.2em;
+  color: #e5e7f8;
+  margin: 1em 0 0.2em;
+`;
+
+const Leaderboard = styled('ol')`
+  margin: 0 0 0.5em 0;
+  padding: 0;
+
+  ol& {
+    counter-reset: position;
+  }
+`;
+
+const LeaderboardOverflow = styled('li')`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5em;
+`;
+
+const Categories = styled('ul')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.8em;
+  color: #e5e7f8;
+  line-height: 1.5;
+  margin: 0 0 0.5em 0;
+  padding: 0;
+  list-style: none;
+`;
+
+const Category = styled('li')`
+  padding: 0;
+  //color: #EF8B2C;
 `;
 
 interface Size {
@@ -106,7 +161,52 @@ const NewDesignPage: NextPage<{}> = () => {
         fontSize: nominationSize?.restrictedBy === 'height' ? '2vh' : '1.2vw'
       }}
     >
-      <Sidebar>Sidebar</Sidebar>
+      <Sidebar>
+        <SubHeading>Leaderboard</SubHeading>
+        <Leaderboard>
+          <LeaderboardItem name="Per" correct={7} total={10} />
+          <LeaderboardItem name="Jobjörn Folkesson asdf" correct={6} total={10} />
+          <LeaderboardItem name="Hedvig" correct={5} total={10} />
+          <LeaderboardItem name="Henrik" correct={4} total={10} />
+          <LeaderboardOverflow>
+            <LeaderboardItemSmall name="Staffan asf" correct={3} />
+            <LeaderboardItemSmall name="Rozbe" correct={3} />
+            <LeaderboardItemSmall name="Lena" correct={2} />
+            <LeaderboardItemSmall name="Leo" correct={1} />
+            <LeaderboardItemSmall name="Staffan asf" correct={3} />
+            <LeaderboardItemRest />
+          </LeaderboardOverflow>
+        </Leaderboard>
+        <SubHeadingSmall>Completed categories</SubHeadingSmall>
+        <Categories>
+          <Category>Best Sound</Category>
+          <Category>Best Visual Effects</Category>
+          <Category>Best Animated Short</Category>
+          <Category>Best Animated Feature</Category>
+          <Category>Best Documentary</Category>
+          <Category>Best Hair and Makeup</Category>
+          <Category>Best Costume Design</Category>
+          <Category>Best Production Design</Category>
+          <Category>Best Live Action Short</Category>
+          <Category>Best Actress</Category>
+        </Categories>
+        <SubHeadingSmall>Upcoming categories</SubHeadingSmall>
+        <Categories>
+          <Category>Best Actor</Category>
+          <Category>Best Adapted Screenplay</Category>
+          <Category>Best Cinematography</Category>
+          <Category>Best Director</Category>
+          <Category>Best Documentary Feature</Category>
+          <Category>Best Film Editing</Category>
+          <Category>Best International Film</Category>
+          <Category>Best Original Score</Category>
+          <Category>Best Original Screenplay</Category>
+          <Category>Best Original Song</Category>
+          <Category>Best Picture</Category>
+          <Category>Best Supporting Actor</Category>
+          <Category>Best Supporting Actress</Category>
+        </Categories>
+      </Sidebar>
       <Main>
         <Heading>Best Actress</Heading>
         <NominationsArea id={AREA_ID}>

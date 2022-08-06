@@ -101,10 +101,6 @@ export const NominatedFilm: React.FC<NominationsProps> = ({
         <BetIcon>P</BetIcon>
         <BetIcon>P</BetIcon>
         <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
       </div>
     </Nomination>
   );
