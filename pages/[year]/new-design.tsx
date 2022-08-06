@@ -23,15 +23,16 @@ const Main = styled('div')`
   flex-direction: column;
   flex-basis: 100%;
   padding: 3em;
+  padding-top: 1em;
 `;
 
 const Heading = styled('h1')`
   font-family: 'Inter', sans-serif;
   font-weight: 300;
-  font-size: 3.5em;
+  font-size: 2.7em;
   color: #e5e7f8;
   margin: 0;
-  padding-bottom: 1rem;
+  padding-bottom: 0.2em;
 `;
 
 interface Size {
@@ -99,7 +100,12 @@ const NewDesignPage: NextPage<{}> = () => {
   }, [nominationSize]);
 
   return (
-    <MainWrapper style={{ fontSize: nominationSize?.restrictedBy === 'height' ? '2vh' : '1.3333vw'}}>
+    // heigh: 16 / 800, width: 16 / 1200
+    <MainWrapper
+      style={{
+        fontSize: nominationSize?.restrictedBy === 'height' ? '2vh' : '1.2vw'
+      }}
+    >
       <Sidebar>Sidebar</Sidebar>
       <Main>
         <Heading>Best Actress</Heading>

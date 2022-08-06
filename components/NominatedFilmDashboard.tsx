@@ -37,18 +37,17 @@ const Nomination = styled(
   transition: opacity 0.2s ease-in-out;
   box-sizing: border-box;
   background: #2c2c2c;
-  border-radius: 8px;
-  padding: 0.5em;
+  border-radius: 0.25em;
+  padding: 0.7em;
 
   display: grid;
-  grid-template-columns: 29fr 71fr;
+  grid-template-columns: 8em 1fr;
   grid-template-rows: min-content min-content auto min-content;
   grid-template-areas:
     'poster title'
     'poster nominee'
     'poster .'
     'poster bets';
-  grid-gap: 0.5em;
 
   color: #e5e7f8;
   font-family: 'Inter', sans-serif;
@@ -59,21 +58,25 @@ const Nomination = styled(
   #title {
     grid-area: title;
 
-    font-size: 1.3em;
+    font-size: 1.5em;
     font-weight: 700;
-    line-height: 1;
-    padding-top: 0.3em;
-    padding-right: 1em;
+    line-height: 1.2;
+    padding: 0.3em 1em 0 0.6em;
   }
   #nominee {
     grid-area: nominee;
     font-family: 'Charis SIL', serif;
     font-style: italic;
+    font-size: 1.3em;
+    line-height: 1.2;
+    padding: 0.2em 1em 0 0.6em;
   }
   #bets {
     grid-area: bets;
     display: flex;
-    gap: 0.5em;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    padding: 0 1em 0 0.7em;
   }
 `;
 
@@ -95,7 +98,13 @@ export const NominatedFilm: React.FC<NominationsProps> = ({
       <div id="nominee">Michelle Yeoh</div>
       <div id="bets">
         <BetIcon>P</BetIcon>
-        <BetIcon>J</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
+        <BetIcon>P</BetIcon>
       </div>
     </Nomination>
   );
@@ -105,14 +114,13 @@ const BetIcon = styled('div')`
   border-radius: 50%;
   background-color: #ef8b2c;
   color: white;
-  width: 1.4em;
-  height: 1.4em;
-  margin-bottom: 0.3em;
+  width: 1.6em;
+  height: 1.6em;
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 1.4em;
+  font-size: 1.6em;
 `;
