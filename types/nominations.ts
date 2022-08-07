@@ -59,6 +59,12 @@ export interface Bet {
 
 export type NormalizedBets = NumberRecord<Bet>;
 
+export interface BetIcon {
+  id: string;
+  letter: string;
+  style: number;
+}
+
 export interface Player {
   id: number;
   name: string;
@@ -66,6 +72,7 @@ export interface Player {
   bets: number[];
   group?: number | null;
   auth0UserId?: string | null;
+  style: number;
 }
 
 export type NormalizedPlayers = NumberRecord<Player>;

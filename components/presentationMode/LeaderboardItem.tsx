@@ -1,13 +1,25 @@
 import { styled } from '@mui/material/styles';
+import { defaultStyledOptions } from 'utils/mui';
+import { getPlayerColor } from 'utils/playerColor';
 import { LeaderboardItemName as Name } from './LeaderboardItemName';
 
-const Wrapper = styled('li')`
+const Wrapper = styled(
+  'li',
+  defaultStyledOptions<{
+    readonly itemStyle: number;
+  }>(['itemStyle'])
+)<{
+  readonly itemStyle: number;
+}>`
   li& {
     margin-bottom: 0.6em;
     font-size: 1em;
   }
 
-  background: #ef8b2c;
+  background-color: ${({ itemStyle }) => getPlayerColor(itemStyle).background};
+  color: ${({ itemStyle }) => getPlayerColor(itemStyle).text};
+  text-shadow: 1px 0px 3px ${({ itemStyle }) => getPlayerColor(itemStyle).glow},
+    -1px 0px 3px ${({ itemStyle }) => getPlayerColor(itemStyle).glow};
 
   &::before {
     counter-increment: position;
@@ -30,11 +42,17 @@ interface props {
   name: string;
   correct: number;
   total: number;
+  itemStyle: number;
 }
 
-export const LeaderboardItem: React.FC<props> = ({ name, correct, total }) => {
+export const LeaderboardItem: React.FC<props> = ({
+  name,
+  correct,
+  total,
+  itemStyle
+}) => {
   return (
-    <Wrapper>
+    <Wrapper itemStyle={itemStyle}>
       <Name>{name}</Name>
       <Score>
         {correct} / {total}

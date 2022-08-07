@@ -1,6 +1,8 @@
 import { styled } from '@mui/material/styles';
+import { BetIcon as BetIconType } from 'types/nominations';
 
 import { defaultStyledOptions } from 'utils/mui';
+import { getPlayerColor } from 'utils/playerColor';
 
 interface Size {
   width: number;
@@ -11,6 +13,10 @@ interface Size {
 interface NominationsProps {
   readonly size: Size | null;
   readonly visible?: boolean;
+  readonly poster: string;
+  readonly title: string;
+  readonly nominee?: string;
+  readonly bets: BetIconType[];
 }
 
 const getSize = (size: Size) => {
@@ -30,8 +36,11 @@ const getSize = (size: Size) => {
 
 const Nomination = styled(
   'div',
-  defaultStyledOptions<NominationsProps>(['size', 'visible'])
-)<NominationsProps>`
+  defaultStyledOptions<{
+    readonly size: Size | null;
+    readonly visible?: boolean;
+  }>(['size', 'visible'])
+)<{ readonly size: Size | null; readonly visible?: boolean }>`
   aspect-ratio: 9 / 4;
   width: ${({ size }) => (size ? getSize(size).width : '0px')};
   height: ${({ size }) => (size ? getSize(size).height : '0px')};
@@ -93,10 +102,17 @@ const Bets = styled('div')`
   padding: 0 1em 0 0.7em;
 `;
 
-const BetIcon = styled('div')`
+const BetIcon = styled(
+  'div',
+  defaultStyledOptions<{
+    readonly itemStyle: number;
+  }>(['itemStyle'])
+)<{
+  readonly itemStyle: number;
+}>`
   border-radius: 50%;
-  background-color: #ef8b2c;
-  color: white;
+  background-color: ${({ itemStyle }) => getPlayerColor(itemStyle).background};
+  color: ${({ itemStyle }) => getPlayerColor(itemStyle).text};
   width: 1.6em;
   height: 1.6em;
   display: flex;
@@ -110,20 +126,25 @@ const BetIcon = styled('div')`
 
 export const NominatedFilm: React.FC<NominationsProps> = ({
   size,
-  visible = false
+  visible = false,
+  poster,
+  title,
+  nominee,
+  bets = []
 }) => {
   return (
     <Nomination size={size} visible={visible}>
       <Poster>
-        <Image src="https://image.tmdb.org/t/p/w342/y89kFMNYXNKMdlZjR2yg7nQtcQH.jpg" />
+        <Image src={poster} alt={title} />
       </Poster>
-      <Title>Everything everywhere all at once</Title>
-      <Nominee>Michelle Yeoh</Nominee>
+      <Title>{title}</Title>
+      <Nominee>{nominee}</Nominee>
       <Bets>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
-        <BetIcon>P</BetIcon>
+        {bets.map((bet) => (
+          <BetIcon key={bet.id} itemStyle={bet.style}>
+            {bet.letter}
+          </BetIcon>
+        ))}
       </Bets>
     </Nomination>
   );
