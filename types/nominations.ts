@@ -32,6 +32,7 @@ export interface Category {
   nominations: number[];
   previousCategory: string | null;
   nextCategory: string | null;
+  decided: boolean;
 }
 
 export type NormalizedCategories = Record<string, Category>;

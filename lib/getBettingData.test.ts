@@ -24,14 +24,16 @@ const nominationData: Record<number, NominationData> = {
         name: 'Best Hair and Makeup',
         nextCategory: 'best-supporting-actor',
         previousCategory: null,
-        nominations: [128, 129]
+        nominations: [128, 129],
+        decided: false
       },
       'best-supporting-actor': {
         slug: 'best-supporting-actor',
         name: 'Best Supporting Actor',
         nextCategory: null,
         previousCategory: 'best-hair-and-makeup',
-        nominations: [123, 124]
+        nominations: [123, 124],
+        decided: false
       }
     },
     nominations: {
@@ -121,14 +123,16 @@ const nominationData: Record<number, NominationData> = {
         name: 'Best Picture',
         previousCategory: null,
         nextCategory: 'best-supporting-actress',
-        nominations: [1, 4]
+        nominations: [1, 4],
+        decided: true
       },
       'best-supporting-actress': {
         slug: 'best-supporting-actress',
         name: 'Best Supporting Actress',
         previousCategory: 'best-picture',
         nextCategory: null,
-        nominations: [11, 12]
+        nominations: [11, 12],
+        decided: true
       }
     },
     nominations: {
@@ -230,7 +234,8 @@ describe('getBettingData', () => {
           name: 'Player 1',
           correct: 0,
           bets: [],
-          group: 1
+          group: 1,
+          style: 0
         },
         {
           id: 2,
@@ -238,7 +243,8 @@ describe('getBettingData', () => {
           name: 'Player 2',
           correct: 0,
           bets: [],
-          group: 1
+          group: 1,
+          style: 1
         }
       ]
     };
@@ -284,7 +290,8 @@ describe('getBettingData', () => {
           name: 'Player 1',
           correct: 2,
           bets: [3, 5],
-          group: 1
+          group: 1,
+          style: 0
         },
         {
           id: 2,
@@ -292,7 +299,8 @@ describe('getBettingData', () => {
           name: 'Player 2',
           correct: 1,
           bets: [4, 6],
-          group: 1
+          group: 1,
+          style: 1
         }
       ],
       nominationBets: {

@@ -26,7 +26,7 @@ const Wrapper = styled(
     content: counter(position) '.';
   }
 
-  &:first-child {
+  &:first-of-type {
     font-size: 1.5em;
     margin-bottom: 0.4em;
     padding: 0.1em 0.4em;

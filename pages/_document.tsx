@@ -91,7 +91,7 @@ export default class MyDocument extends Document {
         <body>
           <GlobalStyles
             styles={{
-              'html, body, body > div:first-child, div#__next': {
+              'html, body, body > div:first-of-type, div#__next': {
                 height: '100%'
               }
             }}

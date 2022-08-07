@@ -12,13 +12,9 @@ import {
   NominationMeta,
   Year,
   NominationData,
-  BetIcon,
-  Player
+  BetIcon
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
-//import { Category as CategoryComponent } from 'components/Category';
-//import { CategoryMenu } from 'components/CategoryMenu';
-//import { PlayerStandings } from 'components/PlayerStandings';
 import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import {
   betsState,
@@ -47,19 +43,35 @@ import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { LeaderboardItemSmall } from 'components/presentationMode/LeaderboardItemSmall';
 import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItemSmallRest';
 import { NominatedFilm } from 'components/presentationMode/NominatedFilm';
+import Link from 'next/link';
+import { defaultStyledOptions } from 'utils/mui';
 
 const AREA_ID = 'nominations-area';
 
-interface Size {
-  width: number;
-  height: number;
-  restrictedBy: 'height' | 'width';
-}
+type RestrictedBy = 'height' | 'width';
 
-const MainWrapper = styled('div')`
+const MainWrapper = styled(
+  'div',
+  defaultStyledOptions<{
+    readonly restrictedBy: RestrictedBy;
+  }>(['restrictedBy'])
+)<{ readonly restrictedBy: RestrictedBy }>`
   display: flex;
   height: 100%;
   width: 100%;
+  font-size: ${({ restrictedBy }) =>
+    restrictedBy === 'height' ? '1.83vh' : '1.2vw'};
+`;
+
+const Main = styled('div')`
+  background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  padding: 3em;
+  padding-top: 1em;
 `;
 
 const Sidebar = styled('div')`
@@ -124,20 +136,18 @@ const Categories = styled('ul')`
   list-style: none;
 `;
 
-const CategoryItem = styled('li')`
+const CategoryItem = styled(
+  'li',
+  defaultStyledOptions<{
+    readonly active: boolean;
+  }>(['active'])
+)<{ readonly active: boolean }>`
   padding: 0;
-  //color: #EF8B2C;
-`;
 
-const Main = styled('div')`
-  background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  padding: 3em;
-  padding-top: 1em;
+  & a {
+    color: ${({ active }) => (active ? '#ef8b2c' : '#e5e7f8')};
+    text-decoration: none;
+  }
 `;
 
 const Heading = styled('h1')`
@@ -178,33 +188,14 @@ const NominationsArea = styled('div')`
   justify-content: flex-start;
 `;
 
-const getNominationSize = (): Size | null => {
+const getRestrictedBy = (): RestrictedBy | null => {
   if (typeof window !== 'undefined') {
-    const $nominationsArea = document.getElementById(AREA_ID);
+    const windowRatio = window.innerWidth / window.innerHeight;
+    const targetContentRatio = 61 / 40;
 
-    if ($nominationsArea) {
-      const emSize = parseInt(
-        getComputedStyle($nominationsArea).fontSize.slice(0, -2),
-        10
-      );
+    const restrictedBy = windowRatio >= targetContentRatio ? 'height' : 'width';
 
-      const nominationsAreaWidth = $nominationsArea.offsetWidth;
-      const nominationsAreaHeight = $nominationsArea.offsetHeight;
-
-      const contentWidth = nominationsAreaWidth - emSize;
-      const contentHeight = nominationsAreaHeight - 2 * emSize;
-
-      const contentRatio = contentWidth / contentHeight;
-      const cardRatio = 3 / 2;
-
-      const restrictedBy = contentRatio >= cardRatio ? 'height' : 'width';
-
-      return {
-        width: nominationsAreaWidth,
-        height: nominationsAreaHeight,
-        restrictedBy: restrictedBy
-      };
-    }
+    return restrictedBy;
   }
 
   return null;
@@ -230,15 +221,20 @@ const CategoryPage: NextPage<Props> = ({
   const router = useRouter();
   const { category: slug } = router.query;
 
-  const nominationSize = getNominationSize();
+  const [restrictedBy, setRestrictedBy] =
+    useState<Nullable<RestrictedBy>>(null);
+  useEffect(() => {
+    setRestrictedBy(getRestrictedBy());
+  }, []);
+
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    if (nominationSize) {
+    if (restrictedBy) {
       const timeOut = setTimeout(() => setVisible(true), 100);
 
       return () => clearTimeout(timeOut);
     }
-  }, [nominationSize]);
+  }, [restrictedBy]);
 
   // Nomination data
   const [nominations, setNominations] = useRecoilState(nominationsState);
@@ -322,12 +318,6 @@ const CategoryPage: NextPage<Props> = ({
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     normalizedNominations ? normalizedNominations[n] : initialNominations[n]
   );
-  const categoryBetIds: number[] = categoryNominations.flatMap(
-    (n) => nominationBets?.[n.id] || []
-  );
-  const categoryBets = bets
-    ? Object.values(bets).filter((b) => categoryBetIds.includes(b.id))
-    : [];
 
   const refreshNominations = useCallback(async () => {
     const nominationsResult = await getNominations(year.year);
@@ -364,7 +354,13 @@ const CategoryPage: NextPage<Props> = ({
     return betIconData;
   };
 
-  const completedCategories = meta
+  const completedCategories = categories
+    .filter((category) => category.decided)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const upcomingCategories = categories
+    .filter((category) => !category.decided)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const completedCategoriesCount = meta
     ? meta.completedCategories
     : initialMeta.completedCategories;
 
@@ -374,11 +370,7 @@ const CategoryPage: NextPage<Props> = ({
       <Head>
         <title>{category.name}</title>
       </Head>
-      <MainWrapper
-        style={{
-          fontSize: nominationSize?.restrictedBy === 'height' ? '2vh' : '1.2vw'
-        }}
-      >
+      <MainWrapper restrictedBy={restrictedBy || 'height'}>
         <Sidebar>
           <SubHeading>Leaderboard</SubHeading>
           <Leaderboard>
@@ -387,7 +379,7 @@ const CategoryPage: NextPage<Props> = ({
                 key={player.id}
                 name={player.name}
                 correct={player.correct}
-                total={completedCategories}
+                total={completedCategoriesCount}
                 itemStyle={player.style}
               />
             ))}
@@ -415,35 +407,40 @@ const CategoryPage: NextPage<Props> = ({
               </LeaderboardOverflow>
             )}
           </Leaderboard>
-          <SubHeadingSmall>Completed categories</SubHeadingSmall>
-          <Categories>
-            <CategoryItem>Best Sound</CategoryItem>
-            <CategoryItem>Best Visual Effects</CategoryItem>
-            <CategoryItem>Best Animated Short</CategoryItem>
-            <CategoryItem>Best Animated Feature</CategoryItem>
-            <CategoryItem>Best Documentary</CategoryItem>
-            <CategoryItem>Best Hair and Makeup</CategoryItem>
-            <CategoryItem>Best Costume Design</CategoryItem>
-            <CategoryItem>Best Production Design</CategoryItem>
-            <CategoryItem>Best Live Action Short</CategoryItem>
-            <CategoryItem>Best Actress</CategoryItem>
-          </Categories>
-          <SubHeadingSmall>Upcoming categories</SubHeadingSmall>
-          <Categories>
-            <CategoryItem>Best Actor</CategoryItem>
-            <CategoryItem>Best Adapted Screenplay</CategoryItem>
-            <CategoryItem>Best Cinematography</CategoryItem>
-            <CategoryItem>Best Director</CategoryItem>
-            <CategoryItem>Best Documentary Feature</CategoryItem>
-            <CategoryItem>Best Film Editing</CategoryItem>
-            <CategoryItem>Best International Film</CategoryItem>
-            <CategoryItem>Best Original Score</CategoryItem>
-            <CategoryItem>Best Original Screenplay</CategoryItem>
-            <CategoryItem>Best Original Song</CategoryItem>
-            <CategoryItem>Best Picture</CategoryItem>
-            <CategoryItem>Best Supporting Actor</CategoryItem>
-            <CategoryItem>Best Supporting Actress</CategoryItem>
-          </Categories>
+          {!!completedCategories.length && (
+            <>
+              <SubHeadingSmall>Completed categories</SubHeadingSmall>
+              <Categories>
+                {completedCategories.map((category) => (
+                  <CategoryItem
+                    key={category.slug}
+                    active={slug === category.slug}
+                  >
+                    <Link href={`/${year.year}/${category.slug}`}>
+                      <a>{category.name}</a>
+                    </Link>
+                  </CategoryItem>
+                ))}
+              </Categories>
+            </>
+          )}
+          {!!upcomingCategories.length && (
+            <>
+              <SubHeadingSmall>Upcoming categories</SubHeadingSmall>
+              <Categories>
+                {upcomingCategories.map((category) => (
+                  <CategoryItem
+                    key={category.slug}
+                    active={slug === category.slug}
+                  >
+                    <Link href={`/${year.year}/${category.slug}`}>
+                      <a>{category.name}</a>
+                    </Link>
+                  </CategoryItem>
+                ))}
+              </Categories>
+            </>
+          )}
         </Sidebar>
         <Main>
           <Heading>{category.name}</Heading>
@@ -451,33 +448,17 @@ const CategoryPage: NextPage<Props> = ({
             {categoryNominations.map((nomination) => (
               <NominatedFilm
                 key={nomination.id}
-                size={nominationSize}
                 visible={visible}
                 poster={films[nomination.film].poster}
                 title={films[nomination.film].name}
                 nominee={nomination.nominee}
                 bets={prepareBets(nomination.id)}
+                won={nomination.won}
               />
             ))}
           </NominationsArea>
         </Main>
       </MainWrapper>
-      {/*       <GridContainer>
-        <CategoryMenu category={category} year={year} />
-        <CategoryComponent
-          nominations={categoryNominations}
-          films={films}
-          bets={categoryBets}
-          players={normalizedPlayers}
-        />
-        <PlayerStandings
-          completedCategories={
-            meta ? meta.completedCategories : initialMeta.completedCategories
-          }
-          players={players}
-          bettingOpen={bettingOpen}
-        />
-      </GridContainer> */}
     </>
   );
 };

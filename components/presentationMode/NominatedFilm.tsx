@@ -4,46 +4,26 @@ import { BetIcon as BetIconType } from 'types/nominations';
 import { defaultStyledOptions } from 'utils/mui';
 import { getPlayerColor } from 'utils/playerColor';
 
-interface Size {
-  width: number;
-  height: number;
-  restrictedBy: 'height' | 'width';
-}
-
 interface NominationsProps {
-  readonly size: Size | null;
   readonly visible?: boolean;
   readonly poster: string;
   readonly title: string;
   readonly nominee?: string;
   readonly bets: BetIconType[];
+  readonly won: boolean;
 }
 
-const getSize = (size: Size) => {
-  switch (size.restrictedBy) {
-    case 'height':
-      return {
-        height: `calc(calc(${size.height - 1}px - 2rem)/3)`,
-        width: 'unset'
-      };
-    case 'width':
-      return {
-        height: 'unset',
-        width: `calc(calc(${size.width - 1}px - 1rem)/2)`
-      };
-  }
-};
-
+interface NominationProps {
+  readonly visible?: boolean;
+  readonly won: boolean;
+}
 const Nomination = styled(
   'div',
-  defaultStyledOptions<{
-    readonly size: Size | null;
-    readonly visible?: boolean;
-  }>(['size', 'visible'])
-)<{ readonly size: Size | null; readonly visible?: boolean }>`
+  defaultStyledOptions<NominationProps>(['visible', 'won'])
+)<NominationProps>`
   aspect-ratio: 9 / 4;
-  width: ${({ size }) => (size ? getSize(size).width : '0px')};
-  height: ${({ size }) => (size ? getSize(size).height : '0px')};
+  width: 30em;
+  height: 13.6em;
   opacity: ${({ visible }) => (visible ? '100%' : '0%')};
   transition: opacity 0.2s ease-in-out;
   box-sizing: border-box;
@@ -62,6 +42,7 @@ const Nomination = styled(
 
   color: #e5e7f8;
   font-family: 'Inter', sans-serif;
+  box-shadow: ${({ won }) => (won ? '0px 0px 1em 0.4em #ffcb00' : 'none')};
 
   #bets {
   }
@@ -97,19 +78,18 @@ const Nominee = styled('div')`
 const Bets = styled('div')`
   grid-area: bets;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
   gap: 0.6em;
   padding: 0 1em 0 0.7em;
 `;
 
+interface BetIconProps {
+  readonly itemStyle: number;
+}
 const BetIcon = styled(
   'div',
-  defaultStyledOptions<{
-    readonly itemStyle: number;
-  }>(['itemStyle'])
-)<{
-  readonly itemStyle: number;
-}>`
+  defaultStyledOptions<BetIconProps>(['itemStyle'])
+)<BetIconProps>`
   border-radius: 50%;
   background-color: ${({ itemStyle }) => getPlayerColor(itemStyle).background};
   color: ${({ itemStyle }) => getPlayerColor(itemStyle).text};
@@ -124,19 +104,37 @@ const BetIcon = styled(
   font-size: 1.6em;
 `;
 
+const Trophy = styled('div')`
+  grid-area: 1 / 2 / -1 / -1;
+  place-self: end;
+  width: 9em;
+  height: 8.6em;
+  margin-inline-end: -0.7em;
+  margin-block-end: -0.7em;
+
+  & img {
+    width: 100%;
+  }
+`;
+
 export const NominatedFilm: React.FC<NominationsProps> = ({
-  size,
   visible = false,
   poster,
   title,
   nominee,
-  bets = []
+  bets = [],
+  won
 }) => {
   return (
-    <Nomination size={size} visible={visible}>
+    <Nomination visible={visible} won={won}>
       <Poster>
         <Image src={poster} alt={title} />
       </Poster>
+      {won && (
+        <Trophy>
+          <img src="/images/trophy.svg" alt="" />
+        </Trophy>
+      )}
       <Title>{title}</Title>
       <Nominee>{nominee}</Nominee>
       <Bets>

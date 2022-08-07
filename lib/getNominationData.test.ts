@@ -50,14 +50,16 @@ describe('getNominationData', () => {
           name: 'Best Hair and Makeup',
           nextCategory: 'best-supporting-actor',
           previousCategory: null,
-          nominations: [128, 129]
+          nominations: [128, 129],
+          decided: false
         },
         'best-supporting-actor': {
           slug: 'best-supporting-actor',
           name: 'Best Supporting Actor',
           nextCategory: null,
           previousCategory: 'best-hair-and-makeup',
-          nominations: [123, 124]
+          nominations: [123, 124],
+          decided: false
         }
       },
       nominations: {
@@ -168,14 +170,16 @@ describe('getNominationData', () => {
           name: 'Best Picture',
           previousCategory: null,
           nextCategory: 'best-supporting-actress',
-          nominations: [1, 4]
+          nominations: [1, 4],
+          decided: true
         },
         'best-supporting-actress': {
           slug: 'best-supporting-actress',
           name: 'Best Supporting Actress',
           previousCategory: 'best-picture',
           nextCategory: null,
-          nominations: [11, 12]
+          nominations: [11, 12],
+          decided: true
         }
       },
       nominations: {
