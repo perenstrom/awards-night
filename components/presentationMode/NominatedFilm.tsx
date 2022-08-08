@@ -30,6 +30,7 @@ const Nomination = styled(
   background: #2c2c2c;
   border-radius: 0.25em;
   padding: 0.7em;
+  overflow: hidden;
 
   display: grid;
   grid-template-columns: 7.7em 1fr;
