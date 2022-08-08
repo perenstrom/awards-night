@@ -40,7 +40,8 @@ export const prismaMap = {
       name: categoryResponse.name,
       nominations: [],
       previousCategory: null,
-      nextCategory: null
+      nextCategory: null,
+      decided: false
     }),
     withNominations: {
       fromPrisma: (
@@ -114,7 +115,8 @@ export const prismaMap = {
       name: playerResponse.name,
       correct: 0,
       bets: [],
-      group: playerResponse.groupId
+      group: playerResponse.groupId,
+      style: 0
     })
   },
   playerWithBets: {
@@ -124,7 +126,8 @@ export const prismaMap = {
       name: playerResponse.name,
       correct: 0,
       bets: playerResponse.bets.map((b) => b.id),
-      group: playerResponse.groupId
+      group: playerResponse.groupId,
+      style: 0
     })
   }
 };

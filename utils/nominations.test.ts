@@ -2,7 +2,6 @@ import {
   Bet,
   Category,
   NormalizedNominations,
-  NormalizedPlayers,
   Player
 } from 'types/nominations';
 import {
@@ -16,21 +15,24 @@ const categories: Category[] = [
     name: 'cat a',
     nominations: [1, 2],
     nextCategory: 'cat-b',
-    previousCategory: null
+    previousCategory: null,
+    decided: true
   },
   {
     name: 'cat b',
     nominations: [3, 4],
     slug: 'cat-b',
     nextCategory: 'cat-c',
-    previousCategory: 'cat-a'
+    previousCategory: 'cat-a',
+    decided: true
   },
   {
     name: 'cat c',
     nominations: [5, 6],
     slug: 'cat-c',
     previousCategory: 'cat-b',
-    nextCategory: null
+    nextCategory: null,
+    decided: true
   }
 ];
 
@@ -100,14 +102,16 @@ const players: Player[] = [
     bets: [1, 3],
     correct: 0,
     name: 'Player A',
-    group: 1
+    group: 1,
+    style: 0
   },
   {
     id: 2,
     bets: [2, 4],
     correct: 0,
     name: 'Player B',
-    group: 1
+    group: 1,
+    style: 1
   }
 ];
 
@@ -145,24 +149,26 @@ describe('calculateCompletedCategories', () => {
 
 describe('calculatePlayerWinnings', () => {
   it('returns the expected players object', async () => {
-    const expectedPlayers: NormalizedPlayers = [
+    const expectedPlayers: Player[] = [
       {
         id: 1,
         bets: [1, 3],
         correct: 1,
         name: 'Player A',
-        group: 1
+        group: 1,
+        style: 0
       },
       {
         id: 2,
         bets: [2, 4],
         correct: 2,
         name: 'Player B',
-        group: 1
+        group: 1,
+        style: 1
       }
     ];
 
-    const enhancedPlayers: NormalizedPlayers = addPlayersWinnings(
+    const enhancedPlayers: Player[] = addPlayersWinnings(
       players,
       nominations,
       bets
