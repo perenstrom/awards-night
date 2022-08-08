@@ -371,7 +371,6 @@ const CategoryPage: NextPage<Props> = ({
     ? meta.completedCategories
     : initialMeta.completedCategories;
 
-  // heigh: 16 / 800, width: 16 / 1200
   return (
     <>
       <Head>
@@ -379,41 +378,75 @@ const CategoryPage: NextPage<Props> = ({
       </Head>
       <MainWrapper restrictedBy={restrictedBy || 'height'}>
         <Sidebar>
-          <SubHeading>Leaderboard</SubHeading>
-          <Leaderboard>
-            {players.slice(0, 4).map((player) => (
-              <LeaderboardItem
-                key={player.id}
-                name={player.name}
-                correct={player.correct}
-                total={completedCategoriesCount}
-                itemStyle={player.style}
-              />
-            ))}
-            {players.length > 4 && (
-              <LeaderboardOverflow>
-                {players.slice(4, 9).map((player) => (
-                  <LeaderboardItemSmall
-                    key={player.id}
-                    name={player.name}
-                    correct={player.correct}
-                    itemStyle={player.style}
-                  />
-                ))}
-                {players.length > 10 ? (
-                  <LeaderboardItemRest />
+          {!!players.length && (
+            <>
+              <SubHeading>{bettingOpen ? 'Players' : 'Leaderboard'}</SubHeading>
+              <Leaderboard>
+                {bettingOpen ? (
+                  <>
+                    <LeaderboardOverflow>
+                      {players.slice(0, 18).map((player) => (
+                        <LeaderboardItemSmall
+                          key={player.id}
+                          name={player.name}
+                          correct={0}
+                          itemStyle={player.style}
+                          showScore={false}
+                        />
+                      ))}
+                      {players.length > 18 ? (
+                        <LeaderboardItemRest />
+                      ) : (
+                        players.length === 18 && (
+                          <LeaderboardItemSmall
+                            name={players[18].name}
+                            correct={0}
+                            itemStyle={players[18].style}
+                            showScore={false}
+                          />
+                        )
+                      )}
+                    </LeaderboardOverflow>
+                  </>
                 ) : (
-                  players.length === 10 && (
-                    <LeaderboardItemSmall
-                      name={players[9].name}
-                      correct={players[9].correct}
-                      itemStyle={players[9].style}
-                    />
-                  )
+                  <>
+                    {players.slice(0, 4).map((player) => (
+                      <LeaderboardItem
+                        key={player.id}
+                        name={player.name}
+                        correct={player.correct}
+                        total={completedCategoriesCount}
+                        itemStyle={player.style}
+                      />
+                    ))}
+                    {players.length > 4 && (
+                      <LeaderboardOverflow>
+                        {players.slice(4, 9).map((player) => (
+                          <LeaderboardItemSmall
+                            key={player.id}
+                            name={player.name}
+                            correct={player.correct}
+                            itemStyle={player.style}
+                          />
+                        ))}
+                        {players.length > 10 ? (
+                          <LeaderboardItemRest />
+                        ) : (
+                          players.length === 10 && (
+                            <LeaderboardItemSmall
+                              name={players[9].name}
+                              correct={players[9].correct}
+                              itemStyle={players[9].style}
+                            />
+                          )
+                        )}
+                      </LeaderboardOverflow>
+                    )}
+                  </>
                 )}
-              </LeaderboardOverflow>
-            )}
-          </Leaderboard>
+              </Leaderboard>
+            </>
+          )}
           {!!completedCategories.length && (
             <>
               <SubHeadingSmall>Completed categories</SubHeadingSmall>
