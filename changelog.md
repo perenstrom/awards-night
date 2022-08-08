@@ -1,4 +1,7 @@
 # Changelog
+## 4.1.1
+* Minor style adjustments
+
 ## 4.1
 * New design for presentation mode
 

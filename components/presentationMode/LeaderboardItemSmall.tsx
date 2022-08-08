@@ -31,17 +31,19 @@ interface props {
   name: string;
   correct: number;
   itemStyle: number;
+  showScore?: boolean;
 }
 
 export const LeaderboardItemSmall: React.FC<props> = ({
   name,
   correct,
-  itemStyle
+  itemStyle,
+  showScore = true
 }) => {
   return (
     <Wrapper itemStyle={itemStyle}>
       <Name>{name}</Name>
-      <Score>{correct}</Score>
+      {showScore && <Score>{correct}</Score>}
     </Wrapper>
   );
 };
