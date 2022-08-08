@@ -24,23 +24,6 @@ export const getPlayersWithBetsForGroup = async (
   }
 };
 
-export const getPlayersForGroup = async (
-  group: number,
-  ctx: Context
-): Promise<Player[]> => {
-  const result = await ctx.prisma.player.findMany({
-    where: {
-      groupId: group
-    }
-  });
-
-  if (!result || result.length === 0) {
-    return [];
-  } else {
-    return result.map((player) => prismaMap.player.fromPrisma(player));
-  }
-};
-
 export const getPlayerByAuth0Id = async (
   auth0Id: string,
   ctx: Context

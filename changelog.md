@@ -1,4 +1,8 @@
 # Changelog
+## 4.1.2
+* Filter non playing players
+* Sort years on /me
+
 ## 4.1.1
 * Minor style adjustments
 
