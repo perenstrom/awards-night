@@ -1,4 +1,7 @@
 # Changelog
+## 4.1
+* New design for presentation mode
+
 ## 4.0.2
 * Re-brand to Awards Night
 
