@@ -8,7 +8,8 @@ import {
   Bet,
   BettingData,
   NominationBets,
-  NominationData
+  NominationData,
+  Player
 } from 'types/nominations';
 import { addPlayersWinnings } from 'utils/nominations';
 
@@ -25,6 +26,22 @@ const calculateNominationBets = (bets: Bet[]) => {
   return nominationBets;
 };
 
+const addStylesToPlayer = (
+  players: Player[]
+): (Player & { style: number })[] => {
+  const sortedPlayers = players.sort((a, b) =>
+    `${a.name}-${a.id}`.localeCompare(`${b.name}-${b.id}`)
+  );
+  const playersWithStyle: (Player & { style: number })[] = sortedPlayers.map(
+    (player, index) => ({
+      ...player,
+      style: index
+    })
+  );
+
+  return playersWithStyle;
+};
+
 export const getBettingData = async (
   nominationData: NominationData,
   group: number,
@@ -34,9 +51,10 @@ export const getBettingData = async (
 
   if (bettingOpen) {
     const players = await getPlayersForGroup(group, ctx);
+
     return {
       bets: [],
-      players: players,
+      players: addStylesToPlayer(players),
       nominationBets: {}
     };
   } else {
@@ -57,7 +75,7 @@ export const getBettingData = async (
 
     return {
       bets: bets,
-      players: playersWithWins,
+      players: addStylesToPlayer(playersWithWins),
       nominationBets: nominationBets
     };
   }

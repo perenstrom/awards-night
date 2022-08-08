@@ -52,9 +52,9 @@ export const normalizedNominationsState = selector<
 });
 
 // Nomination bets
-export const nominationBetsState = atom<NominationBets>({
+export const nominationBetsState = atom<Nullable<NominationBets>>({
   key: 'nominationBetsState',
-  default: {}
+  default: null
 });
 
 // Categories
@@ -115,7 +115,7 @@ export const playerState = selector<Player[]>({
         (Object.entries(bets) as [string, Bet][]).map((c) => c[1])
       );
 
-      return playersWithWins.sort((a, b) => a.correct - b.correct);
+      return playersWithWins.sort((a, b) => b.correct - a.correct);
     } else {
       return players;
     }

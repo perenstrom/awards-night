@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { styled } from '@mui/material';
@@ -11,12 +11,10 @@ import {
   NormalizedNominations,
   NominationMeta,
   Year,
-  NominationData
+  NominationData,
+  BetIcon
 } from 'types/nominations';
 import { ParsedUrlQuery } from 'querystring';
-import { Category as CategoryComponent } from 'components/Category';
-import { CategoryMenu } from 'components/CategoryMenu';
-import { PlayerStandings } from 'components/PlayerStandings';
 import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import {
   betsState,
@@ -27,7 +25,8 @@ import {
   metaState,
   nominationBetsState,
   normalizedPlayersState,
-  nominationsState
+  nominationsState,
+  normalizedBetsState
 } from 'states/state';
 import { getNominationData } from 'lib/getNominationData';
 import {
@@ -40,15 +39,174 @@ import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
 import { getCategories, getYears } from 'services/prisma';
 
-const GridContainer = styled('div')`
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: 50px auto 66px;
-  justify-content: stretch;
-  align-content: stretch;
-  width: 100vw;
-  height: 100vh;
+import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
+import { LeaderboardItemSmall } from 'components/presentationMode/LeaderboardItemSmall';
+import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItemSmallRest';
+import { NominatedFilm } from 'components/presentationMode/NominatedFilm';
+import Link from 'next/link';
+import { defaultStyledOptions } from 'utils/mui';
+
+const AREA_ID = 'nominations-area';
+
+type RestrictedBy = 'height' | 'width';
+
+const MainWrapper = styled(
+  'div',
+  defaultStyledOptions<{
+    readonly restrictedBy: RestrictedBy;
+  }>(['restrictedBy'])
+)<{ readonly restrictedBy: RestrictedBy }>`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  font-size: ${({ restrictedBy }) =>
+    restrictedBy === 'height' ? '1.83vh' : '1.2vw'};
 `;
+
+const Main = styled('div')`
+  background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  padding: 3em;
+  padding-top: 1em;
+`;
+
+const Sidebar = styled('div')`
+  flex-basis: 20em;
+  background: #363636;
+  flex-grow: 0;
+  border-right: 0.5px solid #696b7e;
+  overflow: hidden;
+
+  padding: 2em 1em 1em 1em;
+
+  font-family: 'Inter', sans-serif;
+`;
+
+const Leaderboard = styled('ol')`
+  margin: 0 0 0.5em 0;
+  padding: 0;
+
+  color: #ffffff;
+  font-weight: 700;
+
+  ol& {
+    counter-reset: position;
+  }
+
+  & li {
+    margin-bottom: 0;
+    padding: 0.2em 0.5em;
+
+    display: flex;
+    gap: 0.5em;
+    justify-content: space-between;
+    align-items: baseline;
+
+    overflow: hidden;
+
+    font-size: 0.8em;
+    border-radius: 0.5em;
+  }
+`;
+
+const LeaderboardOverflow = styled('ol')`
+  ol& {
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5em;
+
+    font-size: 1em;
+  }
+`;
+
+const Categories = styled('ul')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.8em;
+  color: #e5e7f8;
+  line-height: 1.5;
+  margin: 0 0 0.5em 0;
+  padding: 0;
+  list-style: none;
+`;
+
+const CategoryItem = styled(
+  'li',
+  defaultStyledOptions<{
+    readonly active: boolean;
+  }>(['active'])
+)<{ readonly active: boolean }>`
+  padding: 0;
+
+  & a {
+    color: ${({ active }) => (active ? '#ef8b2c' : '#e5e7f8')};
+    text-decoration: none;
+  }
+`;
+
+const Heading = styled('h1')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 2.7em;
+  color: #e5e7f8;
+  margin: 0;
+  padding-bottom: 0.2em;
+`;
+
+const SubHeading = styled('h2')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1.7em;
+  color: #e5e7f8;
+  margin: 0;
+  padding-bottom: 0.2em;
+`;
+
+const SubHeadingSmall = styled('h2')`
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1.2em;
+  color: #e5e7f8;
+  margin: 1em 0 0.2em;
+`;
+
+const NominationsArea = styled(
+  'div',
+  defaultStyledOptions<{
+    readonly size: 'small' | 'large';
+  }>(['size'])
+)<{
+  readonly size: 'small' | 'large';
+}>`
+  height: 100%;
+  font-size: ${({ size }) => (size === 'large' ? '1em' : '0.7em')};
+  gap: 1em;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
+`;
+
+const getRestrictedBy = (): RestrictedBy | null => {
+  if (typeof window !== 'undefined') {
+    const windowRatio = window.innerWidth / window.innerHeight;
+    const targetContentRatio = 61 / 40;
+
+    const restrictedBy = windowRatio >= targetContentRatio ? 'height' : 'width';
+
+    return restrictedBy;
+  }
+
+  return null;
+};
 
 interface Props {
   year: Year;
@@ -70,6 +228,21 @@ const CategoryPage: NextPage<Props> = ({
   const router = useRouter();
   const { category: slug } = router.query;
 
+  const [restrictedBy, setRestrictedBy] =
+    useState<Nullable<RestrictedBy>>(null);
+  useEffect(() => {
+    setRestrictedBy(getRestrictedBy());
+  }, []);
+
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (restrictedBy) {
+      const timeOut = setTimeout(() => setVisible(true), 100);
+
+      return () => clearTimeout(timeOut);
+    }
+  }, [restrictedBy]);
+
   // Nomination data
   const [nominations, setNominations] = useRecoilState(nominationsState);
   if (!nominations.length) {
@@ -87,6 +260,7 @@ const CategoryPage: NextPage<Props> = ({
 
   // Bet data
   const [bets, setBets] = useRecoilState(betsState);
+  const normalizedBets = useRecoilValue(normalizedBetsState);
   const [players, setPlayers] = useRecoilState(playerState);
   const normalizedPlayers = useRecoilValue(normalizedPlayersState);
   const [nominationBets, setNominationBets] =
@@ -151,12 +325,6 @@ const CategoryPage: NextPage<Props> = ({
   const categoryNominations: Nomination[] = category.nominations.map((n) =>
     normalizedNominations ? normalizedNominations[n] : initialNominations[n]
   );
-  const categoryBetIds: number[] = categoryNominations.flatMap(
-    (n) => nominationBets?.[n.id] || []
-  );
-  const categoryBets = bets
-    ? Object.values(bets).filter((b) => categoryBetIds.includes(b.id))
-    : [];
 
   const refreshNominations = useCallback(async () => {
     const nominationsResult = await getNominations(year.year);
@@ -173,28 +341,135 @@ const CategoryPage: NextPage<Props> = ({
     }
   }, [bettingOpen, refreshNominations]);
 
+  const prepareBets = (nominationId: number): BetIcon[] => {
+    if (!normalizedPlayers || !normalizedBets || !nominationBets) {
+      return [];
+    }
+
+    const betsForNomination = nominationBets[nominationId]
+      ? nominationBets[nominationId].map((betId) => normalizedBets[betId])
+      : [];
+
+    const betIconData: BetIcon[] = betsForNomination.map((bet) => ({
+      id: `${normalizedPlayers[bet.player].name}-${
+        normalizedPlayers[bet.player].id
+      }`,
+      letter: normalizedPlayers[bet.player].name[0],
+      style: normalizedPlayers[bet.player].style
+    }));
+
+    return betIconData;
+  };
+
+  const completedCategories = categories
+    .filter((category) => category.decided)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const upcomingCategories = categories
+    .filter((category) => !category.decided)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const completedCategoriesCount = meta
+    ? meta.completedCategories
+    : initialMeta.completedCategories;
+
+  // heigh: 16 / 800, width: 16 / 1200
   return (
-    <div>
+    <>
       <Head>
         <title>{category.name}</title>
       </Head>
-      <GridContainer>
-        <CategoryMenu category={category} year={year} />
-        <CategoryComponent
-          nominations={categoryNominations}
-          films={films}
-          bets={categoryBets}
-          players={normalizedPlayers}
-        />
-        <PlayerStandings
-          completedCategories={
-            meta ? meta.completedCategories : initialMeta.completedCategories
-          }
-          players={players}
-          bettingOpen={bettingOpen}
-        />
-      </GridContainer>
-    </div>
+      <MainWrapper restrictedBy={restrictedBy || 'height'}>
+        <Sidebar>
+          <SubHeading>Leaderboard</SubHeading>
+          <Leaderboard>
+            {players.slice(0, 4).map((player) => (
+              <LeaderboardItem
+                key={player.id}
+                name={player.name}
+                correct={player.correct}
+                total={completedCategoriesCount}
+                itemStyle={player.style}
+              />
+            ))}
+            {players.length > 4 && (
+              <LeaderboardOverflow>
+                {players.slice(4, 9).map((player) => (
+                  <LeaderboardItemSmall
+                    key={player.id}
+                    name={player.name}
+                    correct={player.correct}
+                    itemStyle={player.style}
+                  />
+                ))}
+                {players.length > 10 ? (
+                  <LeaderboardItemRest />
+                ) : (
+                  players.length === 10 && (
+                    <LeaderboardItemSmall
+                      name={players[9].name}
+                      correct={players[9].correct}
+                      itemStyle={players[9].style}
+                    />
+                  )
+                )}
+              </LeaderboardOverflow>
+            )}
+          </Leaderboard>
+          {!!completedCategories.length && (
+            <>
+              <SubHeadingSmall>Completed categories</SubHeadingSmall>
+              <Categories>
+                {completedCategories.map((category) => (
+                  <CategoryItem
+                    key={category.slug}
+                    active={slug === category.slug}
+                  >
+                    <Link href={`/${year.year}/${category.slug}`}>
+                      <a>{category.name}</a>
+                    </Link>
+                  </CategoryItem>
+                ))}
+              </Categories>
+            </>
+          )}
+          {!!upcomingCategories.length && (
+            <>
+              <SubHeadingSmall>Upcoming categories</SubHeadingSmall>
+              <Categories>
+                {upcomingCategories.map((category) => (
+                  <CategoryItem
+                    key={category.slug}
+                    active={slug === category.slug}
+                  >
+                    <Link href={`/${year.year}/${category.slug}`}>
+                      <a>{category.name}</a>
+                    </Link>
+                  </CategoryItem>
+                ))}
+              </Categories>
+            </>
+          )}
+        </Sidebar>
+        <Main>
+          <Heading>{category.name}</Heading>
+          <NominationsArea
+            id={AREA_ID}
+            size={categoryNominations.length > 6 ? 'small' : 'large'}
+          >
+            {categoryNominations.map((nomination) => (
+              <NominatedFilm
+                key={nomination.id}
+                visible={visible}
+                poster={films[nomination.film].poster}
+                title={films[nomination.film].name}
+                nominee={nomination.nominee}
+                bets={prepareBets(nomination.id)}
+                won={nomination.won}
+              />
+            ))}
+          </NominationsArea>
+        </Main>
+      </MainWrapper>
+    </>
   );
 };
 

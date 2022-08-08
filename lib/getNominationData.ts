@@ -1,4 +1,9 @@
-import { getCategories, getFilms, getNominations, getYear } from 'services/prisma';
+import {
+  getCategories,
+  getFilms,
+  getNominations,
+  getYear
+} from 'services/prisma';
 import { Context } from 'services/prisma/prisma.types';
 import {
   NormalizedCategories,
@@ -37,9 +42,22 @@ export const getNominationData = async (
       normalizedCategories[n.category].nominations.push(n.id);
     });
 
-    const films = await getFilms(nominations.map((n) => n.film), ctx);
+    const films = await getFilms(
+      nominations.map((n) => n.film),
+      ctx
+    );
     const normalizedFilms: NormalizedFilms = {};
     films.forEach((f) => (normalizedFilms[f.imdbId] = f));
+
+    // Add decided property
+    categories.forEach((category) => {
+      const decided = category.nominations.some(
+        (nominationId) => normalizedNominations[nominationId].decided
+      );
+
+      category.decided = decided;
+      normalizedCategories[category.slug].decided = decided;
+    });
 
     const meta = {
       completedCategories: calculateCompletedCategories(
