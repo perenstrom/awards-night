@@ -27,6 +27,11 @@ export const getYear = async (
 
 export const getYears = async (ctx: Context): Promise<Year[]> => {
   const result = await ctx.prisma.year.findMany({
+    orderBy: [
+      {
+        year: 'desc'
+      }
+    ],
     include: {
       nominations: true,
       yearsCategories: true

@@ -1,8 +1,5 @@
 import { getBetsForNominations } from 'services/prisma/bets';
-import {
-  getPlayersForGroup,
-  getPlayersWithBetsForGroup
-} from 'services/prisma/players';
+import { getPlayersWithBetsForGroup } from 'services/prisma/players';
 import { Context } from 'services/prisma/prisma.types';
 import {
   Bet,
@@ -49,22 +46,31 @@ export const getBettingData = async (
 ): Promise<BettingData> => {
   const { bettingOpen } = nominationData.year;
 
+  const players = await getPlayersWithBetsForGroup(group, ctx);
+  const bets = await getBetsForNominations(
+    nominationData.year.nominations,
+    ctx
+  );
+
+  const betIds = bets.map((b) => b.id);
+  players.forEach((player) => {
+    const newBets = player.bets.filter((betId) => betIds.includes(betId));
+    player.bets = newBets;
+  });
+
+  const playingPlayers = players.filter((player) => player.bets.length > 0);
+
   if (bettingOpen) {
-    const players = await getPlayersForGroup(group, ctx);
+    playingPlayers.forEach((player) => {
+      player.bets = [];
+    });
 
     return {
       bets: [],
-      players: addStylesToPlayer(players),
+      players: addStylesToPlayer(playingPlayers),
       nominationBets: {}
     };
   } else {
-    const players = await getPlayersWithBetsForGroup(group, ctx);
-    const playingPlayers = players.filter((player) => player.bets.length > 0);
-    const bets = await getBetsForNominations(
-      nominationData.year.nominations,
-      ctx
-    );
-
     const nominationBets = calculateNominationBets(bets);
 
     const playersWithWins = addPlayersWinnings(
