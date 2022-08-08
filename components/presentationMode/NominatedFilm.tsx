@@ -22,8 +22,8 @@ const Nomination = styled(
   defaultStyledOptions<NominationProps>(['visible', 'won'])
 )<NominationProps>`
   aspect-ratio: 9 / 4;
-  width: 30em;
-  height: 13.6em;
+  width: 28.4em;
+  height: 12.9em;
   opacity: ${({ visible }) => (visible ? '100%' : '0%')};
   transition: opacity 0.2s ease-in-out;
   box-sizing: border-box;
@@ -32,7 +32,7 @@ const Nomination = styled(
   padding: 0.7em;
 
   display: grid;
-  grid-template-columns: 8em 1fr;
+  grid-template-columns: 7.7em 1fr;
   grid-template-rows: min-content min-content auto min-content;
   grid-template-areas:
     'poster title'

@@ -176,9 +176,16 @@ const SubHeadingSmall = styled('h2')`
   margin: 1em 0 0.2em;
 `;
 
-const NominationsArea = styled('div')`
+const NominationsArea = styled(
+  'div',
+  defaultStyledOptions<{
+    readonly size: 'small' | 'large';
+  }>(['size'])
+)<{
+  readonly size: 'small' | 'large';
+}>`
   height: 100%;
-  font-size: 1em;
+  font-size: ${({ size }) => (size === 'large' ? '1em' : '0.7em')};
   gap: 1em;
 
   display: flex;
@@ -444,7 +451,10 @@ const CategoryPage: NextPage<Props> = ({
         </Sidebar>
         <Main>
           <Heading>{category.name}</Heading>
-          <NominationsArea id={AREA_ID}>
+          <NominationsArea
+            id={AREA_ID}
+            size={categoryNominations.length > 6 ? 'small' : 'large'}
+          >
             {categoryNominations.map((nomination) => (
               <NominatedFilm
                 key={nomination.id}
