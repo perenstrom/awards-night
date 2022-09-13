@@ -19,7 +19,7 @@ interface NominationProps {
 }
 const Nomination = styled(
   'div',
-  defaultStyledOptions<NominationProps>(['visible', 'won'])
+  defaultStyledOptions(['visible', 'won'])
 )<NominationProps>`
   aspect-ratio: 9 / 4;
   width: 28.4em;
@@ -89,7 +89,7 @@ interface BetIconProps {
 }
 const BetIcon = styled(
   'div',
-  defaultStyledOptions<BetIconProps>(['itemStyle'])
+  defaultStyledOptions(['itemStyle'])
 )<BetIconProps>`
   border-radius: 50%;
   background-color: ${({ itemStyle }) => getPlayerColor(itemStyle).background};

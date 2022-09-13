@@ -52,9 +52,7 @@ type RestrictedBy = 'height' | 'width';
 
 const MainWrapper = styled(
   'div',
-  defaultStyledOptions<{
-    readonly restrictedBy: RestrictedBy;
-  }>(['restrictedBy'])
+  defaultStyledOptions(['restrictedBy'])
 )<{ readonly restrictedBy: RestrictedBy }>`
   display: flex;
   height: 100%;
@@ -138,9 +136,7 @@ const Categories = styled('ul')`
 
 const CategoryItem = styled(
   'li',
-  defaultStyledOptions<{
-    readonly active: boolean;
-  }>(['active'])
+  defaultStyledOptions(['active'])
 )<{ readonly active: boolean }>`
   padding: 0;
 
@@ -178,9 +174,7 @@ const SubHeadingSmall = styled('h2')`
 
 const NominationsArea = styled(
   'div',
-  defaultStyledOptions<{
-    readonly size: 'small' | 'large';
-  }>(['size'])
+  defaultStyledOptions(['size'])
 )<{
   readonly size: 'small' | 'large';
 }>`

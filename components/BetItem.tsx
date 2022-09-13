@@ -37,7 +37,7 @@ interface WrapperProps {
 }
 const Wrapper = styled(
   'li',
-  defaultStyledOptions<WrapperProps>([
+  defaultStyledOptions([
     'activeBet',
     'bettingOpen',
     'decided',

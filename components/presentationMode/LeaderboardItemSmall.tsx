@@ -5,9 +5,7 @@ import { LeaderboardItemName as Name } from './LeaderboardItemName';
 
 const Wrapper = styled(
   'li',
-  defaultStyledOptions<{
-    readonly itemStyle: number;
-  }>(['itemStyle'])
+  defaultStyledOptions(['itemStyle'])
 )<{
   readonly itemStyle: number;
 }>`
