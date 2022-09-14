@@ -222,6 +222,7 @@ describe('getBettingData', () => {
     mockCtx.prisma.player.findMany.mockResolvedValue(
       getPlayersResponseFixture(1)
     );
+    mockCtx.prisma.bet.findMany.mockResolvedValue(getBetsResponseFixture());
 
     const bettingData = await getBettingData(nominationData[2020], 1, ctx);
     const expectedBettingData: BettingData = {
