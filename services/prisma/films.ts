@@ -39,7 +39,9 @@ export const getFilms = async (
   if (result.length === 0) {
     return [];
   } else {
-    return result.map((film) => prismaMap.film.fromPrisma(film));
+    return result
+      .map((film) => prismaMap.film.fromPrisma(film))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 };
 
