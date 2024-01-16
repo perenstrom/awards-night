@@ -2,19 +2,27 @@ import { Player } from '@prisma/client';
 import { PlayerWithBets } from 'services/prisma/prisma.types';
 
 export const getPlayersResponseFixture = (group: number): Player[] => {
-  const players: Record<number, Player[]> = {
+  const players: Record<number, PlayerWithBets[]> = {
     1: [
       {
         id: 1,
         auth0UserId: 'user1',
         name: 'Player 1',
-        groupId: 1
+        groupId: 1,
+        bets: [
+          { id: 3, nominationId: 1, playerId: 1 },
+          { id: 5, nominationId: 12, playerId: 1 }
+        ]
       },
       {
         id: 2,
         auth0UserId: 'user2',
         name: 'Player 2',
-        groupId: 1
+        groupId: 1,
+        bets: [
+          { id: 4, nominationId: 4, playerId: 2 },
+          { id: 6, nominationId: 12, playerId: 2 }
+        ]
       }
     ],
     2: [
@@ -22,7 +30,8 @@ export const getPlayersResponseFixture = (group: number): Player[] => {
         id: 3,
         auth0UserId: 'user3',
         name: 'Player 3',
-        groupId: 1
+        groupId: 1,
+        bets: [{ id: 3, nominationId: 2, playerId: 3 }]
       }
     ]
   };

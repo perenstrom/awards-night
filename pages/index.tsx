@@ -42,7 +42,7 @@ interface LoginProps {
 }
 const Login = styled(
   'div',
-  defaultStyledOptions<LoginProps>(['ready'])
+  defaultStyledOptions(['ready'])
 )<LoginProps>`
   opacity: ${({ ready }) => (ready ? '1' : '0')};
   align-self: flex-end;

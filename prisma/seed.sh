@@ -4,7 +4,5 @@
 # -x Print commands before they are executed
 
 set -ex
-
 # Seeding command
-
-psql -d awards_night -f ./prisma/seed-data.sql
+psql $DB_CONNECTION_STRING -f ./prisma/seed-data.sql

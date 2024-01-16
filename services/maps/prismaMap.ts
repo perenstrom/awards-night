@@ -125,7 +125,7 @@ export const prismaMap = {
       auth0UserId: playerResponse.auth0UserId,
       name: playerResponse.name,
       correct: 0,
-      bets: playerResponse.bets.map((b) => b.id),
+      bets: playerResponse.bets ? playerResponse.bets.map((b) => b.id) : [],
       group: playerResponse.groupId,
       style: 0
     })

@@ -9,7 +9,7 @@ interface WrapperProps {
 }
 const Wrapper = styled(
   'li',
-  defaultStyledOptions<WrapperProps>(['winner'])
+  defaultStyledOptions(['winner'])
 )<WrapperProps>`
   list-style: none;
   flex-grow: 1;

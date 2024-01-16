@@ -1,3 +1,3 @@
-export const defaultStyledOptions = <T>(props: (keyof T)[]) => ({
-  shouldForwardProp: (prop: keyof T) => !props.includes(prop)
+export const defaultStyledOptions = (props: string[]) => ({
+  shouldForwardProp: (prop: string) => !props.includes(prop)
 });

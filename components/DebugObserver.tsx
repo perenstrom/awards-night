@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRecoilSnapshot } from 'recoil';
 
-export const DebugObserver: React.ReactNode = () => {
+export const DebugObserver: React.FC = () => {
   const snapshot = useRecoilSnapshot();
   useEffect(() => {
     console.debug('The following atoms were modified:');
