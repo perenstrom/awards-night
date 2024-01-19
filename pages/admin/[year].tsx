@@ -1,6 +1,8 @@
+import { ParsedUrlQuery } from 'querystring';
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps, NextPage } from 'next';
+import { Typography } from '@mui/material';
 import {
   Category,
   Nomination,
@@ -11,9 +13,7 @@ import { getNominationData } from 'lib/getNominationData';
 import { BetItem } from 'components/BetItem';
 import { CategoryBets } from 'components/CategoryBets';
 import { updateNomination as updateNominationApi } from 'services/local';
-import { ParsedUrlQuery } from 'querystring';
 import { withAdminRequired } from 'lib/authorization';
-import { Typography } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 import { prismaContext } from 'lib/prisma';
 

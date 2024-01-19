@@ -3,8 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import getRawBody from 'raw-body';
-import { Typography, Box } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Typography, Box, Alert } from '@mui/material';
 
 import { Nullable, PropsWithUser, StatusMessage } from 'types/utilityTypes';
 import { MainContainer } from 'components/MainContainer';

@@ -1,11 +1,11 @@
+import { ParsedUrlQuery } from 'querystring';
 import { Typography } from '@mui/material';
-import { MainContainer } from 'components/MainContainer';
-import { getNominationData } from 'lib/getNominationData';
-import { prismaContext } from 'lib/prisma';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { ParsedUrlQuery } from 'querystring';
+import { MainContainer } from 'components/MainContainer';
+import { getNominationData } from 'lib/getNominationData';
+import { prismaContext } from 'lib/prisma';
 import { getYears } from 'services/prisma';
 import { NominationData } from 'types/nominations';
 import { RequiredBy } from 'types/utilityTypes';
