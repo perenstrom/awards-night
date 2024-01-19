@@ -19,10 +19,10 @@ interface DeleteRequestBody {
 
 const bets = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const { playerId, nominationId }: PostRequestBody = req.body;
 
-      if (!isAuthorized(req, res, playerId)) {
+      if (!(await isAuthorized(req, res, playerId))) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }
@@ -62,7 +62,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
           return resolve('');
         }
 
-        if (!isAuthorized(req, res, fullBet.player)) {
+        if (!(await isAuthorized(req, res, fullBet.player))) {
           res.status(401).end('Unauthorized.');
           return resolve('');
         }
@@ -92,7 +92,7 @@ const bets = async (req: NextApiRequest, res: NextApiResponse) => {
           return resolve('');
         }
 
-        if (!isAuthorized(req, res, fullBet.player)) {
+        if (!(await isAuthorized(req, res, fullBet.player))) {
           res.status(401).end('Unauthorized.');
           return resolve('');
         }

@@ -11,12 +11,12 @@ const playerBets = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     if (req.method === 'GET') {
       const { playerId } = req.query as unknown as GetRequestQuery;
       const parsedPlayerId = parseInt(playerId, 10);
 
-      if (!isAuthorized(req, res, parsedPlayerId)) {
+      if (!(await isAuthorized(req, res, parsedPlayerId))) {
         res.status(401).end('Unauthorized.');
         return resolve();
       }

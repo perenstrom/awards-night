@@ -16,7 +16,7 @@ const bettingData = async (req: NextApiRequest, res: NextApiResponse) => {
     return new Promise(async (resolve) => {
       const { nominationData, group, playerId }: PostRequestBody = req.body;
 
-      if (!isAuthorized(req, res, playerId)) {
+      if (!(await isAuthorized(req, res, playerId))) {
         res.status(401).end('Unauthorized.');
         resolve('');
       }

@@ -40,8 +40,8 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).end('Internal server error');
     }
   } else if (req.method === 'PATCH') {
-    return new Promise((resolve) => {
-      if (!isAdmin(req, res)) {
+    return new Promise(async (resolve) => {
+      if (!(await isAdmin(req, res))) {
         res.status(401).end('Admin privileges required.');
         resolve('');
       }
@@ -69,8 +69,8 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
   } else if (req.method === 'POST') {
-    return new Promise((resolve) => {
-      if (!isAdmin(req, res)) {
+    return new Promise(async (resolve) => {
+      if (!(await isAdmin(req, res))) {
         res.status(401).end('Admin privileges required.');
         resolve('');
       }

@@ -1,8 +1,4 @@
-import {
-  getSession,
-  UserProfile,
-  withPageAuthRequired
-} from '@auth0/nextjs-auth0';
+import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -24,7 +20,7 @@ export const withAdminRequired = <
   return withPageAuthRequired({
     returnTo: params.returnTo,
     getServerSideProps: async (auth0Context) => {
-      const session = getSession(auth0Context.req, auth0Context.res);
+      const session = await getSession(auth0Context.req, auth0Context.res);
       const user = session?.user;
 
       if (user?.[isAdminKey]) {
@@ -43,29 +39,19 @@ export const withAdminRequired = <
   });
 };
 
-export const isAdmin = (req: NextApiRequest, res: NextApiResponse) => {
-  const session = <{ user: UserProfile }>getSession(req, res);
+export const isAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
+  const session = await getSession(req, res);
   const user = session?.user ?? null;
   return !!user?.[isAdminKey];
 };
 
-export const isAuthorized = (
+export const isAuthorized = async (
   req: NextApiRequest,
   res: NextApiResponse,
   playerId: number
 ) => {
-  const session = <{ user: UserProfile }>getSession(req, res);
+  const session = await getSession(req, res);
   const user = session?.user ?? null;
 
   return user?.[playerIdKey] === playerId;
-};
-
-export const getUserFromRequest = (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => {
-  const session = <{ user: UserProfile }>getSession(req, res);
-  const user = session?.user ?? null;
-
-  return user;
 };

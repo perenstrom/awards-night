@@ -1,8 +1,5 @@
 import { GetStaticProps, NextPage } from 'next';
-import {
-  withPageAuthRequired,
-  WithPageAuthRequiredProps
-} from '@auth0/nextjs-auth0';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import { Year } from 'types/nominations';
 import React from 'react';
 import Head from 'next/head';
@@ -55,6 +52,4 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-export default withPageAuthRequired<Props & WithPageAuthRequiredProps>(
-  DashboardPage
-);
+export default withPageAuthRequired<Props>(DashboardPage);

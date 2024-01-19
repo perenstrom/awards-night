@@ -1,7 +1,7 @@
 import React from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 import { useRouter } from 'next/router';
-import { UserProvider } from '@auth0/nextjs-auth0';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Head from 'next/head';
 import { CacheProvider } from '@emotion/react';

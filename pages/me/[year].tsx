@@ -1,8 +1,5 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import {
-  withPageAuthRequired,
-  WithPageAuthRequiredProps
-} from '@auth0/nextjs-auth0';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import { getNominationData } from 'lib/getNominationData';
 import { Bet, Category, NominationData, Player } from 'types/nominations';
 import React, { useState, useEffect } from 'react';
@@ -126,12 +123,10 @@ const DashboardPage: NextPage<Props> = ({
         <title>Bets</title>
       </Head>
       <MainContainer>
-        <Link href={'/me'}>
-          <a>&lt; Dashboard</a>
-        </Link>
+        <Link href={'/me'}>&lt; Dashboard</Link>
         <span> | </span>
         <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
-          <a>Go to presentation mode &gt;</a>
+          Go to presentation mode &gt;
         </Link>
         <Typography variant="h1">
           {player && `Betting for ${player.name}`}
@@ -200,6 +195,4 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export default withPageAuthRequired<Props & WithPageAuthRequiredProps>(
-  DashboardPage
-);
+export default withPageAuthRequired<Props>(DashboardPage);

@@ -9,8 +9,8 @@ interface PostRequestBody {
 
 const films = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    return new Promise((resolve) => {
-      if (!isAdmin(req, res)) {
+    return new Promise(async (resolve) => {
+      if (!(await isAdmin(req, res))) {
         res.status(401).end('Admin privileges required.');
         resolve('');
       }

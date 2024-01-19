@@ -34,7 +34,7 @@ import {
   getLoggedInPlayer,
   getNominations
 } from 'services/local';
-import { useUser } from '@auth0/nextjs-auth0';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
 import { getCategories, getYears } from 'services/prisma';
@@ -50,10 +50,9 @@ const AREA_ID = 'nominations-area';
 
 type RestrictedBy = 'height' | 'width';
 
-const MainWrapper = styled(
-  'div',
-  defaultStyledOptions(['restrictedBy'])
-)<{ readonly restrictedBy: RestrictedBy }>`
+const MainWrapper = styled('div', defaultStyledOptions(['restrictedBy']))<{
+  readonly restrictedBy: RestrictedBy;
+}>`
   display: flex;
   height: 100%;
   width: 100%;
@@ -134,10 +133,9 @@ const Categories = styled('ul')`
   list-style: none;
 `;
 
-const CategoryItem = styled(
-  'li',
-  defaultStyledOptions(['active'])
-)<{ readonly active: boolean }>`
+const CategoryItem = styled('li', defaultStyledOptions(['active']))<{
+  readonly active: boolean;
+}>`
   padding: 0;
 
   & a {
@@ -172,10 +170,7 @@ const SubHeadingSmall = styled('h2')`
   margin: 1em 0 0.2em;
 `;
 
-const NominationsArea = styled(
-  'div',
-  defaultStyledOptions(['size'])
-)<{
+const NominationsArea = styled('div', defaultStyledOptions(['size']))<{
   readonly size: 'small' | 'large';
 }>`
   height: 100%;
@@ -451,7 +446,7 @@ const CategoryPage: NextPage<Props> = ({
                     active={slug === category.slug}
                   >
                     <Link href={`/${year.year}/${category.slug}`}>
-                      <a>{category.name}</a>
+                      {category.name}
                     </Link>
                   </CategoryItem>
                 ))}
@@ -468,7 +463,7 @@ const CategoryPage: NextPage<Props> = ({
                     active={slug === category.slug}
                   >
                     <Link href={`/${year.year}/${category.slug}`}>
-                      <a>{category.name}</a>
+                      {category.name}
                     </Link>
                   </CategoryItem>
                 ))}

@@ -26,9 +26,7 @@ const YearPage: NextPage<Props> = ({ year, nominationData }) => {
         <ul>
           {Object.values(nominationData.categories).map((category) => (
             <li key={category.slug}>
-              <Link href={`/${year}/${category.slug}`}>
-                <a>{category.name}</a>
-              </Link>
+              <Link href={`/${year}/${category.slug}`}>{category.name}</Link>
             </li>
           ))}
         </ul>

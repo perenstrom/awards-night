@@ -40,10 +40,7 @@ const HeroWrapper = styled('div')`
 interface LoginProps {
   readonly ready: boolean;
 }
-const Login = styled(
-  'div',
-  defaultStyledOptions(['ready'])
-)<LoginProps>`
+const Login = styled('div', defaultStyledOptions(['ready']))<LoginProps>`
   opacity: ${({ ready }) => (ready ? '1' : '0')};
   align-self: flex-end;
   padding: 0.5rem;
@@ -86,9 +83,7 @@ const FrontPage: NextPage<Props> = () => {
       </Head>
       <HeroWrapper>
         <Login ready={state === 'idle'}>
-          <Link href={`/me`}>
-            <a>{player ? 'DASHBOARD' : 'LOG IN'}</a>
-          </Link>
+          <Link href={`/me`}>{player ? 'DASHBOARD' : 'LOG IN'}</Link>
         </Login>
         <MainWrapper>
           <MainContainer topMargin={0}>
