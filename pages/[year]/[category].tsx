@@ -1,8 +1,12 @@
+import { ParsedUrlQuery } from 'querystring';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { styled } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import Link from 'next/link';
+import { clsx } from 'clsx';
 import {
   Category,
   Nomination,
@@ -14,8 +18,6 @@ import {
   NominationData,
   BetIcon
 } from 'types/nominations';
-import { ParsedUrlQuery } from 'querystring';
-import { SetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import {
   betsState,
   categoriesState,
@@ -34,155 +36,18 @@ import {
   getLoggedInPlayer,
   getNominations
 } from 'services/local';
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { Nullable } from 'types/utilityTypes';
 import { prismaContext } from 'lib/prisma';
 import { getCategories, getYears } from 'services/prisma';
-
 import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { LeaderboardItemSmall } from 'components/presentationMode/LeaderboardItemSmall';
 import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItemSmallRest';
 import { NominatedFilm } from 'components/presentationMode/NominatedFilm';
-import Link from 'next/link';
-import { defaultStyledOptions } from 'utils/mui';
+import styles from './[category].module.scss';
 
 const AREA_ID = 'nominations-area';
 
 type RestrictedBy = 'height' | 'width';
-
-const MainWrapper = styled('div', defaultStyledOptions(['restrictedBy']))<{
-  readonly restrictedBy: RestrictedBy;
-}>`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  font-size: ${({ restrictedBy }) =>
-    restrictedBy === 'height' ? '1.83vh' : '1.2vw'};
-`;
-
-const Main = styled('div')`
-  background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  padding: 3em;
-  padding-top: 1em;
-`;
-
-const Sidebar = styled('div')`
-  flex-basis: 20em;
-  background: #363636;
-  flex-grow: 0;
-  border-right: 0.5px solid #696b7e;
-  overflow: hidden;
-
-  padding: 2em 1em 1em 1em;
-
-  font-family: 'Inter', sans-serif;
-`;
-
-const Leaderboard = styled('ol')`
-  margin: 0 0 0.5em 0;
-  padding: 0;
-
-  color: #ffffff;
-  font-weight: 700;
-
-  ol& {
-    counter-reset: position;
-  }
-
-  & li {
-    margin-bottom: 0;
-    padding: 0.2em 0.5em;
-
-    display: flex;
-    gap: 0.5em;
-    justify-content: space-between;
-    align-items: baseline;
-
-    overflow: hidden;
-
-    font-size: 0.8em;
-    border-radius: 0.5em;
-  }
-`;
-
-const LeaderboardOverflow = styled('ol')`
-  ol& {
-    padding: 0;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.5em;
-
-    font-size: 1em;
-  }
-`;
-
-const Categories = styled('ul')`
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 0.8em;
-  color: #e5e7f8;
-  line-height: 1.5;
-  margin: 0 0 0.5em 0;
-  padding: 0;
-  list-style: none;
-`;
-
-const CategoryItem = styled('li', defaultStyledOptions(['active']))<{
-  readonly active: boolean;
-}>`
-  padding: 0;
-
-  & a {
-    color: ${({ active }) => (active ? '#ef8b2c' : '#e5e7f8')};
-    text-decoration: none;
-  }
-`;
-
-const Heading = styled('h1')`
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 2.7em;
-  color: #e5e7f8;
-  margin: 0;
-  padding-bottom: 0.2em;
-`;
-
-const SubHeading = styled('h2')`
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 1.7em;
-  color: #e5e7f8;
-  margin: 0;
-  padding-bottom: 0.2em;
-`;
-
-const SubHeadingSmall = styled('h2')`
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 1.2em;
-  color: #e5e7f8;
-  margin: 1em 0 0.2em;
-`;
-
-const NominationsArea = styled('div', defaultStyledOptions(['size']))<{
-  readonly size: 'small' | 'large';
-}>`
-  height: 100%;
-  font-size: ${({ size }) => (size === 'large' ? '1em' : '0.7em')};
-  gap: 1em;
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-content: flex-start;
-  justify-content: flex-start;
-`;
 
 const getRestrictedBy = (): RestrictedBy | null => {
   if (typeof window !== 'undefined') {
@@ -365,15 +230,22 @@ const CategoryPage: NextPage<Props> = ({
       <Head>
         <title>{category.name}</title>
       </Head>
-      <MainWrapper restrictedBy={restrictedBy || 'height'}>
-        <Sidebar>
+      <div
+        className={clsx(styles.mainWrapper, {
+          [styles.heightRestricted]: restrictedBy === 'height' || null,
+          [styles.widthRestricted]: restrictedBy === 'width'
+        })}
+      >
+        <div className={styles.sidebar}>
           {!!players.length && (
             <>
-              <SubHeading>{bettingOpen ? 'Players' : 'Leaderboard'}</SubHeading>
-              <Leaderboard>
+              <h2 className={styles.subHeading}>
+                {bettingOpen ? 'Players' : 'Leaderboard'}
+              </h2>
+              <ol className={styles.leaderboard}>
                 {bettingOpen ? (
                   <>
-                    <LeaderboardOverflow>
+                    <ol className={styles.leaderboardOverflow}>
                       {players.slice(0, 18).map((player) => (
                         <LeaderboardItemSmall
                           key={player.id}
@@ -395,7 +267,7 @@ const CategoryPage: NextPage<Props> = ({
                           />
                         )
                       )}
-                    </LeaderboardOverflow>
+                    </ol>
                   </>
                 ) : (
                   <>
@@ -409,7 +281,7 @@ const CategoryPage: NextPage<Props> = ({
                       />
                     ))}
                     {players.length > 4 && (
-                      <LeaderboardOverflow>
+                      <ol className={styles.leaderboardOverflow}>
                         {players.slice(4, 9).map((player) => (
                           <LeaderboardItemSmall
                             key={player.id}
@@ -429,53 +301,59 @@ const CategoryPage: NextPage<Props> = ({
                             />
                           )
                         )}
-                      </LeaderboardOverflow>
+                      </ol>
                     )}
                   </>
                 )}
-              </Leaderboard>
+              </ol>
             </>
           )}
           {!!completedCategories.length && (
             <>
-              <SubHeadingSmall>Completed categories</SubHeadingSmall>
-              <Categories>
+              <h2 className={styles.subHeadingSmall}>Completed categories</h2>
+              <ul className={styles.categories}>
                 {completedCategories.map((category) => (
-                  <CategoryItem
+                  <li
+                    className={clsx(styles.categoryItem, {
+                      [styles.active]: slug === category.slug
+                    })}
                     key={category.slug}
-                    active={slug === category.slug}
                   >
                     <Link href={`/${year.year}/${category.slug}`}>
                       {category.name}
                     </Link>
-                  </CategoryItem>
+                  </li>
                 ))}
-              </Categories>
+              </ul>
             </>
           )}
           {!!upcomingCategories.length && (
             <>
-              <SubHeadingSmall>Upcoming categories</SubHeadingSmall>
-              <Categories>
+              <h2 className={styles.subHeadingSmall}>Upcoming categories</h2>
+              <ul className={styles.categories}>
                 {upcomingCategories.map((category) => (
-                  <CategoryItem
+                  <li
+                    className={clsx(styles.categoryItem, {
+                      [styles.active]: slug === category.slug
+                    })}
                     key={category.slug}
-                    active={slug === category.slug}
                   >
                     <Link href={`/${year.year}/${category.slug}`}>
                       {category.name}
                     </Link>
-                  </CategoryItem>
+                  </li>
                 ))}
-              </Categories>
+              </ul>
             </>
           )}
-        </Sidebar>
-        <Main>
-          <Heading>{category.name}</Heading>
-          <NominationsArea
+        </div>
+        <div className={styles.main}>
+          <h1 className={styles.heading}>{category.name}</h1>
+          <div
             id={AREA_ID}
-            size={categoryNominations.length > 6 ? 'small' : 'large'}
+            className={clsx(styles.nominationsArea, {
+              [styles.largeNomination]: categoryNominations.length <= 6
+            })}
           >
             {categoryNominations.map((nomination) => (
               <NominatedFilm
@@ -488,9 +366,9 @@ const CategoryPage: NextPage<Props> = ({
                 won={nomination.won}
               />
             ))}
-          </NominationsArea>
-        </Main>
-      </MainWrapper>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
