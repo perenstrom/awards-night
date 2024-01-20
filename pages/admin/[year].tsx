@@ -11,7 +11,6 @@ import {
 } from 'types/nominations';
 import { getNominationData } from 'lib/getNominationData';
 import { BetItem } from 'components/BetItem';
-import { CategoryBets } from 'components/CategoryBets';
 import { updateNomination as updateNominationApi } from 'services/local';
 import { withAdminRequired } from 'lib/authorization';
 import { MainContainer } from 'components/MainContainer';
@@ -116,7 +115,7 @@ const AdminYearPage: NextPage<Props> = ({
         {(Object.values(categories) as Category[]).map((category) => (
           <div key={category.slug}>
             <Typography variant="h2">{category.name}</Typography>
-            <CategoryBets>
+            <ul className='p-0'>
               {category.nominations.map((nominationId) => {
                 const nomination = nominations
                   ? nominations[nominationId]
@@ -137,7 +136,7 @@ const AdminYearPage: NextPage<Props> = ({
                   />
                 );
               })}
-            </CategoryBets>
+            </ul>
           </div>
         ))}
       </MainContainer>

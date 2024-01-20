@@ -11,7 +11,6 @@ import {
   getBetsForPlayer
 } from 'services/local';
 import { BetItem } from 'components/BetItem';
-import { CategoryBets } from 'components/CategoryBets';
 import Head from 'next/head';
 import { ParsedUrlQuery } from 'querystring';
 import { Typography, styled } from '@mui/material';

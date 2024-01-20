@@ -93,6 +93,9 @@ export default class MyDocument extends Document {
             styles={{
               'html, body, body > div:first-of-type, div#__next': {
                 height: '100%'
+              },
+              '.p-0': {
+                padding: 0
               }
             }}
           />
