@@ -5,18 +5,9 @@ import {
   NormalizedFilms,
   NormalizedPlayers
 } from 'types/nominations';
-import { NominatedFilm } from './NominatedFilm';
-import { styled } from '@mui/material';
 import { Nullable } from 'types/utilityTypes';
-
-const FilmList = styled('ul')`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-around;
-  align-items: flex-start;
-  margin: 0px;
-  padding: 1em;
-`;
+import { NominatedFilm } from './NominatedFilm';
+import styles from './Category.module.scss';
 
 interface Props {
   nominations: Nomination[];
@@ -32,7 +23,7 @@ const CategoryComponent: React.FC<Props> = ({
   players
 }) => {
   return (
-    <FilmList>
+    <ul className={styles.filmList}>
       {nominations.map((nomination) => (
         <NominatedFilm
           key={nomination.id}
@@ -42,7 +33,7 @@ const CategoryComponent: React.FC<Props> = ({
           players={players}
         />
       ))}
-    </FilmList>
+    </ul>
   );
 };
 
