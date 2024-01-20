@@ -2,6 +2,52 @@
   display: flex;
   height: 100%;
   width: 100%;
+
+  --player-color-text-white: #fff;
+  --player-color-text-black: #000;
+  --player-color-glow-black: #000;
+  --player-color-glow-white: #fff;
+  --player-color-glow-transparent: transparent;
+
+  --player-color-0-background: #1395ba;
+  --player-color-0-text: var(--player-color-text-white);
+  --player-color-0-glow: var(--player-color-glow-black);
+  --player-color-1-background: #a2b86c;
+  --player-color-1-text: var(--player-color-text-black);
+  --player-color-1-glow: var(--player-color-glow-transparent);
+  --player-color-2-background: #ebc844;
+  --player-color-2-text: var(--player-color-text-black);
+  --player-color-2-glow: var(--player-color-glow-transparent);
+  --player-color-3-background: #ef8b2c;
+  --player-color-3-text: var(--player-color-text-black);
+  --player-color-3-glow: var(--player-color-glow-transparent);
+  --player-color-4-background: #c02e1d;
+  --player-color-4-text: var(--player-color-text-white);
+  --player-color-4-glow: var(--player-color-glow-black);
+  --player-color-5-background: #0f5b78;
+  --player-color-5-text: var(--player-color-text-white);
+  --player-color-5-glow: var(--player-color-glow-black);
+  --player-color-6-background: #d94e1f;
+  --player-color-6-text: var(--player-color-text-white);
+  --player-color-6-glow: var(--player-color-glow-black);
+  --player-color-7-background: #5ca793;
+  --player-color-7-text: var(--player-color-text-white);
+  --player-color-7-glow: var(--player-color-glow-black);
+  --player-color-8-background: #651199;
+  --player-color-8-text: var(--player-color-text-white);
+  --player-color-8-glow: var(--player-color-glow-black);
+  --player-color-9-background: #ce4ca2;
+  --player-color-9-text: var(--player-color-text-black);
+  --player-color-9-glow: var(--player-color-glow-white);
+  --player-color-10-background: #8e1063;
+  --player-color-10-text: var(--player-color-text-white);
+  --player-color-10-glow: var(--player-color-glow-black);
+  --player-color-11-background: #4c8315;
+  --player-color-11-text: var(--player-color-text-white);
+  --player-color-11-glow: var(--player-color-glow-black);
+  --player-color-default-background: #1395ba;
+  --player-color-default-text: var(--player-color-text-white);
+  --player-color-default-glow: var(--player-color-glow-black);
 }
 
 .heightRestricted {

@@ -1,0 +1,134 @@
+.wrapperLarge {
+  margin-bottom: 0.6em;
+  font-size: 1em;
+
+  &::before {
+    counter-increment: position;
+    content: counter(position) '.';
+  }
+
+  &:first-of-type {
+    font-size: 1.5em;
+    margin-bottom: 0.4em;
+    padding: 0.1em 0.4em;
+  }
+}
+
+.wrapperSmall {
+  flex-grow: 1;
+
+  &::before {
+    counter-increment: position;
+  }
+}
+
+.wrapperRest {
+  flex-grow: 1;
+
+  justify-content: center;
+  align-items: center;
+
+  background: #989898;
+
+  &::before {
+    counter-increment: position;
+  }
+}
+
+.playerColor0 {
+  background-color: var(--player-color-0-background);
+  color: var(--player-color-0-text);
+  text-shadow: 1px 0px 3px var(--player-color-0-glow),
+    -1px 0px 3px var(--player-color-0-glow);
+}
+
+.playerColor1 {
+  background-color: var(--player-color-1-background);
+  color: var(--player-color-1-text);
+  text-shadow: 1px 0px 3px var(--player-color-1-glow),
+    -1px 0px 3px var(--player-color-1-glow);
+}
+.playerColor2 {
+  background-color: var(--player-color-2-background);
+  color: var(--player-color-2-text);
+  text-shadow: 1px 0px 3px var(--player-color-2-glow),
+    -1px 0px 3px var(--player-color-2-glow);
+}
+.playerColor3 {
+  background-color: var(--player-color-3-background);
+  color: var(--player-color-3-text);
+  text-shadow: 1px 0px 3px var(--player-color-3-glow),
+    -1px 0px 3px var(--player-color-3-glow);
+}
+.playerColor4 {
+  background-color: var(--player-color-4-background);
+  color: var(--player-color-4-text);
+  text-shadow: 1px 0px 3px var(--player-color-4-glow),
+    -1px 0px 3px var(--player-color-4-glow);
+}
+.playerColor5 {
+  background-color: var(--player-color-5-background);
+  color: var(--player-color-5-text);
+  text-shadow: 1px 0px 3px var(--player-color-5-glow),
+    -1px 0px 3px var(--player-color-5-glow);
+}
+.playerColor6 {
+  background-color: var(--player-color-6-background);
+  color: var(--player-color-6-text);
+  text-shadow: 1px 0px 3px var(--player-color-6-glow),
+    -1px 0px 3px var(--player-color-6-glow);
+}
+.playerColor7 {
+  background-color: var(--player-color-7-background);
+  color: var(--player-color-7-text);
+  text-shadow: 1px 0px 3px var(--player-color-7-glow),
+    -1px 0px 3px var(--player-color-7-glow);
+}
+.playerColor8 {
+  background-color: var(--player-color-8-background);
+  color: var(--player-color-8-text);
+  text-shadow: 1px 0px 3px var(--player-color-8-glow),
+    -1px 0px 3px var(--player-color-8-glow);
+}
+.playerColor9 {
+  background-color: var(--player-color-9-background);
+  color: var(--player-color-9-text);
+  text-shadow: 1px 0px 3px var(--player-color-9-glow),
+    -1px 0px 3px var(--player-color-9-glow);
+}
+.playerColor10 {
+  background-color: var(--player-color-10-background);
+  color: var(--player-color-10-text);
+  text-shadow: 1px 0px 3px var(--player-color-10-glow),
+    -1px 0px 3px var(--player-color-10-glow);
+}
+.playerColor11 {
+  background-color: var(--player-color-11-background);
+  color: var(--player-color-11-text);
+  text-shadow: 1px 0px 3px var(--player-color-11-glow),
+    -1px 0px 3px var(--player-color-11-glow);
+}
+.playerColorDefault {
+  background-color: var(--player-color-default-background);
+  color: var(--player-color-default-text);
+  text-shadow: 1px 0px 3px var(--player-color-default-glow),
+    -1px 0px 3px var(--player-color-default-glow);
+}
+
+.score {
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.smallScore {
+  flex-grow: 0;
+}
+
+.name {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 0.3em;
+  margin: 0 -0.3em;
+}
