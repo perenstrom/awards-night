@@ -2,61 +2,21 @@ import { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { MainContainer } from 'components/MainContainer';
+import { clsx } from 'clsx';
 import {
   Box,
   Card,
   CardContent,
   CardMedia,
   Grid,
-  styled,
   Typography
 } from '@mui/material';
+import { MainContainer } from 'components/MainContainer';
 import { Player } from 'types/nominations';
 import { getLoggedInPlayer } from 'services/local';
-import { defaultStyledOptions } from 'utils/mui';
+import styles from './index.module.scss';
 
 interface Props {}
-
-const MainWrapper = styled('div')`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-`;
-
-const HeroWrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  height: 20rem;
-  background-color: black;
-  background-image: url('/images/hero.jpg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-`;
-
-interface LoginProps {
-  readonly ready: boolean;
-}
-const Login = styled('div', defaultStyledOptions(['ready']))<LoginProps>`
-  opacity: ${({ ready }) => (ready ? '1' : '0')};
-  align-self: flex-end;
-  padding: 0.5rem;
-  line-height: 1;
-
-  transition: opacity 0.3s ease-in;
-
-  a {
-    color: rgba(255, 255, 255, 0.3);
-    text-decoration: none;
-  }
-`;
-
-const TitleShadow = styled('span')`
-  text-shadow: 0 0 3rem #000000;
-`;
 
 type State = 'idle' | 'loading';
 const FrontPage: NextPage<Props> = () => {
@@ -81,11 +41,13 @@ const FrontPage: NextPage<Props> = () => {
       <Head>
         <title>Awards Night – Social prediction for the Academy Awards</title>
       </Head>
-      <HeroWrapper>
-        <Login ready={state === 'idle'}>
+      <div className={styles.heroWrapper}>
+        <div
+          className={clsx(styles.login, { [styles.visible]: state === 'idle' })}
+        >
           <Link href={`/me`}>{player ? 'DASHBOARD' : 'LOG IN'}</Link>
-        </Login>
-        <MainWrapper>
+        </div>
+        <div className={styles.mainWrapper}>
           <MainContainer topMargin={0}>
             <Typography
               color="white"
@@ -93,7 +55,7 @@ const FrontPage: NextPage<Props> = () => {
               fontSize="4.5rem"
               textAlign="center"
             >
-              <TitleShadow>Awards Night</TitleShadow>
+              <span className={styles.titleShadow}>Awards Night</span>
             </Typography>
             <Typography
               color="white"
@@ -106,8 +68,8 @@ const FrontPage: NextPage<Props> = () => {
               Social Prediction for the Academy Awards
             </Typography>
           </MainContainer>
-        </MainWrapper>
-      </HeroWrapper>
+        </div>
+      </div>
       <MainContainer>
         <Grid container spacing={2}>
           <Grid item sm={4} xs={12}>
