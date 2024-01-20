@@ -1,8 +1,12 @@
+import { ParsedUrlQuery } from 'querystring';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Typography } from '@mui/material';
+import Link from 'next/link';
 import { getNominationData } from 'lib/getNominationData';
 import { Bet, Category, NominationData, Player } from 'types/nominations';
-import React, { useState, useEffect } from 'react';
 import {
   createBet,
   deleteBet,
@@ -11,19 +15,11 @@ import {
   getBetsForPlayer
 } from 'services/local';
 import { BetItem } from 'components/BetItem';
-import Head from 'next/head';
-import { ParsedUrlQuery } from 'querystring';
-import { Typography, styled } from '@mui/material';
 import { MainContainer } from 'components/MainContainer';
 import { RequiredBy } from 'types/utilityTypes';
-import Link from 'next/link';
 import { prismaContext } from 'lib/prisma';
 import { getYears } from 'services/prisma';
-
-const Loading = styled('span')`
-  font-size: 1rem;
-  font-weight: normal;
-`;
+import styles from './[year].module.scss';
 
 type Props = NominationData;
 type State = 'idle' | 'loading' | 'saving';
@@ -129,13 +125,15 @@ const DashboardPage: NextPage<Props> = ({
         </Link>
         <Typography variant="h1">
           {player && `Betting for ${player.name}`}
-          {state !== 'idle' && <Loading> loading...</Loading>}
+          {state !== 'idle' && (
+            <span className={styles.loading}> loading...</span>
+          )}
         </Typography>
         {!year.bettingOpen && <p>Betting is closed</p>}
         {(Object.values(categories) as Category[]).map((category) => (
           <div key={category.slug}>
             <Typography variant="h2">{category.name}</Typography>
-            <CategoryBets>
+            <ul className="p-0">
               {category.nominations.map((nominationId) => {
                 const nomination = nominations[nominationId];
                 return (
@@ -154,7 +152,7 @@ const DashboardPage: NextPage<Props> = ({
                   />
                 );
               })}
-            </CategoryBets>
+            </ul>
           </div>
         ))}
       </MainContainer>
