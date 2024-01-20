@@ -1,25 +1,23 @@
-import { NextPage } from 'next';
-import React, { useEffect, useState } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { clsx } from 'clsx';
+'use client';
+
 import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
+  Typography,
   Grid,
-  Typography
+  Card,
+  CardMedia,
+  CardContent,
+  Box
 } from '@mui/material';
+import { clsx } from 'clsx';
+import Link from 'next/link';
+import { Player } from '@prisma/client';
+import { useState, useEffect } from 'react';
 import { MainContainer } from 'components/MainContainer';
-import { Player } from 'types/nominations';
 import { getLoggedInPlayer } from 'services/local';
 import styles from './index.module.scss';
 
-interface Props {}
-
 type State = 'idle' | 'loading';
-const FrontPage: NextPage<Props> = () => {
+export default function Page() {
   const [player, setPlayer] = useState<Player>();
   const [state, setState] = useState<State>('loading');
 
@@ -28,7 +26,11 @@ const FrontPage: NextPage<Props> = () => {
       try {
         const player = await getLoggedInPlayer();
         if (player.success) {
-          setPlayer(player.data);
+          setPlayer({
+            ...player.data,
+            groupId: player.data.group || null,
+            auth0UserId: player.data.auth0UserId || null
+          });
         }
       } catch (_) {}
       setState('idle');
@@ -38,9 +40,6 @@ const FrontPage: NextPage<Props> = () => {
 
   return (
     <div>
-      <Head>
-        <title>Awards Night – Social prediction for the Academy Awards</title>
-      </Head>
       <div className={styles.heroWrapper}>
         <div
           className={clsx(styles.login, { [styles.visible]: state === 'idle' })}
@@ -155,6 +154,4 @@ const FrontPage: NextPage<Props> = () => {
       </MainContainer>
     </div>
   );
-};
-
-export default FrontPage;
+}
