@@ -1,8 +1,9 @@
+import { clsx } from 'clsx';
 import { memo } from 'react';
-import { Typography, styled } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Category } from 'types/nominations';
-import { defaultStyledOptions } from 'utils/mui';
 import { FilmPoster } from './FilmPoster';
+import styles from './BetItem.module.scss';
 
 const getBackgroundColor = (
   activeBet: boolean,
@@ -11,58 +12,23 @@ const getBackgroundColor = (
 ): string => {
   if (activeBet && won) {
     // Green
-    return 'rgb(135, 218, 161)';
+    return 'correct';
   } else if (activeBet && decided && !won) {
     // Red
-    return 'rgb(223, 121, 113)';
+    return 'wrong';
   } else if (activeBet && !decided && !won) {
     // Light blue
-    return 'rgb(147, 161, 209)';
+    return 'selected';
   } else if (!activeBet && won) {
     // Yellow
-    return 'rgb(187, 162, 103)';
+    return 'winner';
   } else if (!activeBet && !won) {
     // White
-    return 'rgb(238, 238, 238)';
+    return 'white';
   } else {
-    return 'rgb(238, 238, 238)';
+    return 'white';
   }
 };
-
-interface WrapperProps {
-  readonly activeBet: boolean;
-  readonly won: boolean;
-  readonly decided: boolean;
-  readonly bettingOpen: boolean;
-}
-const Wrapper = styled(
-  'li',
-  defaultStyledOptions([
-    'activeBet',
-    'bettingOpen',
-    'decided',
-    'won'
-  ])
-)<WrapperProps>`
-  display: flex;
-  width: 100%;
-  background-color: ${({ activeBet, won, decided }) =>
-    getBackgroundColor(activeBet, won, decided)};
-  list-style: none;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  border-radius: 3px;
-  transition: background-color 300ms ease-out;
-  cursor: ${({ bettingOpen }) => bettingOpen && 'pointer'};
-`;
-
-const InnerWrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-  padding-left: 1em;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-`;
 
 interface Props {
   category: Category;
@@ -90,20 +56,23 @@ export const BetItemComponent: React.FC<Props> = ({
   onClick
 }) => {
   return (
-    <Wrapper
+    <li
+      className={clsx(
+        styles.wrapper,
+        styles[getBackgroundColor(activeBet, won, decided)],
+        {
+          [styles.pointer]: bettingOpen
+        }
+      )}
       key={nominationId}
-      activeBet={activeBet}
-      won={won}
-      decided={decided}
-      bettingOpen={bettingOpen}
       onClick={bettingOpen ? () => onClick(nominationId, category) : () => null}
     >
       <FilmPoster poster={poster} />
-      <InnerWrapper>
+      <div className={styles.innerWrapper}>
         <Typography variant="h3">{filmName}</Typography>
         {nominee && <Typography>{nominee}</Typography>}
-      </InnerWrapper>
-    </Wrapper>
+      </div>
+    </li>
   );
 };
 
