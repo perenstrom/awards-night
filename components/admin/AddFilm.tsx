@@ -1,47 +1,70 @@
-import React, { FormEvent, useRef, useState } from 'react';
+'use client';
+
+import React, { RefObject, useEffect, useRef } from 'react';
 import {
-  CircularProgress,
   Typography,
   TextField,
   Box,
   Button,
   Paper,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
-import { Nullable, StatusMessage } from 'types/utilityTypes';
-import { createFilm } from 'services/local';
+import { useFormState, useFormStatus } from 'react-dom';
+import { createFilm } from './actions';
 
-interface Props {
-  submitAction: string;
-  parentStatusMessage?: StatusMessage;
-}
+const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement> }> = ({
+  inputRef
+}) => {
+  const { pending } = useFormStatus();
 
-export const AddFilm: React.FC<Props> = (props) => {
-  const { submitAction, parentStatusMessage } = props;
-
-  const [statusMessage, setStatusMessage] =
-    useState<Nullable<StatusMessage>>(parentStatusMessage);
-
-  const imdbIdInputElement = useRef<HTMLInputElement>(null);
-  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
-    'idle'
+  return (
+    <>
+      <TextField
+        id="imdb-id"
+        name="imdbId"
+        label="IMDb ID"
+        variant="outlined"
+        size="small"
+        inputProps={{
+          minLength: '9',
+          maxLength: '10',
+          pattern: 'tt[0-9]{7-8}'
+        }}
+        inputRef={inputRef}
+      />
+      <Box ml={1} display="inline">
+        <Button
+          name="action"
+          value="addFilmByImdbId"
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={pending}
+          disableElevation
+        >
+          Add
+        </Button>
+      </Box>
+      {pending && (
+        <Box mt={2.5}>
+          <CircularProgress size={'2rem'} />
+        </Box>
+      )}
+    </>
   );
-  const onAddFilmSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setAddFilmStatus('loading');
-    setStatusMessage(null);
-    const imdbId = imdbIdInputElement.current?.value;
+};
 
-    if (imdbId) {
-      const saveFilmResult = await createFilm(imdbId);
-      setStatusMessage(saveFilmResult);
-      if (saveFilmResult.severity !== 'error') {
-        imdbIdInputElement.current.value = '';
-        imdbIdInputElement.current.focus();
-      }
+export const AddFilm: React.FC<{}> = () => {
+  const [statusMessage, createFilmAction] = useFormState(createFilm, null);
+  const imdbIdInputElement = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (statusMessage?.severity !== 'error' && imdbIdInputElement.current) {
+      imdbIdInputElement.current.value = '';
+      imdbIdInputElement.current.focus();
     }
-    setAddFilmStatus('idle');
-  };
+  }, [statusMessage?.severity]);
 
   return (
     <Box mt={2}>
@@ -51,42 +74,8 @@ export const AddFilm: React.FC<Props> = (props) => {
             Add film
           </Typography>
           <Box mt={2}>
-            <form
-              action={submitAction}
-              method="POST"
-              onSubmit={onAddFilmSubmit}
-            >
-              <TextField
-                id="imdb-id"
-                name="imdbId"
-                label="IMDb ID"
-                variant="outlined"
-                size="small"
-                inputProps={{
-                  minLength: '9',
-                  maxLength: '10',
-                  pattern: 'tt[0-9]{7-8}'
-                }}
-                inputRef={imdbIdInputElement}
-              />
-              <Box ml={1} display="inline">
-                <Button
-                  name="action"
-                  value="addFilmByImdbId"
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={addFilmStatus === 'loading'}
-                  disableElevation
-                >
-                  Add
-                </Button>
-              </Box>
-              {addFilmStatus === 'loading' && (
-                <Box mt={2.5}>
-                  <CircularProgress size={'2rem'} />
-                </Box>
-              )}
+            <form action={createFilmAction}>
+              <FormContent inputRef={imdbIdInputElement} />
             </form>
             {statusMessage && (
               <Box mt={2}>
