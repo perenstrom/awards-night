@@ -17,23 +17,6 @@
   background-size: cover;
 }
 
-.login {
-  align-self: flex-end;
-  padding: 0.5rem;
-  line-height: 1;
-
-  transition: opacity 0.3s ease-in;
-
-  a {
-    color: rgba(255, 255, 255, 0.3);
-    text-decoration: none;
-  }
-}
-
-.visible {
-  opacity: 1;
-}
-
 .titleShadow {
   text-shadow: 0 0 3rem #000000;
 }

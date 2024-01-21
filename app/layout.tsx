@@ -2,6 +2,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import './global.scss';
 import { Metadata } from 'next';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { theme } from 'styles/theme';
 
 export const metadata: Metadata = {
@@ -62,12 +63,14 @@ export default function RootLayout({
         <meta name="theme-color" content="#bba267" />
       </head>
       <body>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        <UserProvider>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              {children}
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </UserProvider>
       </body>
     </html>
   );

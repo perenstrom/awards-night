@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Typography,
   Grid,
@@ -8,44 +6,15 @@ import {
   CardContent,
   Box
 } from '@mui/material';
-import { clsx } from 'clsx';
-import Link from 'next/link';
-import { Player } from '@prisma/client';
-import { useState, useEffect } from 'react';
 import { MainContainer } from 'components/MainContainer';
-import { getLoggedInPlayer } from 'services/local';
+import { LoginLink } from 'components/LoginLink';
 import styles from './index.module.scss';
 
-type State = 'idle' | 'loading';
 export default function Page() {
-  const [player, setPlayer] = useState<Player>();
-  const [state, setState] = useState<State>('loading');
-
-  useEffect(() => {
-    const fetchDataAsync = async () => {
-      try {
-        const player = await getLoggedInPlayer();
-        if (player.success) {
-          setPlayer({
-            ...player.data,
-            groupId: player.data.group || null,
-            auth0UserId: player.data.auth0UserId || null
-          });
-        }
-      } catch (_) {}
-      setState('idle');
-    };
-    fetchDataAsync();
-  }, []);
-
   return (
     <div>
       <div className={styles.heroWrapper}>
-        <div
-          className={clsx(styles.login, { [styles.visible]: state === 'idle' })}
-        >
-          <Link href={`/me`}>{player ? 'DASHBOARD' : 'LOG IN'}</Link>
-        </div>
+        <LoginLink />
         <div className={styles.mainWrapper}>
           <MainContainer topMargin={0}>
             <Typography
@@ -145,7 +114,7 @@ export default function Page() {
           <Typography variant="body1" pt="1rem">
             Awards Night is currently under development and in closed alpha. If
             you want to be a part of the alpha testing, send me an e-mail at{' '}
-            <a href="mailto:hello@oscarnight.app">hello@oscarnight.app</a>.
+            <a href="mailto:hello@awardsnight.app">hello@awardsnight.app</a>.
           </Typography>
           <Typography variant="body1" pt="1rem" mb="4rem">
             – Per Enström.
