@@ -178,59 +178,6 @@ export const updateNomination = async (
   }
 };
 
-export const createFilm = async (imdbId: string): Promise<StatusMessage> => {
-  const url = '/api/films';
-  const options: RequestInit = {
-    method: 'POST',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      imdbId
-    })
-  };
-
-  const result = await apiResult<StatusMessage>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
-export const createFilmByTmdb = async (
-  tmdbId: string
-): Promise<StatusMessage> => {
-  const url = '/api/films';
-  const options: RequestInit = {
-    method: 'POST',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      tmdbId
-    })
-  };
-
-  const result = await apiResult<StatusMessage>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
-export const searchFilms = async (query: string): Promise<TmdbFilmResult[]> => {
-  const url = `/api/films/search?query=${query}`;
-  const options: RequestInit = {
-    method: 'GET',
-    headers: defaultHeaders
-  };
-
-  const result = await apiResult<TmdbFilmResult[]>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
 const apiResult = <K>(
   url: RequestInfo,
   options: RequestInit

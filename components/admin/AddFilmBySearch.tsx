@@ -1,6 +1,7 @@
-import React, { FormEvent, useRef, useState } from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  CircularProgress,
   Typography,
   TextField,
   Box,
@@ -9,73 +10,112 @@ import {
   List,
   ListItem,
   ListItemText,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
+import { useFormState, useFormStatus } from 'react-dom';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
-import { createFilmByTmdb, searchFilms } from 'services/local';
+import { createFilmByTmdb, searchFilms } from './actions';
 
-interface Props {
-  submitAction: string;
-  searchResults: TmdbFilmResult[];
-  parentStatusMessage?: StatusMessage;
-}
+const SearchFormContent: React.FC<{
+  inputRef: React.RefObject<HTMLInputElement>;
+}> = ({ inputRef }) => {
+  const { pending } = useFormStatus();
 
-export const AddFilmBySearch: React.FC<Props> = (props) => {
-  const {
-    submitAction,
-    searchResults: initialSearchResults,
-    parentStatusMessage
-  } = props;
+  return (
+    <>
+      <TextField
+        id="filmQuery"
+        name="filmQuery"
+        label="Film name"
+        variant="outlined"
+        size="small"
+        inputRef={inputRef}
+      />
+      <Box ml={1} display="inline">
+        <Button
+          name="action"
+          value="searchFilms"
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={pending}
+          disableElevation
+        >
+          Search
+        </Button>
+      </Box>
+      {pending && (
+        <Box mt={2.5}>
+          <CircularProgress size={'2rem'} />
+        </Box>
+      )}
+    </>
+  );
+};
+
+const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
+  const { pending } = useFormStatus();
+
+  return (
+    <ListItem
+      button
+      type="submit"
+      name="tmdbId"
+      value={film.tmdbId}
+      disabled={pending}
+      component="button"
+      key={film.tmdbId}
+    >
+      <ListItemText>
+        {`${film.name} (${
+          film.releaseDate ? film.releaseDate.slice(0, 4) : 'n/a'
+        })`}
+      </ListItemText>
+    </ListItem>
+  );
+};
+
+export const AddFilmBySearch: React.FC<{}> = () => {
+  const [searchResultsResponse, searchAction] = useFormState(searchFilms, null);
+  const [statusMessageCreate, saveAction] = useFormState(
+    createFilmByTmdb,
+    null
+  );
 
   const [statusMessage, setStatusMessage] =
-    useState<Nullable<StatusMessage>>(parentStatusMessage);
-  const [searchResults, setSearchResults] = useState(initialSearchResults);
+    useState<Nullable<StatusMessage>>(null);
+  const [searchResults, setSearchResults] =
+    useState<Nullable<TmdbFilmResult[]>>(null);
 
-  const searchFilmInputElement = useRef<HTMLInputElement>(null);
-  const [searchFilmStatus, setSearchFilmStatus] = useState<'idle' | 'loading'>(
-    'idle'
-  );
-  const onSearchFilmSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setSearchFilmStatus('loading');
-    setStatusMessage(null);
-    setSearchResults([]);
-    const query = searchFilmInputElement.current?.value;
-
-    if (query) {
-      try {
-        const searchFilmResult = await searchFilms(query);
-        setSearchResults(searchFilmResult);
-      } catch (_) {
-        setStatusMessage({
-          severity: 'error',
-          message:
-            'Something went wrong when searching for films, please try again.'
-        });
-      }
-    }
-    setSearchFilmStatus('idle');
-  };
-
-  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
-    'idle'
-  );
-  const onAddFilmClick = async (tmdbId: string) => {
-    setAddFilmStatus('loading');
-    setStatusMessage(null);
-    try {
-      const saveFilmResult = await createFilmByTmdb(tmdbId);
-      setSearchResults([]);
-      setStatusMessage(saveFilmResult);
-    } catch (error) {
+  useEffect(() => {
+    if (searchResultsResponse && !searchResultsResponse.success) {
       setStatusMessage({
         severity: 'error',
-        message: 'Something went wrong when adding movie. Please try again.'
+        message: searchResultsResponse.error.message
       });
     }
-    setAddFilmStatus('idle');
-  };
+
+    if (searchResultsResponse && searchResultsResponse.success) {
+      setSearchResults(searchResultsResponse.data);
+      setStatusMessage(null);
+    }
+  }, [searchResultsResponse]);
+
+  const searchFilmInputElement = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (
+      statusMessageCreate?.severity !== 'error' &&
+      searchFilmInputElement.current
+    ) {
+      setSearchResults([]);
+      searchFilmInputElement.current.value = '';
+      searchFilmInputElement.current.focus();
+    }
+
+    if (statusMessageCreate) setStatusMessage(statusMessageCreate);
+  }, [statusMessageCreate]);
 
   return (
     <Box mt={2}>
@@ -85,68 +125,14 @@ export const AddFilmBySearch: React.FC<Props> = (props) => {
             Search and add films
           </Typography>
           <Box mt={2}>
-            <form
-              action={submitAction}
-              method="POST"
-              onSubmit={onSearchFilmSubmit}
-            >
-              <TextField
-                id="filmQuery"
-                name="filmQuery"
-                label="Film name"
-                variant="outlined"
-                size="small"
-                inputRef={searchFilmInputElement}
-              />
-              <Box ml={1} display="inline">
-                <Button
-                  name="action"
-                  value="searchFilms"
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={
-                    searchFilmStatus === 'loading' ||
-                    addFilmStatus === 'loading'
-                  }
-                  disableElevation
-                >
-                  Search
-                </Button>
-              </Box>
-              {searchFilmStatus === 'loading' && (
-                <Box mt={2.5}>
-                  <CircularProgress size={'2rem'} />
-                </Box>
-              )}
+            <form action={searchAction}>
+              <SearchFormContent inputRef={searchFilmInputElement} />
             </form>
-            {searchResults.length > 0 && (
-              <form
-                action={submitAction}
-                method="POST"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <input type="hidden" name="action" value="addFilmByTmdbId" />
+            {searchResults && searchResults.length > 0 && (
+              <form action={saveAction}>
                 <List dense>
                   {searchResults.map((film) => (
-                    <ListItem
-                      button
-                      type="submit"
-                      name="tmdbId"
-                      value={film.tmdbId}
-                      disabled={addFilmStatus === 'loading'}
-                      component="button"
-                      key={film.tmdbId}
-                      onClick={() => onAddFilmClick(film.tmdbId.toString())}
-                    >
-                      <ListItemText>
-                        {`${film.name} (${
-                          film.releaseDate
-                            ? film.releaseDate.slice(0, 4)
-                            : 'n/a'
-                        })`}
-                      </ListItemText>
-                    </ListItem>
+                    <SearchResult film={film} key={film.tmdbId} />
                   ))}
                 </List>
               </form>
