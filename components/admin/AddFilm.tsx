@@ -64,7 +64,7 @@ export const AddFilm: React.FC<{}> = () => {
       imdbIdInputElement.current.value = '';
       imdbIdInputElement.current.focus();
     }
-  }, [statusMessage?.severity]);
+  }, [statusMessage]);
 
   return (
     <Box mt={2}>
