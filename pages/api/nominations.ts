@@ -68,31 +68,6 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
           });
       }
     });
-  } else if (req.method === 'POST') {
-    return new Promise(async (resolve) => {
-      if (!(await isAdmin(req, res))) {
-        res.status(401).end('Admin privileges required.');
-        resolve('');
-      }
-
-      const { category, year, films, nominees }: PostRequestBody = req.body;
-      if (!category || !year || !films || !nominees) {
-        res
-          .status(400)
-          .end('Category, year, films and nominees must be provided');
-        resolve('');
-      } else {
-        saveNominations({ category, year, films, nominees })
-          .then((statusMessage) => {
-            res.status(200).json(statusMessage);
-            resolve('');
-          })
-          .catch((error) => {
-            res.status(500).end(error);
-            return resolve('');
-          });
-      }
-    });
   } else {
     res.status(404);
   }

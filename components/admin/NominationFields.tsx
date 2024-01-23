@@ -31,7 +31,10 @@ export const NominationFields: React.FC<Props> = ({
           >
             {availableFilms.map((film) => (
               <option key={film.imdbId} value={film.imdbId}>
-                {film.name}
+                {`${film.name} ${
+                  film.releaseDate &&
+                  `(${new Date(film.releaseDate).getFullYear()})`
+                }`}
               </option>
             ))}
           </TextField>

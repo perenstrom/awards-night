@@ -3,10 +3,9 @@ import {
   BettingData,
   Nomination,
   NominationData,
-  Player,
-  TmdbFilmResult
+  Player
 } from 'types/nominations';
-import { Maybe, StatusMessage } from 'types/utilityTypes';
+import { Maybe } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
 
@@ -116,27 +115,6 @@ export const deleteBet = async (betId: number): Promise<number> => {
   };
 
   const result = await apiResult<number>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
-export const createNominations = async (data: {
-  category: string;
-  year: number;
-  films: string[];
-  nominees: string[];
-}): Promise<StatusMessage> => {
-  const url = '/api/nominations';
-  const options: RequestInit = {
-    method: 'POST',
-    headers: defaultHeaders,
-    body: JSON.stringify(data)
-  };
-
-  const result = await apiResult<StatusMessage>(url, options);
   if (result.success) {
     return result.data;
   } else {

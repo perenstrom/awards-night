@@ -2,6 +2,7 @@
 
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
+import { saveNominations } from 'lib/saveNominations';
 import { searchFilms as searchFilmsTmdb } from 'services/tmdb';
 import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
@@ -47,4 +48,35 @@ export const searchFilms = async (
   } catch (error) {
     return createError(getError(ERROR_CODES.TMDB_SEARCH_ERROR));
   }
+};
+
+export const createNominations = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const year = formData.get('year') as string;
+  const category = formData.get('category') as string;
+  const films = formData.getAll('films') as string[];
+  const nominees = formData.getAll('nominees') as string[];
+
+  if (!category || !year || !films || !nominees) return;
+
+  return await saveNominations({
+    category,
+    year: parseInt(year, 10),
+    films,
+    nominees
+  });
+};
+
+export const setNominationsCount = async (
+  previousState: number | null,
+  formData: FormData
+) => {
+  const nominationCount = formData.get('nominationCount') as string;
+  if (!nominationCount) return 5;
+
+  return parseInt(nominationCount, 10);
 };
