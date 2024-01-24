@@ -1,8 +1,10 @@
 'use server';
 
+import { revalidateTag } from 'next/cache';
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
+import { FILM_TAG } from 'services/prisma/films';
 import { searchFilms as searchFilmsTmdb } from 'services/tmdb';
 import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
@@ -18,7 +20,12 @@ export const createFilm = async (
   const imdb = formData.get('imdbId') as string;
   if (!imdb) return;
 
-  return await saveFilm(imdb);
+  const result = await saveFilm(imdb);
+  if (result.severity === 'success') {
+    revalidateTag(FILM_TAG);
+  }
+
+  return result;
 };
 
 export const createFilmByTmdb = async (
@@ -30,7 +37,12 @@ export const createFilmByTmdb = async (
   const tmdbId = formData.get('tmdbId') as string;
   if (!tmdbId) return;
 
-  return await saveFilmByTmdbId(tmdbId);
+  const result = await saveFilmByTmdbId(tmdbId);
+  if (result.severity === 'success') {
+    revalidateTag(FILM_TAG);
+  }
+
+  return result;
 };
 
 export const searchFilms = async (
