@@ -49,11 +49,8 @@ export const getFilms = unstable_cache(
   { tags: [FILM_TAG] }
 );
 
-export const getFilm = async (
-  film: string,
-  ctx: Context
-): Promise<Nullable<Film>> => {
-  const filmResult = await ctx.prisma.film.findUnique({
+export const getFilm = async (film: string): Promise<Nullable<Film>> => {
+  const filmResult = await prismaContext.prisma.film.findUnique({
     where: {
       imdbId: film
     }

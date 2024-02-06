@@ -1,33 +1,36 @@
 import { Prisma } from '@prisma/client';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
-
 import type { Category, Nomination } from 'types/nominations';
+import { prismaContext } from 'lib/prisma';
 import type { Context } from './prisma.types';
 
-export const getCategories = async (
-  categories: string[],
-  ctx: Context
-): Promise<Category[]> => {
-  const args: Prisma.CategoryFindManyArgs =
-    categories.length > 0
-      ? {
-          where: {
-            slug: { in: categories }
+export const CATEGORIES_TAG = 'categories';
+export const getCategories = unstable_cache(
+  async (categories: string[]): Promise<Category[]> => {
+    const args: Prisma.CategoryFindManyArgs =
+      categories.length > 0
+        ? {
+            where: {
+              slug: { in: categories }
+            }
           }
-        }
-      : {};
-  const result = await ctx.prisma.category.findMany(args);
+        : {};
+    const result = await prismaContext.prisma.category.findMany(args);
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    const formattedCategories = result
-      .map((category) => prismaMap.category.fromPrisma(category))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    if (result.length === 0) {
+      return [];
+    } else {
+      const formattedCategories = result
+        .map((category) => prismaMap.category.fromPrisma(category))
+        .sort((a, b) => a.name.localeCompare(b.name));
 
-    return addAdjacentCategories(formattedCategories);
-  }
-};
+      return addAdjacentCategories(formattedCategories);
+    }
+  },
+  ['categories'],
+  { tags: [CATEGORIES_TAG] }
+);
 
 export const getCategoriesWithNominationsForYear = async (
   categories: string[],

@@ -10,6 +10,8 @@ import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
+import { NOMINATION_DATA_TAG, getNominationData } from 'lib/getNominationData';
+import { updateNomination } from 'services/prisma/nominations';
 
 export const createFilm = async (
   previousState: StatusMessage | null | undefined,
@@ -84,11 +86,79 @@ export const createNominations = async (
 };
 
 export const setNominationsCount = async (
-  previousState: number | null,
+  previousState: number | null | undefined,
   formData: FormData
 ) => {
+  if (!isAdmin()) return;
+
   const nominationCount = formData.get('nominationCount') as string;
   if (!nominationCount) return 5;
 
   return parseInt(nominationCount, 10);
+};
+
+export const setWinner = async (formData: FormData) => {
+  if (!isAdmin()) return;
+
+  const rawNominationId = formData.get('nominationId') as string;
+  if (!rawNominationId) return;
+  const nominationId = parseInt(rawNominationId, 10);
+
+  const year = formData.get('year') as string;
+  if (!year) return;
+
+  const nominationData = await getNominationData(parseInt(year, 10));
+  if (!nominationData) return;
+
+  const nomination = nominationData.nominations[nominationId];
+  const category = nominationData.categories[nomination.category];
+
+  const winningNominationsInCategory = category.nominations.filter(
+    (n) => nominationData.nominations[n].won
+  );
+
+  if (winningNominationsInCategory.length > 1) {
+    throw new Error('Multiple wins for one category');
+  }
+
+  const relatedNominations = category.nominations.filter(
+    (n) => n !== nominationId && n !== winningNominationsInCategory[0]
+  );
+
+  if (winningNominationsInCategory[0] === nominationId) {
+    console.log('Clicked nomination already marked as winner');
+    // Clicked nomination already marked as winner
+    // Remove win
+    await Promise.all([
+      updateNomination(nominationId, { won: false, decided: false }),
+      ...relatedNominations.map((n) => updateNomination(n, { decided: false }))
+    ]);
+  } else if (winningNominationsInCategory[0]) {
+    console.log('Clicked nomination when another already marked as winner');
+    // Clicked nomination when another already marked as winner
+    // Update both old and new
+    await Promise.all([
+      updateNomination(winningNominationsInCategory[0], {
+        won: false
+      }),
+      updateNomination(nominationId, {
+        won: true
+      })
+    ]);
+  } else {
+    console.log('Clicked nomination when no other already marked as winner');
+    // Clicked nomination when no other already marked as winner
+    // Set new
+    await Promise.all([
+      updateNomination(nominationId, {
+        won: true,
+        decided: true
+      }),
+      ...relatedNominations.map((nominationId) =>
+        updateNomination(nominationId, { decided: true })
+      )
+    ]);
+  }
+
+  revalidateTag(NOMINATION_DATA_TAG);
 };

@@ -1,10 +1,9 @@
-import { prismaContext } from 'lib/prisma';
 import { getCategories, getFilms, getYears } from 'services/prisma';
 import { AddNominationsForm } from './AddNominationsForm';
 
 export const AddNominations: React.FC<{}> = async () => {
-  const categories = await getCategories([], prismaContext);
-  const years = await getYears(prismaContext);
+  const categories = await getCategories([]);
+  const years = await getYears();
   const films = await getFilms([]);
 
   return (
