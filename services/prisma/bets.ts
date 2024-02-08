@@ -1,9 +1,12 @@
 import { Prisma } from '@prisma/client';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import { Bet } from 'types/nominations';
 import { Nullable, PartialBy } from 'types/utilityTypes';
+import { prismaContext } from 'lib/prisma';
 import { Context } from './prisma.types';
 
+export const BETS_TAG = 'bets';
 export const createBet = async (
   bet: PartialBy<Bet, 'id'>,
   ctx: Context
@@ -69,22 +72,23 @@ export const getBetsForNominations = async (
   }
 };
 
-export const getBetsForPlayer = async (
-  playerId: number,
-  ctx: Context
-): Promise<Bet[]> => {
-  const result = await ctx.prisma.bet.findMany({
-    where: {
-      playerId: playerId
-    }
-  });
+export const getBetsForPlayer = unstable_cache(
+  async (playerId: number): Promise<Bet[]> => {
+    const result = await prismaContext.prisma.bet.findMany({
+      where: {
+        playerId: playerId
+      }
+    });
 
-  if (!result || result.length === 0) {
-    return [];
-  } else {
-    return result.map((bet) => prismaMap.bet.fromPrisma(bet));
-  }
-};
+    if (!result || result.length === 0) {
+      return [];
+    } else {
+      return result.map((bet) => prismaMap.bet.fromPrisma(bet));
+    }
+  },
+  ['betsForPlayer'],
+  { tags: [BETS_TAG] }
+);
 
 export const updateBet = async (
   betId: number,

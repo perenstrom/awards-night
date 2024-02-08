@@ -134,28 +134,6 @@ export const getNominations = async (
   return apiResult<Nomination[]>(url, options);
 };
 
-export const updateNomination = async (
-  nominationId: number,
-  nomination: Partial<Nomination>
-): Promise<Nomination> => {
-  const url = '/api/nominations';
-  const options: RequestInit = {
-    method: 'PATCH',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      nominationId,
-      nomination
-    })
-  };
-
-  const result = await apiResult<Nomination>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
 const apiResult = <K>(
   url: RequestInfo,
   options: RequestInit

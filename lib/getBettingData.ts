@@ -1,4 +1,9 @@
-import { getBetsForNominations } from 'services/prisma/bets';
+import { unstable_cache } from 'next/cache';
+import {
+  BETS_TAG,
+  getBetsForNominations,
+  getBetsForPlayer
+} from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
 import { Context } from 'services/prisma/prisma.types';
 import {
@@ -86,3 +91,34 @@ export const getBettingData = async (
     };
   }
 };
+
+export const getBettingDataForPlayer = unstable_cache(
+  async (
+    playerId: number,
+    nominationData: NominationData[]
+  ): Promise<{ bets: Bet[]; yearBets: { [key: number]: number[] } }> => {
+    const bets = await getBetsForPlayer(playerId);
+    if (!bets) {
+      return {
+        bets: [],
+        yearBets: {}
+      };
+    }
+
+    let yearBets: { [key: number]: number[] } = {};
+    nominationData.forEach((yearData) => {
+      const filteredBets = bets.filter((bet) =>
+        yearData.year.nominations.includes(bet.nomination)
+      );
+      yearBets[yearData.year.year] = filteredBets.map((bet) => bet.id);
+    });
+
+    return {
+      bets,
+      yearBets
+    };
+  },
+
+  ['bettingDataForPlayer'],
+  { tags: [BETS_TAG] }
+);

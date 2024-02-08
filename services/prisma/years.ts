@@ -5,7 +5,7 @@ import type { Year } from 'types/nominations';
 import { prismaContext } from 'lib/prisma';
 import type { Context } from './prisma.types';
 
-export const FILM_TAG = 'film';
+export const YEAR_TAG = 'year';
 export const getYear = unstable_cache(
   async (year: number): Promise<Nullable<Year>> => {
     const result = await prismaContext.prisma.year.findUnique({
@@ -25,28 +25,33 @@ export const getYear = unstable_cache(
     }
   },
   ['year'],
-  { tags: [FILM_TAG] }
+  { tags: [YEAR_TAG] }
 );
 
-export const getYears = async (): Promise<Year[]> => {
-  const result = await prismaContext.prisma.year.findMany({
-    orderBy: [
-      {
-        year: 'desc'
+export const YEARS_TAG = 'years';
+export const getYears = unstable_cache(
+  async (): Promise<Year[]> => {
+    const result = await prismaContext.prisma.year.findMany({
+      orderBy: [
+        {
+          year: 'desc'
+        }
+      ],
+      include: {
+        nominations: true,
+        yearsCategories: true
       }
-    ],
-    include: {
-      nominations: true,
-      yearsCategories: true
-    }
-  });
+    });
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    return result.map((year) => prismaMap.year.fromPrisma(year));
-  }
-};
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result.map((year) => prismaMap.year.fromPrisma(year));
+    }
+  },
+  ['years'],
+  { tags: [YEARS_TAG] }
+);
 
 export const connectCategoryToYear = async (
   category: string,

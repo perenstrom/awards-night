@@ -3,17 +3,17 @@ import { getCategoriesWithNominationsForYear } from 'services/prisma/categories'
 import { createNominations } from 'services/prisma/nominations';
 import { connectCategoryToYear } from 'services/prisma/years';
 import { getGenericErrorMessage } from 'utils/statusMessages';
-import { triggerDeploy } from 'utils/triggerDeploy';
-import { prismaContext } from './prisma';
+//import { triggerDeploy } from 'utils/triggerDeploy';
 
 import type { Nomination } from 'types/nominations';
 import type { PartialBy, StatusMessage } from 'types/utilityTypes';
+import { prismaContext } from './prisma';
 
 const getData = async (data: { category: string; year: number }) => {
   const { category, year } = data;
 
   try {
-    const fullYear = await getYear(year, prismaContext);
+    const fullYear = await getYear(year);
     if (!fullYear) {
       throw new Error('Null year');
     }
@@ -114,12 +114,13 @@ export const saveNominations = async (data: {
   }
 
   if (saveNominationsResult) {
-    await triggerDeploy();
+    // await triggerDeploy();
     return {
       severity: 'success',
       message: 'Nominations added.'
     };
   } else {
+    console.log('Nominations not saved');
     return getGenericErrorMessage();
   }
 };

@@ -3,7 +3,8 @@ import {
   getCategories,
   getFilms,
   getNominations,
-  getYear
+  getYear,
+  getYears
 } from 'services/prisma';
 import {
   NormalizedCategories,
@@ -85,13 +86,24 @@ export const getNominationData = unstable_cache(
   { tags: [NOMINATION_DATA_TAG] }
 );
 
-/* export const refreshNominations = async (
-  year: Year
-): Promise<NormalizedNominations> => {
-  const nominations = await getNominations(year.nominations);
+export const getAllNominationData = async (): Promise<
+  Nullable<NominationData[]>
+> => {
+  try {
+    const years = await getYears();
+    if (!years) {
+      throw new Error('Error when fetching years');
+    }
 
-  const normalizedNominations: NormalizedNominations = {};
-  nominations.forEach((n) => (normalizedNominations[n.id] = n));
+    const nominationData = await Promise.all(
+      years.map(async (year) => {
+        return getNominationData(year.year);
+      })
+    );
 
-  return normalizedNominations;
-}; */
+    return nominationData.filter(Boolean) as NominationData[];
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

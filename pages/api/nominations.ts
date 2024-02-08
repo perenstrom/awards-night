@@ -39,35 +39,6 @@ const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
       console.error(error);
       res.status(500).end('Internal server error');
     }
-  } else if (req.method === 'PATCH') {
-    return new Promise(async (resolve) => {
-      if (!(await isAdmin(req, res))) {
-        res.status(401).end('Admin privileges required.');
-        resolve('');
-      }
-
-      const { nominationId, nomination }: PatchRequestBody = req.body;
-      if (!nominationId || !nomination) {
-        res
-          .status(400)
-          .end('Both nominationId and nomination must be provided');
-        resolve('');
-      } else {
-        updateNomination(
-          nominationId,
-          prismaMap.nomination.toPrisma(nomination),
-          prismaContext
-        )
-          .then((nomination) => {
-            res.status(200).json(nomination);
-            resolve('');
-          })
-          .catch((error) => {
-            res.status(500).end(error);
-            return resolve('');
-          });
-      }
-    });
   } else {
     res.status(404);
   }

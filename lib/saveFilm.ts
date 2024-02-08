@@ -11,7 +11,7 @@ import { prismaContext } from './prisma';
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
   let film: Nullable<Film>;
   try {
-    film = await getFilm(imdbId, prismaContext);
+    film = await getFilm(imdbId);
   } catch (error) {
     // Prisma error
     console.error(error);
@@ -84,7 +84,7 @@ export const saveFilmByTmdbId = async (
 
   let film: Nullable<Film>;
   try {
-    film = await getFilm(filmDetails.imdbId, prismaContext);
+    film = await getFilm(filmDetails.imdbId);
   } catch (error) {
     // Prisma error
     console.error(error);
