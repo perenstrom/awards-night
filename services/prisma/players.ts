@@ -48,11 +48,10 @@ export const getPlayerWithBets = unstable_cache(
 );
 
 export const getPlayerByAuth0Id = async (
-  auth0Id: string,
-  ctx: Context
+  auth0Id: string
 ): Promise<Nullable<Player>> => {
   console.log(`Finding player with auth0id ${auth0Id}`);
-  const result = await ctx.prisma.player.findUnique({
+  const result = await prismaContext.prisma.player.findUnique({
     where: {
       auth0UserId: auth0Id
     }

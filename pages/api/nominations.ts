@@ -1,33 +1,12 @@
-import { refreshNominations } from 'lib/refreshNominations';
-import { saveNominations } from 'lib/saveNominations';
-import { isAdmin } from 'lib/authorization';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Nomination } from 'types/nominations';
-import { prismaContext } from 'lib/prisma';
+import { refreshNominations } from 'lib/refreshNominations';
 import { getYear } from 'services/prisma';
-import { prismaMap } from 'services/maps/prismaMap';
-import { updateNomination } from 'services/prisma/nominations';
-
-interface PatchRequestBody {
-  nominationId: number;
-  nomination: Nomination;
-}
-
-interface PostRequestBody {
-  category: string;
-  year: number;
-  films: string[];
-  nominees: string[];
-}
 
 const nominations = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { year } = req.query;
     try {
-      const fullYear = await getYear(
-        parseInt(year as string, 10),
-        prismaContext
-      );
+      const fullYear = await getYear(parseInt(year as string, 10));
       if (fullYear) {
         const nominations = await refreshNominations(fullYear);
 

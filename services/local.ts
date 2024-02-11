@@ -1,5 +1,4 @@
 import {
-  Bet,
   BettingData,
   Nomination,
   NominationData,
@@ -14,28 +13,6 @@ export const defaultHeaders = {
   'Content-Type': 'application/json;charset=UTF-8'
 };
 
-export const createBet = async (
-  playerId: number,
-  nominationId: number
-): Promise<Bet> => {
-  const url = '/api/bets';
-  const options: RequestInit = {
-    method: 'POST',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      playerId,
-      nominationId
-    })
-  };
-
-  const result = await apiResult<Bet>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
 export const getLoggedInPlayer = async (): Promise<Maybe<Player>> => {
   const url = `/api/players/me`;
   const options: RequestInit = {
@@ -44,21 +21,6 @@ export const getLoggedInPlayer = async (): Promise<Maybe<Player>> => {
   };
 
   return apiResult<Player>(url, options);
-};
-
-export const getBetsForPlayer = async (playerId: number): Promise<Bet[]> => {
-  const url = `/api/players/${playerId}/bets`;
-  const options: RequestInit = {
-    method: 'GET',
-    headers: defaultHeaders
-  };
-
-  const result = await apiResult<Bet[]>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
 };
 
 export const getBettingData = async (data: {
@@ -75,46 +37,6 @@ export const getBettingData = async (data: {
   };
 
   const result = await apiResult<BettingData>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
-export const updateBet = async (
-  betId: number,
-  nominationId: number
-): Promise<Bet> => {
-  const url = '/api/bets';
-  const options: RequestInit = {
-    method: 'PATCH',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      betId,
-      nominationId
-    })
-  };
-
-  const result = await apiResult<Bet>(url, options);
-  if (result.success) {
-    return result.data;
-  } else {
-    throw new Error(result.error.message);
-  }
-};
-
-export const deleteBet = async (betId: number): Promise<number> => {
-  const url = '/api/bets';
-  const options: RequestInit = {
-    method: 'DELETE',
-    headers: defaultHeaders,
-    body: JSON.stringify({
-      betId
-    })
-  };
-
-  const result = await apiResult<number>(url, options);
   if (result.success) {
     return result.data;
   } else {

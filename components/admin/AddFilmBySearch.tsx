@@ -16,7 +16,7 @@ import {
 import { useFormState, useFormStatus } from 'react-dom';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
-import { createFilmByTmdb, searchFilms } from './actions';
+import { createFilmByTmdb, searchFilms } from '../../app/admin/actions';
 
 const SearchFormContent: React.FC<{
   inputRef: React.RefObject<HTMLInputElement>;

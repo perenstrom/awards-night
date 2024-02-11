@@ -32,3 +32,5 @@ export interface ErrorMessage {
   code: string;
   message: string;
 }
+
+export type FormAction = string | ((formData: FormData) => void) | undefined;

@@ -11,8 +11,11 @@ import {
 } from '@mui/material';
 import { useFormState, useFormStatus } from 'react-dom';
 import { Category, Film, Year } from 'types/nominations';
+import {
+  createNominations,
+  setNominationsCount
+} from '../../app/admin/actions';
 import { NominationFields } from './NominationFields';
-import { createNominations, setNominationsCount } from './actions';
 
 const renderNominationFields = (availableFilms: Film[], count: number) => {
   let elements: ReactElement[] = [];

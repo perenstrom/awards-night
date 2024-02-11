@@ -8,12 +8,11 @@ import { Context } from './prisma.types';
 
 export const BETS_TAG = 'bets';
 export const createBet = async (
-  bet: PartialBy<Bet, 'id'>,
-  ctx: Context
+  bet: PartialBy<Bet, 'id'>
 ): Promise<Nullable<Bet>> => {
   const formattedBet = prismaMap.bet.toPrisma(bet);
 
-  const result = await ctx.prisma.bet.create({
+  const result = await prismaContext.prisma.bet.create({
     data: formattedBet
   });
 
@@ -73,12 +72,21 @@ export const getBetsForNominations = async (
 };
 
 export const getBetsForPlayer = unstable_cache(
-  async (playerId: number): Promise<Bet[]> => {
-    const result = await prismaContext.prisma.bet.findMany({
-      where: {
-        playerId: playerId
-      }
-    });
+  async (playerId: number, year?: number): Promise<Bet[]> => {
+    const result = year
+      ? await prismaContext.prisma.bet.findMany({
+          where: {
+            playerId: playerId
+          }
+        })
+      : await prismaContext.prisma.bet.findMany({
+          where: {
+            playerId: playerId,
+            nomination: {
+              yearId: year
+            }
+          }
+        });
 
     if (!result || result.length === 0) {
       return [];
@@ -92,11 +100,10 @@ export const getBetsForPlayer = unstable_cache(
 
 export const updateBet = async (
   betId: number,
-  nominationId: number,
-  ctx: Context
+  nominationId: number
 ): Promise<Bet> => {
   try {
-    const updatedBet = await ctx.prisma.bet.update({
+    const updatedBet = await prismaContext.prisma.bet.update({
       where: {
         id: betId
       },
@@ -118,12 +125,9 @@ export const updateBet = async (
   }
 };
 
-export const deleteBet = async (
-  betId: number,
-  ctx: Context
-): Promise<boolean> => {
+export const deleteBet = async (betId: number): Promise<boolean> => {
   try {
-    const deletedBet = await ctx.prisma.bet.delete({
+    const deletedBet = await prismaContext.prisma.bet.delete({
       where: {
         id: betId
       }

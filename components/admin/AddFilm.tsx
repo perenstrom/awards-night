@@ -11,7 +11,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useFormState, useFormStatus } from 'react-dom';
-import { createFilm } from './actions';
+import { createFilm } from '../../app/admin/actions';
 
 const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement> }> = ({
   inputRef
