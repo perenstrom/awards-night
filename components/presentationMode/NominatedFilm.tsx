@@ -12,7 +12,6 @@ interface NominationsProps {
 }
 
 export const NominatedFilm: React.FC<NominationsProps> = ({
-  visible = false,
   poster,
   title,
   nominee,
@@ -22,7 +21,6 @@ export const NominatedFilm: React.FC<NominationsProps> = ({
   return (
     <div
       className={clsx(styles.nomination, {
-        [styles.invisible]: !visible,
         [styles.won]: won
       })}
     >

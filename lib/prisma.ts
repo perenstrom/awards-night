@@ -9,7 +9,8 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: []
+    log: ['query', 'info', 'warn', 'error'],
+    // log: [],
   });
 
 export const prismaContext = { prisma };

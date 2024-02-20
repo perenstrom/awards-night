@@ -2,7 +2,6 @@
   aspect-ratio: 9 / 4;
   width: 28.4em;
   height: 12.9em;
-  transition: opacity 0.2s ease-in-out;
   box-sizing: border-box;
   background: #2c2c2c;
   border-radius: 0.25em;
@@ -20,10 +19,6 @@
 
   color: #e5e7f8;
   font-family: 'Inter', sans-serif;
-}
-
-.invisible {
-  opacity: 0;
 }
 
 .won {

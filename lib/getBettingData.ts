@@ -5,7 +5,6 @@ import {
   getBetsForPlayer
 } from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
-import { Context } from 'services/prisma/prisma.types';
 import {
   Bet,
   BettingData,
@@ -14,6 +13,7 @@ import {
   Player
 } from 'types/nominations';
 import { addPlayersWinnings } from 'utils/nominations';
+import { prismaContext } from './prisma';
 
 const calculateNominationBets = (bets: Bet[]) => {
   let nominationBets: NominationBets = {};
@@ -44,17 +44,18 @@ const addStylesToPlayer = (
   return playersWithStyle;
 };
 
+// TODO: Remove local services and unused functions
+// TODO: Add cache
 export const getBettingData = async (
   nominationData: NominationData,
-  group: number,
-  ctx: Context
+  group: number
 ): Promise<BettingData> => {
   const { bettingOpen } = nominationData.year;
 
-  const players = await getPlayersWithBetsForGroup(group, ctx);
+  const players = await getPlayersWithBetsForGroup(group, prismaContext);
   const bets = await getBetsForNominations(
     nominationData.year.nominations,
-    ctx
+    prismaContext
   );
 
   const betIds = bets.map((b) => b.id);
