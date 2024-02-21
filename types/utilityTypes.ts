@@ -9,8 +9,6 @@ export type NumberRecord<T> = {
   [n: number]: T;
 };
 
-export type PropsWithUser<T> = T & { user: { sub: string } };
-
 export type Severity = 'error' | 'warning' | 'info' | 'success';
 
 export type SuccessResult<T> = {

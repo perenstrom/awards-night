@@ -46,6 +46,7 @@ const addStylesToPlayer = (
 
 // TODO: Remove local services and unused functions
 // TODO: Add cache
+// TODO: Figure out what the heck the transforming in recoil is doing
 export const getBettingData = async (
   nominationData: NominationData,
   group: number

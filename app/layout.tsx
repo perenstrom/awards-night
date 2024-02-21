@@ -1,4 +1,4 @@
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import './global.scss';
 import { Metadata } from 'next';
 import { CssBaseline, ThemeProvider } from '@mui/material';
