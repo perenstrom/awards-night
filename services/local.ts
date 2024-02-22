@@ -20,6 +20,7 @@ export const createBet = async (
   nominationId: number
 ): Promise<Bet> => {
   const url = '/api/bets';
+
   const options: RequestInit = {
     method: 'POST',
     headers: defaultHeaders,
