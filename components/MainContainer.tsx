@@ -10,7 +10,7 @@ export const MainContainer: React.FC<PropsWithChildren<Props>> = ({
   topMargin = 8
 }) => {
   return (
-    <Container maxWidth="md" sx={{ pt: topMargin }}>
+    <Container maxWidth="md" sx={{ pt: topMargin, background: 'white' }}>
       {children}
     </Container>
   );
