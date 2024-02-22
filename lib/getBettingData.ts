@@ -44,55 +44,56 @@ const addStylesToPlayer = (
   return playersWithStyle;
 };
 
-// TODO: Remove local services and unused functions
-// TODO: Add cache
-// TODO: Figure out what the heck the transforming in recoil is doing
-export const getBettingData = async (
-  nominationData: NominationData,
-  group: number
-): Promise<BettingData> => {
-  const { bettingOpen } = nominationData.year;
+export const getBettingData = unstable_cache(
+  async (
+    nominationData: NominationData,
+    group: number
+  ): Promise<BettingData> => {
+    const { bettingOpen } = nominationData.year;
 
-  const players = await getPlayersWithBetsForGroup(group, prismaContext);
-  const bets = await getBetsForNominations(
-    nominationData.year.nominations,
-    prismaContext
-  );
-
-  const betIds = bets.map((b) => b.id);
-  players.forEach((player) => {
-    const newBets = player.bets.filter((betId) => betIds.includes(betId));
-    player.bets = newBets;
-  });
-
-  const playingPlayers = players.filter((player) => player.bets.length > 0);
-
-  if (bettingOpen) {
-    playingPlayers.forEach((player) => {
-      player.bets = [];
-    });
-
-    return {
-      bets: [],
-      players: addStylesToPlayer(playingPlayers),
-      nominationBets: {}
-    };
-  } else {
-    const nominationBets = calculateNominationBets(bets);
-
-    const playersWithWins = addPlayersWinnings(
-      playingPlayers,
-      nominationData.nominations,
-      bets
+    const players = await getPlayersWithBetsForGroup(group, prismaContext);
+    const bets = await getBetsForNominations(
+      nominationData.year.nominations,
+      prismaContext
     );
 
-    return {
-      bets: bets,
-      players: addStylesToPlayer(playersWithWins),
-      nominationBets: nominationBets
-    };
-  }
-};
+    const betIds = bets.map((b) => b.id);
+    players.forEach((player) => {
+      const newBets = player.bets.filter((betId) => betIds.includes(betId));
+      player.bets = newBets;
+    });
+
+    const playingPlayers = players.filter((player) => player.bets.length > 0);
+
+    if (bettingOpen) {
+      playingPlayers.forEach((player) => {
+        player.bets = [];
+      });
+
+      return {
+        bets: [],
+        players: addStylesToPlayer(playingPlayers),
+        nominationBets: {}
+      };
+    } else {
+      const nominationBets = calculateNominationBets(bets);
+
+      const playersWithWins = addPlayersWinnings(
+        playingPlayers,
+        nominationData.nominations,
+        bets
+      );
+
+      return {
+        bets: bets,
+        players: addStylesToPlayer(playersWithWins),
+        nominationBets: nominationBets
+      };
+    }
+  },
+  ['bettingData'],
+  { tags: [BETS_TAG] }
+);
 
 export const getBettingDataForPlayer = unstable_cache(
   async (
