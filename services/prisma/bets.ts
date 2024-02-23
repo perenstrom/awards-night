@@ -76,15 +76,15 @@ export const getBetsForPlayer = unstable_cache(
     const result = year
       ? await prismaContext.prisma.bet.findMany({
           where: {
-            playerId: playerId
-          }
-        })
-      : await prismaContext.prisma.bet.findMany({
-          where: {
             playerId: playerId,
             nomination: {
               yearId: year
             }
+          }
+        })
+      : await prismaContext.prisma.bet.findMany({
+          where: {
+            playerId: playerId
           }
         });
 
