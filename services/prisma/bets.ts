@@ -88,6 +88,8 @@ export const getBetsForPlayer = unstable_cache(
           }
         });
 
+    console.log(JSON.stringify(result, null, 2));
+
     if (!result || result.length === 0) {
       return [];
     } else {

@@ -1,10 +1,9 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { getNominationData } from 'lib/getNominationData';
 import { getLoggedInPlayer } from 'lib/player';
 import {
-  BETS_TAG,
   createBet,
   deleteBet,
   getBetsForPlayer,
@@ -71,5 +70,6 @@ export const setBet = async (formData: FormData) => {
     });
   }
 
-  revalidateTag(BETS_TAG);
+  console.log('revalidating');
+  revalidatePath('/me/[year]', 'page');
 };

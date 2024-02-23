@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 
 export default withPageAuthRequired(
   async function Page({ params: rawParams }) {
+    console.log('rendering');
     const params = z
       .object({
         year: z.string()
@@ -34,7 +35,10 @@ export default withPageAuthRequired(
 
     const { year, categories } = nominationData;
 
+    console.log('getting bets');
     const bets = await getBetsForPlayer(player.id, year.year);
+    console.log('got bets');
+    console.log(JSON.stringify(bets, null, 2));
 
     return (
       <MainContainer>
