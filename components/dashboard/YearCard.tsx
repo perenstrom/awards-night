@@ -208,8 +208,10 @@ export const YearCard: React.FC<props> = ({ nominationData, bets }) => {
   return (
     <Link className={styles.link} href={`me/${year.year}`}>
       <div className={styles.wrapper}>
-        <h2 className={styles.heading}>{year.name}</h2>
-        <h3 className={styles.subHeading}>{year.year}</h3>
+        <h2 className={styles.heading}>
+          {year.year}
+          <small className={styles.subHeading}> - {year.name}</small>
+        </h2>
         <div className={styles.textAndChevronWrapper}>
           <p className={styles.stateText}>{stateText}</p>
           <svg
