@@ -1,0 +1,12 @@
+diff --git a/node_modules/@auth0/nextjs-auth0/dist/helpers/with-page-auth-required.d.ts b/node_modules/@auth0/nextjs-auth0/dist/helpers/with-page-auth-required.d.ts
+index 46f3684..195a580 100644
+--- a/node_modules/@auth0/nextjs-auth0/dist/helpers/with-page-auth-required.d.ts
++++ b/node_modules/@auth0/nextjs-auth0/dist/helpers/with-page-auth-required.d.ts
+@@ -36,6 +36,7 @@ export type PageRoute<P, Q extends ParsedUrlQuery = ParsedUrlQuery> = (ctx: GetS
+  * @category Server
+  */
+ export type AppRouterPageRouteOpts = {
++    children?: React.ReactNode;
+     params?: Record<string, string | string[]>;
+     searchParams?: {
+         [key: string]: string | string[] | undefined;
