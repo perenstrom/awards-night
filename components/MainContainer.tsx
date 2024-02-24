@@ -1,14 +1,11 @@
 import { Container } from '@mui/material';
-import { PropsWithChildren } from 'react';
 
 interface Props {
+  children: React.ReactNode;
   topMargin?: number;
 }
 
-export const MainContainer: React.FC<PropsWithChildren<Props>> = ({
-  children,
-  topMargin = 8
-}) => {
+export const MainContainer = ({ children, topMargin = 8 }: Props) => {
   return (
     <Container maxWidth="md" sx={{ pt: topMargin, background: 'white' }}>
       {children}

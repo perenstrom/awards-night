@@ -4,19 +4,19 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Box
+  Box,
+  Container
 } from '@mui/material';
-import { MainContainer } from 'components/MainContainer';
 import { LoginLink } from 'components/LoginLink';
 import styles from './index.module.scss';
 
 export default function Page() {
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.heroWrapper}>
         <LoginLink />
         <div className={styles.mainWrapper}>
-          <MainContainer topMargin={0}>
+          <Container maxWidth="md" sx={{ pt: 0 }}>
             <Typography
               color="white"
               variant="h1"
@@ -35,10 +35,10 @@ export default function Page() {
             >
               Social Prediction for the Academy Awards
             </Typography>
-          </MainContainer>
+          </Container>
         </div>
       </div>
-      <MainContainer>
+      <Container maxWidth="md" sx={{ pt: 8, pb: 8 }}>
         <Grid container spacing={2}>
           <Grid item sm={4} xs={12}>
             <Card
@@ -116,11 +116,11 @@ export default function Page() {
             you want to be a part of the alpha testing, send me an e-mail at{' '}
             <a href="mailto:hello@awardsnight.app">hello@awardsnight.app</a>.
           </Typography>
-          <Typography variant="body1" pt="1rem" mb="4rem">
+          <Typography variant="body1" pt="1rem">
             – Per Enström.
           </Typography>
         </Box>
-      </MainContainer>
+      </Container>
     </div>
   );
 }
