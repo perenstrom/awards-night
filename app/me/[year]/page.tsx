@@ -10,6 +10,7 @@ import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
 import { getBetsForPlayer } from 'services/prisma/bets';
 import { setBet } from '../actions';
+import styles from './meYear.module.scss';
 
 export const metadata: Metadata = {
   title: 'My predictions – Awards Night'
@@ -42,6 +43,10 @@ export default withPageAuthRequired(
 
     return (
       <MainContainer>
+        <div className={styles.backLink}>
+          <Link href={'/me'}>&lt; Dashboard</Link>
+          <span> | </span>
+        </div>
         <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
           Go to presentation mode &gt;
         </Link>
