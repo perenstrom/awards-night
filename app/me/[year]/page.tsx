@@ -42,8 +42,6 @@ export default withPageAuthRequired(
 
     return (
       <MainContainer>
-        <Link href={'/me'}>&lt; Dashboard</Link>
-        <span> | </span>
         <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
           Go to presentation mode &gt;
         </Link>

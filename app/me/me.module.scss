@@ -1,12 +1,14 @@
 .mainWrapper {
+  display: flex;
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
 }
 
-.wrapper {
+.yearListWrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  width: 364px;
+  min-width: 300px;
+  max-width: 300px;
   background-color: #333;
 }

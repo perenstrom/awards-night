@@ -7,7 +7,7 @@ interface Props {
 
 export const MainContainer = ({ children, topMargin = 8 }: Props) => {
   return (
-    <Container maxWidth="md" sx={{ pt: topMargin, background: 'white' }}>
+    <Container maxWidth="lg" sx={{ pt: topMargin, background: 'white' }}>
       {children}
     </Container>
   );

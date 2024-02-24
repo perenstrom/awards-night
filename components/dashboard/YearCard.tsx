@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import Link from 'next/link';
 import { Bet, NominationData } from 'types/nominations';
 import styles from './YearCard.module.scss';
+import { YearCardWrapper } from './YearCardWrapper';
 
 type YearState =
   | 'open' // year.bettingOpen && bets.length === 0
@@ -166,12 +167,12 @@ const getProgressData = (
   }
 };
 
-interface props {
+interface Props {
   nominationData: NominationData;
   bets: Bet[];
 }
 
-export const YearCard: React.FC<props> = ({ nominationData, bets }) => {
+export const YearCard: React.FC<Props> = ({ nominationData, bets }) => {
   const { year } = nominationData;
 
   const numberOfCategories = Object.keys(nominationData.categories).length;
@@ -206,8 +207,8 @@ export const YearCard: React.FC<props> = ({ nominationData, bets }) => {
   );
 
   return (
-    <Link className={styles.link} href={`me/${year.year}`}>
-      <div className={styles.wrapper}>
+    <Link className={styles.link} href={`/me/${year.year}`}>
+      <YearCardWrapper year={year.year}>
         <h2 className={styles.heading}>
           {year.year}
           <small className={styles.subHeading}> - {year.name}</small>
@@ -250,7 +251,7 @@ export const YearCard: React.FC<props> = ({ nominationData, bets }) => {
             />
           )}
         </div>
-      </div>
+      </YearCardWrapper>
     </Link>
   );
 };
