@@ -9,11 +9,11 @@ import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { LeaderboardItemSmall } from 'components/presentationMode/LeaderboardItemSmall';
 import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItemSmallRest';
 import { NominatedFilm } from 'components/presentationMode/NominatedFilm';
-import { NominationsWrapper } from 'components/dashboard/NominationsWrapper';
+import { NominationsWrapper } from 'components/presentationMode/NominationsWrapper';
 import { getLoggedInPlayer } from 'lib/player';
 import { getBettingData } from 'lib/getBettingData';
 import { normalizeBets, normalizePlayers } from 'utils/normalizer';
-import { NominationsPoller } from 'components/dashboard/NominationsPoller';
+import { NominationsPoller } from 'components/presentationMode/NominationsPoller';
 import styles from './category.module.scss';
 
 interface Props {
