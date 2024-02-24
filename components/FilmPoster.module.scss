@@ -1,6 +1,7 @@
 .wrapper {
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .innerWrapper {
