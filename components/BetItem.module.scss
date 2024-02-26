@@ -1,44 +1,26 @@
 .wrapper {
-  --background-color-correct: rgb(135, 218, 161);
-  --background-color-wrong: rgb(223, 121, 113);
-  --background-color-selected: rgb(147, 161, 209);
-  --background-color-winner: rgb(187, 162, 103);
-  --background-color-white: rgb(238, 238, 238);
-
   display: flex;
+  gap: 0.7rem;
   width: 100%;
   list-style: none;
   padding: 0.5rem;
-  margin-bottom: 0.5rem;
   border-radius: 3px;
   transition: background-color 300ms ease-out;
-  background-color: var(--background-color-white);
+  background-color: var(--color-background-grey-1);
+  color: var(--color-text-primary);
 }
 
 .pointer {
   cursor: pointer;
 }
 
-.correct {
-  background-color: var(--background-color-correct);
-}
-.wrong {
-  background-color: var(--background-color-wrong);
-}
-.selected {
-  background-color: var(--background-color-selected);
-}
 .winner {
-  background-color: var(--background-color-winner);
-}
-.white {
-  background-color: var(--background-color-white);
+  box-shadow: 0px 0px 1em 0.4em var(--color-winner-yellow);
 }
 
 .innerWrapper {
   display: flex;
   flex-direction: column;
-  padding-left: 1em;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }

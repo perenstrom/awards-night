@@ -2,13 +2,13 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { Typography } from '@mui/material';
 import Link from 'next/link';
 import { getNominationData } from 'lib/getNominationData';
 import { MainContainer } from 'components/MainContainer';
 import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
 import { getBetsForPlayer } from 'services/prisma/bets';
+import { Typography } from 'components/base/Typography';
 import { setBet } from '../actions';
 import styles from './meYear.module.scss';
 
@@ -50,7 +50,7 @@ export default withPageAuthRequired(
         <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
           Go to presentation mode &gt;
         </Link>
-        <Typography variant="h1">{`Betting for ${player.name}`}</Typography>
+        <Typography variant="h1">{`${year.year} predictions`}</Typography>
         {!year.bettingOpen && <p>Betting is closed</p>}
         <NominationList
           formAction={setBet}

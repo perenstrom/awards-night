@@ -1,8 +1,9 @@
-import { Typography } from '@mui/material';
 import { Bet, Category, NominationData } from 'types/nominations';
 import { FormAction } from 'types/utilityTypes';
 import { getBetForNomination } from 'utils/nominations';
 import { BetItem } from './BetItem';
+import { Typography } from './base/Typography';
+import styles from './NominationList.module.scss';
 
 export const NominationList: React.FC<{
   formAction: FormAction;
@@ -17,7 +18,7 @@ export const NominationList: React.FC<{
       {(Object.values(categories) as Category[]).map((category) => (
         <div key={category.slug}>
           <Typography variant="h2">{category.name}</Typography>
-          <ul className="p-0">
+          <ul className={styles.listWrapper}>
             {category.nominations.map((nominationId) => {
               const nomination = nominations[nominationId];
 
