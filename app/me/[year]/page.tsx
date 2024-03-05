@@ -50,8 +50,11 @@ export default withPageAuthRequired(
         <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
           Go to presentation mode &gt;
         </Link>
-        <Typography variant="h1">{`${year.year} predictions`}</Typography>
-        {!year.bettingOpen && <p>Betting is closed</p>}
+        <Typography variant="h1">
+          {year.bettingOpen
+            ? `${year.year} predictions`
+            : `${year.year} results`}
+        </Typography>
         <NominationList
           formAction={setBet}
           nominationData={nominationData}

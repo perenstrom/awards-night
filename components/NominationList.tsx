@@ -16,7 +16,7 @@ export const NominationList: React.FC<{
     <form action={formAction}>
       <input type="hidden" name="year" value={year.year} />
       {(Object.values(categories) as Category[]).map((category) => (
-        <div key={category.slug}>
+        <div className={styles.categoryWrapper} key={category.slug}>
           <Typography variant="h2">{category.name}</Typography>
           <ul className={styles.listWrapper}>
             {category.nominations.map((nominationId) => {
