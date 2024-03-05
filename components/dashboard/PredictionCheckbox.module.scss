@@ -8,3 +8,11 @@
 .selected {
   color: var(--color-text-primary);
 }
+
+@container (width < 38rem) {
+  .icon {
+    width: 1.3rem;
+    min-width: 1.3rem;
+    margin: 0 0.3rem;
+  }
+}

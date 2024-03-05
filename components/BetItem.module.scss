@@ -1,5 +1,16 @@
+.button {
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  container-type: inline-size;
+}
+
 .wrapper {
   display: flex;
+  align-items: center;
   gap: 0.7rem;
   width: 100%;
   list-style: none;
@@ -18,6 +29,12 @@
   box-shadow: 0px 0px 1em 0.4em var(--color-winner-yellow);
 }
 
+@container (width < 38rem) {
+  .winner {
+    box-shadow: 0px 0px 0.5em 0.2em var(--color-winner-yellow);
+  }
+}
+
 .innerWrapper {
   display: flex;
   flex-direction: column;
@@ -25,11 +42,30 @@
   padding-bottom: 0.5rem;
 }
 
-.button {
-  width: 100%;
-  border: 0;
-  background: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
+@container (width < 38rem) {
+  .innerWrapper {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}
+
+.title {
+  font-size: 1.17rem;
+  font-weight: 700;
+}
+
+@container (width < 38rem) {
+  .title {
+    font-size: 0.9rem;
+  }
+}
+
+.nominee {
+  font-size: 1rem;
+}
+
+@container (width < 38rem) {
+  .nominee {
+    font-size: 0.7rem;
+  }
 }

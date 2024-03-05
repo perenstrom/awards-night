@@ -7,13 +7,7 @@ interface Props {
 export const FilmPoster: React.FC<Props> = ({ poster }) => (
   <div className={styles.wrapper}>
     <div className={styles.innerWrapper}>
-      <img
-        className={styles.poster}
-        src={poster}
-        alt="Poster image"
-        width="48"
-        height="72"
-      />
+      <img className={styles.poster} src={poster} alt="Poster image" />
       <span className={styles.frame}></span>
     </div>
   </div>

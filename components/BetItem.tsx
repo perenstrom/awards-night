@@ -41,8 +41,8 @@ export const BetItemComponent: React.FC<Props> = ({
         <PredictionCheckbox selected={activeBet} />
         <FilmPoster poster={poster} />
         <div className={styles.innerWrapper}>
-          <h3>{filmName}</h3>
-          {nominee && <p>{nominee}</p>}
+          <h3 className={styles.title}>{filmName}</h3>
+          {nominee && <p className={styles.nominee}>{nominee}</p>}
         </div>
       </li>
     </button>
