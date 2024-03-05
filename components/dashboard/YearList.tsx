@@ -6,6 +6,7 @@ import { playerIdKey } from 'lib/authorization';
 import { getBettingDataForPlayer } from 'lib/getBettingData';
 import { YearCard } from 'components/dashboard/YearCard';
 import YearListWrapper from './YearListWrapper';
+import styles from './YearList.module.scss';
 
 const betsForYear = (
   bettingData: Awaited<ReturnType<typeof getBettingDataForPlayer>>,
@@ -28,13 +29,15 @@ export default async function YearList() {
 
   return (
     <YearListWrapper>
-      {nominationData?.map((nomData) => (
-        <YearCard
-          key={nomData.year.year}
-          nominationData={nomData}
-          bets={betsForYear(bettingData, nomData.year.year)}
-        />
-      ))}
+      <div className={styles.stickyWrapper}>
+        {nominationData?.map((nomData) => (
+          <YearCard
+            key={nomData.year.year}
+            nominationData={nomData}
+            bets={betsForYear(bettingData, nomData.year.year)}
+          />
+        ))}
+      </div>
     </YearListWrapper>
   );
 }

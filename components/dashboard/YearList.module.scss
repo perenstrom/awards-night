@@ -1,12 +1,4 @@
-.yearListWrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #333;
-  width: 100%;
-
-  @media (min-width: 768px) {
-    min-width: 300px;
-    max-width: 300px;
-  }
+.stickyWrapper {
+  position: sticky;
+  top: 0;
 }
