@@ -2,13 +2,13 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import Link from 'next/link';
 import { getNominationData } from 'lib/getNominationData';
 import { MainContainer } from 'components/MainContainer';
 import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
 import { getBetsForPlayer } from 'services/prisma/bets';
 import { Typography } from 'components/base/Typography';
+import { Button } from 'components/base/Button';
 import { setBet } from '../actions';
 import styles from './meYear.module.scss';
 
@@ -43,18 +43,26 @@ export default withPageAuthRequired(
 
     return (
       <MainContainer>
-        <div className={styles.backLink}>
-          <Link href={'/me'}>&lt; Dashboard</Link>
-          <span> | </span>
+        <div className={styles.header}>
+          <Typography variant="h1" noMargin={true}>
+            {year.bettingOpen
+              ? `${year.year} predictions`
+              : `${year.year} results`}
+          </Typography>
+          <div className={styles.buttonWrapper}>
+            <div className={styles.backLink}>
+              <Button element="a" href="/me">
+                &lt; Dashboard
+              </Button>
+            </div>
+            <Button
+              element="a"
+              href={`/${year.year}/${Object.values(categories)[0].slug}`}
+            >
+              Go to presentation mode &gt;
+            </Button>
+          </div>
         </div>
-        <Link href={`/${year.year}/${Object.values(categories)[0].slug}`}>
-          Go to presentation mode &gt;
-        </Link>
-        <Typography variant="h1">
-          {year.bettingOpen
-            ? `${year.year} predictions`
-            : `${year.year} results`}
-        </Typography>
         <NominationList
           formAction={setBet}
           nominationData={nominationData}
