@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useActionState } from 'react';
 import {
   Typography,
   TextField,
@@ -13,13 +13,13 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
 import { createFilmByTmdb, searchFilms } from '../../app/admin/actions';
 
 const SearchFormContent: React.FC<{
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }> = ({ inputRef }) => {
   const { pending } = useFormStatus();
 
@@ -78,8 +78,8 @@ const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
 };
 
 export const AddFilmBySearch: React.FC<{}> = () => {
-  const [searchResultsResponse, searchAction] = useFormState(searchFilms, null);
-  const [statusMessageCreate, saveAction] = useFormState(
+  const [searchResultsResponse, searchAction] = useActionState(searchFilms, null);
+  const [statusMessageCreate, saveAction] = useActionState(
     createFilmByTmdb,
     null
   );

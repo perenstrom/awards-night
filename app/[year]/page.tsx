@@ -7,15 +7,17 @@ import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
 
 type Props = {
-  params: { year: number };
+  params: Promise<{ year: number }>;
 };
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: `Nominations for ${params.year}`
   };
 }
 
-export default async function Page({ params: rawParams }: Props) {
+export default async function Page(props: Props) {
+  const rawParams = await props.params;
   const params = z
     .object({
       year: z.string()

@@ -1,10 +1,10 @@
 import React from 'react';
-import { getSession } from '@auth0/nextjs-auth0';
 import { redirect } from 'next/navigation';
 import { getAllNominationData } from 'lib/getNominationData';
 import { playerIdKey } from 'lib/authorization';
 import { getBettingDataForPlayer } from 'lib/getBettingData';
 import { YearCard } from 'components/dashboard/YearCard';
+import { auth0 } from 'lib/auth0';
 import YearListWrapper from './YearListWrapper';
 import styles from './YearList.module.scss';
 
@@ -18,7 +18,7 @@ const betsForYear = (
 };
 
 export default async function YearList() {
-  const session = await getSession();
+  const session = await auth0.getSession();
   if (!session) redirect('/');
 
   const playerId = session.user[playerIdKey] as number;

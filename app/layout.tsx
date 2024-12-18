@@ -2,18 +2,21 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import './global.scss';
 import { Metadata } from 'next';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { UserProvider } from '@auth0/nextjs-auth0/client';
+import { Auth0Provider } from '@auth0/nextjs-auth0';
 import { theme } from 'styles/theme';
+import { auth0 } from 'lib/auth0';
 
 export const metadata: Metadata = {
   title: 'Awards Night – Social prediction for the Academy Awards'
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth0.getSession();
+
   return (
     <html lang="en">
       <head>
@@ -63,14 +66,14 @@ export default function RootLayout({
         <meta name="theme-color" content="#bba267" />
       </head>
       <body>
-        <UserProvider>
+        <Auth0Provider user={session?.user}>
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
               {children}
             </ThemeProvider>
           </AppRouterCacheProvider>
-        </UserProvider>
+        </Auth0Provider>
       </body>
     </html>
   );

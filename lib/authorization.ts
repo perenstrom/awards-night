@@ -1,15 +1,16 @@
-import {
+/* import {
   AppRouterPageRoute,
   WithPageAuthRequiredAppRouterOptions,
   getSession,
   withPageAuthRequired
 } from '@auth0/nextjs-auth0';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';*/
 
 export const isAdminKey = `${process.env.AUTH0_METADATA_NAMESPACE}/is_admin`;
 export const playerIdKey = `${process.env.AUTH0_METADATA_NAMESPACE}/player_id`;
 
+/*
 export const withAdminRequiredAppRouter = (
   page: AppRouterPageRoute,
   opts?: WithPageAuthRequiredAppRouterOptions
@@ -35,3 +36,4 @@ export const isAuthorized = async (
 
   return user?.[playerIdKey] === playerId;
 };
+ */

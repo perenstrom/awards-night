@@ -1,6 +1,6 @@
 'use client';
 
-import React, { RefObject, useEffect, useRef } from 'react';
+import React, { RefObject, useEffect, useRef, useActionState } from 'react';
 import {
   Typography,
   TextField,
@@ -10,10 +10,10 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { createFilm } from '../../app/admin/actions';
 
-const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement> }> = ({
+const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement | null> }> = ({
   inputRef
 }) => {
   const { pending } = useFormStatus();
@@ -56,7 +56,7 @@ const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement> }> = ({
 };
 
 export const AddFilm: React.FC<{}> = () => {
-  const [statusMessage, createFilmAction] = useFormState(createFilm, null);
+  const [statusMessage, createFilmAction] = useActionState(createFilm, null);
   const imdbIdInputElement = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

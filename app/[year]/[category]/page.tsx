@@ -17,16 +17,18 @@ import { NominationsPoller } from 'components/presentationMode/NominationsPoller
 import styles from './category.module.scss';
 
 interface Props {
-  params: { year: string; category: string };
+  params: Promise<{ year: string; category: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: `Nominations for ${params.year} - ${params.category}`
   };
 }
 
-export default async function Page({ params: rawParams }: Props) {
+export default async function Page(props: Props) {
+  const rawParams = await props.params;
   const params = z
     .object({
       year: z.string(),

@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState, useActionState } from 'react';
 import {
   CircularProgress,
   Typography,
@@ -9,7 +9,7 @@ import {
   Paper,
   Alert
 } from '@mui/material';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { Category, Film, Year } from 'types/nominations';
 import {
   createNominations,
@@ -18,7 +18,7 @@ import {
 import { NominationFields } from './NominationFields';
 
 const renderNominationFields = (availableFilms: Film[], count: number) => {
-  let elements: ReactElement[] = [];
+  let elements: ReactElement<any>[] = [];
   for (let i = 0; i < count; i++) {
     elements.push(
       <NominationFields
@@ -97,7 +97,7 @@ export const AddNominationsForm: React.FC<Props> = ({
   const nominationCountElement = useRef<HTMLInputElement>(null);
 
   const [nominationCount, setNominationCount] = useState(5);
-  const [nominationCountResult, setNominationsAction] = useFormState(
+  const [nominationCountResult, setNominationsAction] = useActionState(
     setNominationsCount,
     null
   );
@@ -113,7 +113,7 @@ export const AddNominationsForm: React.FC<Props> = ({
     }
   };
 
-  const [statusMessage, formAction] = useFormState(createNominations, null);
+  const [statusMessage, formAction] = useActionState(createNominations, null);
   const formElement = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
