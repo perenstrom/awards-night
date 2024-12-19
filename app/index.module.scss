@@ -6,6 +6,7 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .heroWrapper {
@@ -21,6 +22,105 @@
   background-size: cover;
 }
 
-.titleShadow {
+.myContainer {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0;
+
+  box-sizing: border-box;
+}
+
+.featuresContainer {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+
+  box-sizing: border-box;
+}
+
+.gridWrapper {
+  display: flex;
+  gap: 1rem;
+  flex: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gridItem {
+  min-width: 200px;
+  max-width: 270px;
+  flex-grow: 1;
+  hyphens: auto;
+  overflow-wrap: break-word;
+
+  flex-basis: calc(100% / 3);
+  border-radius: 4px;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.cardImage {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  object-fit: cover;
+  height: 220px;
+}
+
+.cardContent {
+  padding: 1rem;
+  padding-block-end: 1.5rem;
+}
+
+.heading {
+  font-size: 4.5rem;
+  color: white;
+  text-align: center;
   text-shadow: 0 0 3rem #000000;
+}
+
+.subHeading {
+  color: white;
+  text-align: center;
+  font-size: 1.2rem;
+  padding-block-start: 0.5rem;
+  margin-block-end: 0;
+}
+
+.featureHeading {
+  color: black;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  padding-block-start: 1rem;
+}
+
+.bodyText {
+  color: black;
+  font-size: 1rem;
+  margin: 0;
+  margin-block-start: 1rem;
+}
+
+.accessHeading {
+  color: black;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.accessWrapper {
+  padding-block-start: 3rem;
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
 }

@@ -1,8 +1,8 @@
-import { getSession } from '@auth0/nextjs-auth0';
 import { getPlayerByAuth0Id } from 'services/prisma/players';
+import { auth0 } from './auth0';
 
 export const getLoggedInPlayer = async () => {
-  const session = await getSession();
+  const session = await auth0.getSession();
   console.log(JSON.stringify(session, null, 2));
   const user = session?.user ?? null;
   const auth0id = user?.sub as string;
