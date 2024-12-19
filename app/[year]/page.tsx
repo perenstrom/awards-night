@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
 import { Metadata } from 'next';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
+import { Typography } from 'components/base/Typography';
+import styles from './year.module.scss';
 
 type Props = {
   params: Promise<{ year: number }>;
@@ -33,8 +34,10 @@ export default async function Page(props: Props) {
 
   return (
     <MainContainer>
-      <Typography variant="h1">Nominations for {year.year}</Typography>
-      <ul>
+      <Typography variant="h1" color="white">
+        Nominations for {year.year}
+      </Typography>
+      <ul className={styles.list}>
         {Object.values(nominationData.categories).map((category) => (
           <li key={category.slug}>
             <Link href={`/${year.year}/${category.slug}`}>{category.name}</Link>
