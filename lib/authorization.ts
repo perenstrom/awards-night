@@ -7,9 +7,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { redirect } from 'next/navigation';*/
 
+import { auth0 } from './auth0';
+
 export const isAdminKey = `${process.env.AUTH0_METADATA_NAMESPACE}/is_admin`;
 export const playerIdKey = `${process.env.AUTH0_METADATA_NAMESPACE}/player_id`;
 
+export const isAdmin = async () => {
+  const session = await auth0.getSession();
+  const user = session?.user ?? null;
+  return !!user?.[isAdminKey];
+};
 /*
 export const withAdminRequiredAppRouter = (
   page: AppRouterPageRoute,
@@ -20,11 +27,6 @@ export const withAdminRequiredAppRouter = (
   return withPageAuthRequired(page, opts);
 };
 
-export const isAdmin = async () => {
-  const session = await getSession();
-  const user = session?.user ?? null;
-  return !!user?.[isAdminKey];
-};
 
 export const isAuthorized = async (
   req: NextApiRequest,
