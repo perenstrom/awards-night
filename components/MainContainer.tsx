@@ -1,14 +1,5 @@
-import { Container } from '@mui/material';
+import styles from './MainContainer.module.scss';
 
-interface Props {
-  children: React.ReactNode;
-  topMargin?: number;
-}
-
-export const MainContainer = ({ children, topMargin = 8 }: Props) => {
-  return (
-    <Container maxWidth="lg" sx={{ pt: topMargin }}>
-      {children}
-    </Container>
-  );
+export const MainContainer: React.ElementType = ({ children }) => {
+  return <div className={styles.container}>{children}</div>;
 };
