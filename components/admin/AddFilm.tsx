@@ -1,14 +1,13 @@
 'use client';
 
 import React, { RefObject, useEffect, useRef, useActionState } from 'react';
-import { Box, Paper, Alert } from '@mui/material';
 import { useFormStatus } from 'react-dom';
 import { Button } from 'components/base/Button';
 import { InputField } from 'components/base/InputField';
 import { LoadingSpinner } from 'components/base/LoadingSpinner';
 import { Typography } from 'components/base/Typography';
+import { Alert } from 'components/base/Alert';
 import { createFilm } from '../../app/admin/actions';
-import styles from './AddFilm.module.scss';
 
 const FormContent: React.FC<{
   inputRef: RefObject<HTMLInputElement | null>;
@@ -17,7 +16,7 @@ const FormContent: React.FC<{
 
   return (
     <>
-      <div className={styles.formWrapper}>
+      <div className="flex items-end gap-4">
         <InputField id="imdb-id" inputRef={inputRef} name="imdbId" />
         <Button
           name="action"
@@ -46,24 +45,21 @@ export const AddFilm: React.FC<{}> = () => {
   }, [statusMessage]);
 
   return (
-    <Box mt={2}>
-      <Paper>
-        <Box p={2}>
-          <Typography variant="h2">Add film</Typography>
-          <Box mt={2}>
-            <form action={createFilmAction}>
-              <FormContent inputRef={imdbIdInputElement} />
-            </form>
-            {statusMessage && (
-              <Box mt={2}>
-                <Alert severity={statusMessage.severity}>
-                  {statusMessage.message}
-                </Alert>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-    </Box>
+    <div className="mt-4 p-4 rounded-md bg-white">
+      <Typography variant="h2">Add film</Typography>
+      <div className="mt-4">
+        <form action={createFilmAction}>
+          <FormContent inputRef={imdbIdInputElement} />
+        </form>
+        {statusMessage && (
+          <div className="mt-4">
+            <Alert
+              severity={statusMessage.severity}
+              message={statusMessage.message}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
