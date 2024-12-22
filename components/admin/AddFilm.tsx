@@ -1,56 +1,35 @@
 'use client';
 
 import React, { RefObject, useEffect, useRef, useActionState } from 'react';
-import {
-  Typography,
-  TextField,
-  Box,
-  Button,
-  Paper,
-  Alert,
-  CircularProgress
-} from '@mui/material';
+import { Box, Paper, Alert } from '@mui/material';
 import { useFormStatus } from 'react-dom';
+import { Button } from 'components/base/Button';
+import { InputField } from 'components/base/InputField';
+import { LoadingSpinner } from 'components/base/LoadingSpinner';
+import { Typography } from 'components/base/Typography';
 import { createFilm } from '../../app/admin/actions';
+import styles from './AddFilm.module.scss';
 
-const FormContent: React.FC<{ inputRef: RefObject<HTMLInputElement | null> }> = ({
-  inputRef
-}) => {
+const FormContent: React.FC<{
+  inputRef: RefObject<HTMLInputElement | null>;
+}> = ({ inputRef }) => {
   const { pending } = useFormStatus();
 
   return (
     <>
-      <TextField
-        id="imdb-id"
-        name="imdbId"
-        label="IMDb ID"
-        variant="outlined"
-        size="small"
-        inputProps={{
-          minLength: '9',
-          maxLength: '10',
-          pattern: 'tt[0-9]{7-8}'
-        }}
-        inputRef={inputRef}
-      />
-      <Box ml={1} display="inline">
+      <div className={styles.formWrapper}>
+        <InputField id="imdb-id" inputRef={inputRef} name="imdbId" />
         <Button
           name="action"
           value="addFilmByImdbId"
-          variant="contained"
           color="primary"
           type="submit"
           disabled={pending}
-          disableElevation
         >
           Add
         </Button>
-      </Box>
-      {pending && (
-        <Box mt={2.5}>
-          <CircularProgress size={'2rem'} />
-        </Box>
-      )}
+        {pending && <LoadingSpinner />}
+      </div>
     </>
   );
 };
@@ -70,9 +49,7 @@ export const AddFilm: React.FC<{}> = () => {
     <Box mt={2}>
       <Paper>
         <Box p={2}>
-          <Typography variant="h2" sx={{ pt: 0 }}>
-            Add film
-          </Typography>
+          <Typography variant="h2">Add film</Typography>
           <Box mt={2}>
             <form action={createFilmAction}>
               <FormContent inputRef={imdbIdInputElement} />

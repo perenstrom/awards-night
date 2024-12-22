@@ -1,0 +1,17 @@
+.formWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.inputText {
+  height: 2.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-background-grey-1);
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
