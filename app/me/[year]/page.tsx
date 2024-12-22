@@ -43,7 +43,7 @@ export default async function Page(props: Props) {
   return (
     <MainContainer>
       <div className={styles.header}>
-        <Typography variant="h1" noMargin={true}>
+        <Typography variant="h1" noMargin={true} color="white">
           {year.bettingOpen
             ? `${year.year} predictions`
             : `${year.year} results`}
