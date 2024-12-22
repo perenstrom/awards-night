@@ -1,21 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useActionState } from 'react';
-import {
-  Typography,
-  TextField,
-  Box,
-  Button,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Alert,
-  CircularProgress
-} from '@mui/material';
 import { useFormStatus } from 'react-dom';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
+import { InputField } from 'components/base/InputField';
+import { LoadingSpinner } from 'components/base/LoadingSpinner';
+import { Button } from 'components/base/Button';
+import { Typography } from 'components/base/Typography';
+import { Alert } from 'components/base/Alert';
 import { createFilmByTmdb, searchFilms } from '../../app/admin/actions';
 
 const SearchFormContent: React.FC<{
@@ -25,32 +18,24 @@ const SearchFormContent: React.FC<{
 
   return (
     <>
-      <TextField
-        id="filmQuery"
-        name="filmQuery"
-        label="Film name"
-        variant="outlined"
-        size="small"
-        inputRef={inputRef}
-      />
-      <Box ml={1} display="inline">
+      <div className="flex items-end gap-4">
+        <InputField
+          id="filmQuery"
+          inputRef={inputRef}
+          name="filmQuery"
+          label="Film name"
+        />
         <Button
           name="action"
           value="searchFilms"
-          variant="contained"
           color="primary"
           type="submit"
           disabled={pending}
-          disableElevation
         >
           Search
         </Button>
-      </Box>
-      {pending && (
-        <Box mt={2.5}>
-          <CircularProgress size={'2rem'} />
-        </Box>
-      )}
+        {pending && <LoadingSpinner />}
+      </div>
     </>
   );
 };
@@ -59,26 +44,27 @@ const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
   const { pending } = useFormStatus();
 
   return (
-    <ListItem
-      button
-      type="submit"
-      name="tmdbId"
-      value={film.tmdbId}
-      disabled={pending}
-      component="button"
-      key={film.tmdbId}
-    >
-      <ListItemText>
+    <li>
+      <button
+        className="px-4 py-2 w-full text-left hover:bg-gray-100"
+        type="submit"
+        name="tmdbId"
+        value={film.tmdbId}
+        disabled={pending}
+      >
         {`${film.name} (${
           film.releaseDate ? film.releaseDate.slice(0, 4) : 'n/a'
         })`}
-      </ListItemText>
-    </ListItem>
+      </button>
+    </li>
   );
 };
 
 export const AddFilmBySearch: React.FC<{}> = () => {
-  const [searchResultsResponse, searchAction] = useActionState(searchFilms, null);
+  const [searchResultsResponse, searchAction] = useActionState(
+    searchFilms,
+    null
+  );
   const [statusMessageCreate, saveAction] = useActionState(
     createFilmByTmdb,
     null
@@ -118,35 +104,30 @@ export const AddFilmBySearch: React.FC<{}> = () => {
   }, [statusMessageCreate]);
 
   return (
-    <Box mt={2}>
-      <Paper>
-        <Box p={2}>
-          <Typography variant="h2" sx={{ pt: 0 }}>
-            Search and add films
-          </Typography>
-          <Box mt={2}>
-            <form action={searchAction}>
-              <SearchFormContent inputRef={searchFilmInputElement} />
-            </form>
-            {searchResults && searchResults.length > 0 && (
-              <form action={saveAction}>
-                <List dense>
-                  {searchResults.map((film) => (
-                    <SearchResult film={film} key={film.tmdbId} />
-                  ))}
-                </List>
-              </form>
-            )}
-            {statusMessage && (
-              <Box mt={2}>
-                <Alert severity={statusMessage.severity}>
-                  {statusMessage.message}
-                </Alert>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-    </Box>
+    <div className="mt-4 p-4 rounded-md bg-white">
+      <Typography variant="h2">Search and add films</Typography>
+      <div className="mt-4">
+        <form action={searchAction}>
+          <SearchFormContent inputRef={searchFilmInputElement} />
+        </form>
+        {searchResults && searchResults.length > 0 && (
+          <form action={saveAction}>
+            <ul className="mt-4">
+              {searchResults.map((film) => (
+                <SearchResult film={film} key={film.tmdbId} />
+              ))}
+            </ul>
+          </form>
+        )}
+        {statusMessage && (
+          <div className="mt-4">
+            <Alert
+              severity={statusMessage.severity}
+              message={statusMessage.message}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

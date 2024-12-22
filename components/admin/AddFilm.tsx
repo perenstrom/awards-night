@@ -17,7 +17,12 @@ const FormContent: React.FC<{
   return (
     <>
       <div className="flex items-end gap-4">
-        <InputField id="imdb-id" inputRef={inputRef} name="imdbId" />
+        <InputField
+          id="imdb-id"
+          inputRef={inputRef}
+          name="imdbId"
+          label="IMDb ID"
+        />
         <Button
           name="action"
           value="addFilmByImdbId"
