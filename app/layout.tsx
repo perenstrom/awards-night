@@ -1,9 +1,6 @@
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import './global.scss';
 import { Metadata } from 'next';
-import { CssBaseline, ThemeProvider } from '@mui/material';
 import { Auth0Provider } from '@auth0/nextjs-auth0';
-import { theme } from 'styles/theme';
 import { auth0 } from 'lib/auth0';
 
 export const metadata: Metadata = {
@@ -66,14 +63,7 @@ export default async function RootLayout({
         <meta name="theme-color" content="#bba267" />
       </head>
       <body>
-        <Auth0Provider user={session?.user}>
-          <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              {children}
-            </ThemeProvider>
-          </AppRouterCacheProvider>
-        </Auth0Provider>
+        <Auth0Provider user={session?.user}>{children}</Auth0Provider>
       </body>
     </html>
   );
