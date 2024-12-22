@@ -1,55 +1,36 @@
 import React from 'react';
-import { Box, Grid, TextField } from '@mui/material';
 import { Film } from 'types/nominations';
+import { InputField } from 'components/base/InputField';
 
 interface Props {
   availableFilms: Film[];
   index: number;
-  first?: boolean;
 }
 
 export const NominationFields: React.FC<Props> = ({
   availableFilms,
-  index,
-  first
+  index
 }) => {
   return (
-    <Box mt={first ? 2 : 1}>
-      <Grid container spacing={1}>
-        <Grid item xs>
-          <TextField
-            id={`film-${index}`}
-            name={`films`}
-            label="Film"
-            variant="outlined"
-            size="small"
-            SelectProps={{
-              native: true
-            }}
-            select
-            fullWidth
-          >
-            {availableFilms.map((film) => (
-              <option key={film.imdbId} value={film.imdbId}>
-                {`${film.name} ${
-                  film.releaseDate &&
-                  `(${new Date(film.releaseDate).getFullYear()})`
-                }`}
-              </option>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs>
-          <TextField
-            id={`nominee-${index}`}
-            name={`nominees`}
-            label="Nominee"
-            variant="outlined"
-            size="small"
-            fullWidth
-          />
-        </Grid>
-      </Grid>
-    </Box>
+    <div className="flex flex-wrap items-end gap-4 mt-4">
+      <div className="flex flex-col gap-1">
+        <label htmlFor={`film-${index}`}>Film</label>
+        <select
+          id={`film-${index}`}
+          name="films"
+          className="border border-gray-300 rounded-md p-2 hover:border-black"
+        >
+          {availableFilms.map((film) => (
+            <option key={film.imdbId} value={film.imdbId}>
+              {`${film.name} ${
+                film.releaseDate &&
+                `(${new Date(film.releaseDate).getFullYear()})`
+              }`}
+            </option>
+          ))}
+        </select>
+      </div>
+      <InputField id={`nominee-${index}`} name={`nominees`} label="Nominee" />
+    </div>
   );
 };

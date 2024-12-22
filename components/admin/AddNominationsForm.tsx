@@ -1,16 +1,17 @@
 'use client';
-import React, { ReactElement, useEffect, useRef, useState, useActionState } from 'react';
-import {
-  CircularProgress,
-  Typography,
-  TextField,
-  Box,
-  Button,
-  Paper,
-  Alert
-} from '@mui/material';
+import React, {
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+  useActionState
+} from 'react';
 import { useFormStatus } from 'react-dom';
 import { Category, Film, Year } from 'types/nominations';
+import { Button } from 'components/base/Button';
+import { Typography } from 'components/base/Typography';
+import { LoadingSpinner } from 'components/base/LoadingSpinner';
+import { Alert } from 'components/base/Alert';
 import {
   createNominations,
   setNominationsCount
@@ -24,7 +25,6 @@ const renderNominationFields = (availableFilms: Film[], count: number) => {
       <NominationFields
         availableFilms={availableFilms}
         index={i}
-        first={i === 0}
         key={`nomination-fields-${i}`}
       />
     );
@@ -33,14 +33,14 @@ const renderNominationFields = (availableFilms: Film[], count: number) => {
   return elements;
 };
 
-const LoadingSpinner: React.FC<{}> = () => {
+const LoadingSpinnerWrapper: React.FC<{}> = () => {
   const { pending } = useFormStatus();
 
   return (
     pending && (
-      <Box mt={2.5}>
-        <CircularProgress size={'2rem'} />
-      </Box>
+      <div className="mt-6">
+        <LoadingSpinner />
+      </div>
     )
   );
 };
@@ -54,12 +54,10 @@ const SaveNominationCountButton: React.FC<{
     <Button
       name="action"
       value="changeNominationCount"
-      variant="contained"
       color="primary"
       type="submit"
       onClick={onUpdateNominationCount}
       disabled={pending}
-      disableElevation
     >
       Update
     </Button>
@@ -73,11 +71,9 @@ const SaveButton: React.FC<{}> = () => {
     <Button
       name="action"
       value="addNominations"
-      variant="contained"
       color="primary"
       type="submit"
       disabled={pending}
-      disableElevation
     >
       Save
     </Button>
@@ -94,7 +90,7 @@ export const AddNominationsForm: React.FC<Props> = ({
   availableCategories,
   availableFilms
 }) => {
-  const nominationCountElement = useRef<HTMLInputElement>(null);
+  const nominationCountElement = useRef<HTMLSelectElement>(null);
 
   const [nominationCount, setNominationCount] = useState(5);
   const [nominationCountResult, setNominationsAction] = useActionState(
@@ -123,99 +119,81 @@ export const AddNominationsForm: React.FC<Props> = ({
   }, [statusMessage]);
 
   return (
-    <Box mt={2}>
-      <Paper>
-        <Box p={2}>
-          <Typography variant="h2" sx={{ pt: 0 }}>
-            Add nominations
-          </Typography>
-          <Box mt={2}>
-            <form action={setNominationsAction}>
-              <Box display="inline">
-                <TextField
-                  id="nominationCount"
-                  name="nominationCount"
-                  label="Nomination count"
-                  variant="outlined"
-                  size="small"
-                  defaultValue={nominationCountResult || nominationCount}
-                  SelectProps={{
-                    native: true
-                  }}
-                  select
-                  inputRef={nominationCountElement}
-                >
-                  {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((count) => (
-                    <option key={`category-count-${count}`} value={count}>
-                      {`${count} nominations`}
-                    </option>
-                  ))}
-                </TextField>
-              </Box>
-              <Box ml={1} display="inline">
-                <SaveNominationCountButton
-                  onUpdateNominationCount={onUpdateNominationCount}
-                />
-              </Box>
-            </form>
-          </Box>
-          <Box mt={2}>
-            <form action={formAction} ref={formElement}>
-              <TextField
+    <div className="mt-4 p-4 rounded-md bg-white">
+      <Typography variant="h2">Add nominations</Typography>
+      <form action={setNominationsAction}>
+        <div className="flex items-end gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nominationCount">Nomination count</label>
+            <select
+              id="nominationCount"
+              name="nominationCount"
+              defaultValue={nominationCountResult || nominationCount}
+              ref={nominationCountElement}
+              className="border border-gray-300 rounded-md p-2 hover:border-black"
+            >
+              {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((count) => (
+                <option key={`category-count-${count}`} value={count}>
+                  {`${count} nominations`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <SaveNominationCountButton
+            onUpdateNominationCount={onUpdateNominationCount}
+          />
+        </div>
+      </form>
+      <div className="mt-4">
+        <form action={formAction} ref={formElement}>
+          <div className="flex gap-4">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="year">Year</label>
+              <select
                 id="year"
                 name="year"
-                label="Year"
-                variant="outlined"
-                size="small"
-                SelectProps={{
-                  native: true
-                }}
-                select
+                className="border border-gray-300 rounded-md p-2 hover:border-black"
               >
                 {availableYears.map((year) => (
                   <option key={year.year} value={year.year}>
                     {year.year}
                   </option>
                 ))}
-              </TextField>
-              <Box ml={1} display="inline">
-                <TextField
-                  id="category"
-                  name="category"
-                  label="Category"
-                  variant="outlined"
-                  size="small"
-                  SelectProps={{
-                    native: true
-                  }}
-                  select
-                >
-                  {availableCategories.map((category) => (
-                    <option key={category.slug} value={category.slug}>
-                      {category.name}
-                    </option>
-                  ))}
-                </TextField>
-              </Box>
-              {renderNominationFields(
-                availableFilms,
-                nominationCountResult || nominationCount
-              )}
-              <Box mt={2}>
-                <SaveButton />
-              </Box>
-              <LoadingSpinner />
-            </form>
-            {statusMessage && (
-              <Box mt={2}>
-                <Alert severity={statusMessage.severity}>
-                  {statusMessage.message}
-                </Alert>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-    </Box>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                name="category"
+                className="border border-gray-300 rounded-md p-2 hover:border-black"
+              >
+                {availableCategories.map((category) => (
+                  <option key={category.slug} value={category.slug}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {renderNominationFields(
+            availableFilms,
+            nominationCountResult || nominationCount
+          )}
+          <div className="mt-4">
+            <SaveButton />
+          </div>
+          <LoadingSpinnerWrapper />
+        </form>
+        {statusMessage && (
+          <div className="mt-4">
+            <Alert
+              severity={statusMessage.severity}
+              message={statusMessage.message}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
