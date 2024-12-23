@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.2.1
+
+- Update styles for /me
+
 ## 4.2
 
 - Migrated to NextJS App router
