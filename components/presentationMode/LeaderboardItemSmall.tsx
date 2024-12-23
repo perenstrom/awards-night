@@ -1,29 +1,5 @@
-import { styled } from '@mui/material/styles';
-import { defaultStyledOptions } from 'utils/mui';
-import { getPlayerColor } from 'utils/playerColor';
-import { LeaderboardItemName as Name } from './LeaderboardItemName';
-
-const Wrapper = styled(
-  'li',
-  defaultStyledOptions(['itemStyle'])
-)<{
-  readonly itemStyle: number;
-}>`
-  flex-grow: 1;
-
-  background-color: ${({ itemStyle }) => getPlayerColor(itemStyle).background};
-  color: ${({ itemStyle }) => getPlayerColor(itemStyle).text};
-  text-shadow: 1px 0px 3px ${({ itemStyle }) => getPlayerColor(itemStyle).glow},
-    -1px 0px 3px ${({ itemStyle }) => getPlayerColor(itemStyle).glow};
-
-  &::before {
-    counter-increment: position;
-  }
-`;
-
-const Score = styled('div')`
-  flex-grow: 0;
-`;
+import { clsx } from 'clsx';
+import styles from './LeaderboardItem.module.scss';
 
 interface props {
   name: string;
@@ -39,9 +15,14 @@ export const LeaderboardItemSmall: React.FC<props> = ({
   showScore = true
 }) => {
   return (
-    <Wrapper itemStyle={itemStyle}>
-      <Name>{name}</Name>
-      {showScore && <Score>{correct}</Score>}
-    </Wrapper>
+    <li
+      className={clsx(
+        styles.wrapperSmall,
+        styles[`playerColor${itemStyle}`]
+      )}
+    >
+      <div className={styles.name}>{name}</div>
+      {showScore && <div className={styles.smallScore}>{correct}</div>}
+    </li>
   );
 };

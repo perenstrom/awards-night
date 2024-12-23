@@ -1,0 +1,140 @@
+.nomination {
+  aspect-ratio: 9 / 4;
+  width: 28.4em;
+  height: 12.9em;
+  box-sizing: border-box;
+  background: #2c2c2c;
+  border-radius: 0.25em;
+  padding: 0.7em;
+  overflow: hidden;
+
+  display: grid;
+  grid-template-columns: 7.7em 1fr;
+  grid-template-rows: min-content min-content auto min-content;
+  grid-template-areas:
+    'poster title'
+    'poster nominee'
+    'poster .'
+    'poster bets';
+
+  color: #e5e7f8;
+  font-family: 'Inter', sans-serif;
+}
+
+.won {
+  box-shadow: 0px 0px 1em 0.4em var(--color-winner-yellow);
+}
+
+.poster {
+  grid-area: poster;
+}
+
+.image {
+  display: block;
+  width: 100%;
+}
+
+.title {
+  grid-area: title;
+
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0.3em 1em 0 0.6em;
+}
+
+.nominee {
+  grid-area: nominee;
+  font-family: 'Charis SIL', serif;
+  font-style: italic;
+  font-size: 1.3em;
+  line-height: 1.2;
+  padding: 0.2em 1em 0 0.6em;
+}
+
+.bets {
+  grid-area: bets;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: 0.6em;
+  padding: 0 1em 0 0.7em;
+}
+
+.betIcon {
+  border-radius: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1.6em;
+}
+
+.playerColor0 {
+  background-color: var(--player-color-0-background);
+  color: var(--player-color-0-text);
+}
+.playerColor1 {
+  background-color: var(--player-color-1-background);
+  color: var(--player-color-1-text);
+}
+.playerColor2 {
+  background-color: var(--player-color-2-background);
+  color: var(--player-color-2-text);
+}
+.playerColor3 {
+  background-color: var(--player-color-3-background);
+  color: var(--player-color-3-text);
+}
+.playerColor4 {
+  background-color: var(--player-color-4-background);
+  color: var(--player-color-4-text);
+}
+.playerColor5 {
+  background-color: var(--player-color-5-background);
+  color: var(--player-color-5-text);
+}
+.playerColor6 {
+  background-color: var(--player-color-6-background);
+  color: var(--player-color-6-text);
+}
+.playerColor7 {
+  background-color: var(--player-color-7-background);
+  color: var(--player-color-7-text);
+}
+.playerColor8 {
+  background-color: var(--player-color-8-background);
+  color: var(--player-color-8-text);
+}
+.playerColor9 {
+  background-color: var(--player-color-9-background);
+  color: var(--player-color-9-text);
+}
+.playerColor10 {
+  background-color: var(--player-color-10-background);
+  color: var(--player-color-10-text);
+}
+.playerColor11 {
+  background-color: var(--player-color-11-background);
+  color: var(--player-color-11-text);
+}
+.playerColorDefault {
+  background-color: var(--player-color-default-background);
+  color: var(--player-color-default-text);
+}
+
+.trophy {
+  grid-area: 1 / 2 / -1 / -1;
+  place-self: end;
+  width: 9em;
+  height: 8.6em;
+  margin-inline-end: -0.7em;
+  margin-block-end: -0.7em;
+
+  & img {
+    width: 100%;
+  }
+}

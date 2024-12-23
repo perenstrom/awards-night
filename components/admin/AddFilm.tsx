@@ -1,103 +1,70 @@
-import React, { FormEvent, useRef, useState } from 'react';
-import {
-  CircularProgress,
-  Typography,
-  TextField,
-  Box,
-  Button,
-  Paper
-} from '@mui/material';
-import { Alert } from '@mui/material';
-import { Nullable, StatusMessage } from 'types/utilityTypes';
-import { createFilm } from 'services/local';
+'use client';
 
-interface Props {
-  submitAction: string;
-  parentStatusMessage?: StatusMessage;
-}
+import React, { RefObject, useEffect, useRef, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { Button } from 'components/base/Button';
+import { InputField } from 'components/base/InputField';
+import { LoadingSpinner } from 'components/base/LoadingSpinner';
+import { Typography } from 'components/base/Typography';
+import { Alert } from 'components/base/Alert';
+import { createFilm } from '../../app/admin/actions';
 
-export const AddFilm: React.FC<Props> = (props) => {
-  const { submitAction, parentStatusMessage } = props;
-
-  const [statusMessage, setStatusMessage] =
-    useState<Nullable<StatusMessage>>(parentStatusMessage);
-
-  const imdbIdInputElement = useRef<HTMLInputElement>(null);
-  const [addFilmStatus, setAddFilmStatus] = useState<'idle' | 'loading'>(
-    'idle'
-  );
-  const onAddFilmSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setAddFilmStatus('loading');
-    setStatusMessage(null);
-    const imdbId = imdbIdInputElement.current?.value;
-
-    if (imdbId) {
-      const saveFilmResult = await createFilm(imdbId);
-      setStatusMessage(saveFilmResult);
-      if (saveFilmResult.severity !== 'error') {
-        imdbIdInputElement.current.value = '';
-        imdbIdInputElement.current.focus();
-      }
-    }
-    setAddFilmStatus('idle');
-  };
+const FormContent: React.FC<{
+  inputRef: RefObject<HTMLInputElement | null>;
+}> = ({ inputRef }) => {
+  const { pending } = useFormStatus();
 
   return (
-    <Box mt={2}>
-      <Paper>
-        <Box p={2}>
-          <Typography variant="h2" sx={{ pt: 0 }}>
-            Add film
-          </Typography>
-          <Box mt={2}>
-            <form
-              action={submitAction}
-              method="POST"
-              onSubmit={onAddFilmSubmit}
-            >
-              <TextField
-                id="imdb-id"
-                name="imdbId"
-                label="IMDb ID"
-                variant="outlined"
-                size="small"
-                inputProps={{
-                  minLength: '9',
-                  maxLength: '10',
-                  pattern: 'tt[0-9]{7-8}'
-                }}
-                inputRef={imdbIdInputElement}
-              />
-              <Box ml={1} display="inline">
-                <Button
-                  name="action"
-                  value="addFilmByImdbId"
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={addFilmStatus === 'loading'}
-                  disableElevation
-                >
-                  Add
-                </Button>
-              </Box>
-              {addFilmStatus === 'loading' && (
-                <Box mt={2.5}>
-                  <CircularProgress size={'2rem'} />
-                </Box>
-              )}
-            </form>
-            {statusMessage && (
-              <Box mt={2}>
-                <Alert severity={statusMessage.severity}>
-                  {statusMessage.message}
-                </Alert>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-    </Box>
+    <>
+      <div className="flex items-end gap-4">
+        <InputField
+          id="imdb-id"
+          inputRef={inputRef}
+          name="imdbId"
+          label="IMDb ID"
+        />
+        <Button
+          name="action"
+          value="addFilmByImdbId"
+          color="primary"
+          type="submit"
+          disabled={pending}
+        >
+          Add
+        </Button>
+        {pending && <LoadingSpinner />}
+      </div>
+    </>
+  );
+};
+
+export const AddFilm: React.FC<{}> = () => {
+  const [statusMessage, createFilmAction] = useActionState(createFilm, null);
+  const imdbIdInputElement = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (statusMessage?.severity !== 'error' && imdbIdInputElement.current) {
+      imdbIdInputElement.current.value = '';
+      imdbIdInputElement.current.focus();
+    }
+  }, [statusMessage]);
+
+  return (
+    <div className="mt-4 p-4 rounded-md bg-white">
+      <Typography variant="h2">Add film</Typography>
+      <div className="mt-4">
+        <form action={createFilmAction}>
+          <FormContent inputRef={imdbIdInputElement} />
+        </form>
+        {statusMessage && (
+          <div className="mt-4">
+            <Alert
+              severity={statusMessage.severity}
+              message={statusMessage.message}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

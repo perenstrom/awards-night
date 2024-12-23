@@ -1,8 +1,9 @@
 import { Nomination as PrismaNomination, Prisma } from '@prisma/client';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
-
 import type { Nomination } from 'types/nominations';
 import type { PartialBy } from 'types/utilityTypes';
+import { prismaContext } from 'lib/prisma';
 import type { Context } from './prisma.types';
 
 export const createNominations = async (
@@ -22,30 +23,31 @@ export const createNominations = async (
   }
 };
 
-export const getNominations = async (
-  nominations: number[],
-  ctx: Context
-): Promise<Nomination[]> => {
-  const result = await ctx.prisma.nomination.findMany({
-    where: {
-      id: { in: nominations }
-    }
-  });
+export const NOMINATIONS_TAG = 'nominations';
+export const getNominations = unstable_cache(
+  async (nominations: number[]): Promise<Nomination[]> => {
+    const result = await prismaContext.prisma.nomination.findMany({
+      where: {
+        id: { in: nominations }
+      }
+    });
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
-  }
-};
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
+    }
+  },
+  ['nominations'],
+  { tags: [NOMINATIONS_TAG] }
+);
 
 export const updateNomination = async (
   nominationId: number,
-  nomination: Partial<PrismaNomination>,
-  ctx: Context
+  nomination: Partial<PrismaNomination>
 ): Promise<Nomination> => {
   try {
-    const updatedNomination = await ctx.prisma.nomination.update({
+    const updatedNomination = await prismaContext.prisma.nomination.update({
       where: {
         id: nominationId
       },

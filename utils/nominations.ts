@@ -42,3 +42,15 @@ export const calculateCompletedCategories = (
     0
   );
 };
+
+export const getBetForNomination = (bets: Bet[], nominationId: number) => {
+  const filteredBets = bets.filter((bet) => bet.nomination === nominationId);
+
+  if (filteredBets.length > 1) {
+    throw new Error('More than one bet for the requested nomination');
+  } else if (filteredBets.length === 0) {
+    return null;
+  } else {
+    return filteredBets[0];
+  }
+};

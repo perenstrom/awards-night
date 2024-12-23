@@ -9,8 +9,6 @@ export interface Year {
   nominations: number[];
 }
 
-export type NormalizedYears = NumberRecord<Year>;
-
 export interface Nomination {
   id: number;
   year: number;

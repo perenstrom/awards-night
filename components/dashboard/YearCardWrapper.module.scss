@@ -1,0 +1,17 @@
+.wrapper {
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-top: 12px;
+  background-color: #333;
+  font-family: 'Inter', sans-serif;
+  color: #e5e7f8;
+  border-left: 0px solid var(--color-active-green);
+  transition: border-left 0.3s ease;
+}
+
+.active {
+  border-left: 5px solid var(--color-active-green);
+}
