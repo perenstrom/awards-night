@@ -63,12 +63,15 @@ h6 {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(180deg, #24242e 0%, #111115 24.3%) no-repeat,
+  background: linear-gradient(180deg, #24242e 0, #111115 12rem) no-repeat,
     #111115;
   --color-text-primary: #e5e7f8;
   --color-primary-weak: #828392;
+  --color-primary-weak-invisible: #82839200;
   --color-background-grey-1: #333;
   --color-winner-yellow: #ffcb00;
+  --color-active-green: hsla(112, 45%, 42%, 1);
+  --color-active-green-invisible: hsla(112, 45%, 42%, 0);
 
   --shadow-color: 240deg 19% 6%;
   --shadow-elevation-medium: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.36),
