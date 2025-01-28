@@ -1,4 +1,4 @@
-import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import {
   getCategories,
   getFilms,
@@ -17,7 +17,7 @@ import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
 export const NOMINATION_DATA_TAG = 'nominationData';
-export const getNominationData = unstable_cache(
+export const getNominationData = cache(
   async (year: number): Promise<Nullable<NominationData>> => {
     try {
       const yearData = await getYear(year);
@@ -81,9 +81,7 @@ export const getNominationData = unstable_cache(
       console.log(error);
       return null;
     }
-  },
-  ['nominationData'],
-  { tags: [NOMINATION_DATA_TAG] }
+  }
 );
 
 export const getAllNominationData = async (): Promise<
