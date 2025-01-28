@@ -8,6 +8,7 @@ import type { Context } from './prisma.types';
 export const YEAR_TAG = 'year';
 export const getYear = unstable_cache(
   async (year: number): Promise<Nullable<Year>> => {
+    console.log(`Finding year ${year}`);
     const result = await prismaContext.prisma.year.findUnique({
       where: {
         year: year
@@ -31,6 +32,7 @@ export const getYear = unstable_cache(
 export const YEARS_TAG = 'years';
 export const getYears = unstable_cache(
   async (): Promise<Year[]> => {
+    console.log('Getting years');
     const result = await prismaContext.prisma.year.findMany({
       orderBy: [
         {
@@ -58,6 +60,7 @@ export const connectCategoryToYear = async (
   year: number,
   ctx: Context
 ): Promise<boolean> => {
+  console.log(`Connecting category ${category} to year ${year}`);
   const result = await ctx.prisma.yearToCategory.create({
     data: {
       categories: {

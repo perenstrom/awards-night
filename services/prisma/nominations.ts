@@ -10,6 +10,7 @@ export const createNominations = async (
   nominations: PartialBy<Nomination, 'id'>[],
   ctx: Context
 ): Promise<boolean> => {
+  console.log('Creating nominations');
   const formattedNominations = nominations.map(prismaMap.nomination.toPrisma);
 
   const result = await ctx.prisma.nomination.createMany({
@@ -26,6 +27,7 @@ export const createNominations = async (
 export const NOMINATIONS_TAG = 'nominations';
 export const getNominations = unstable_cache(
   async (nominations: number[]): Promise<Nomination[]> => {
+    console.log('Finding nominations');
     const result = await prismaContext.prisma.nomination.findMany({
       where: {
         id: { in: nominations }
@@ -46,6 +48,7 @@ export const updateNomination = async (
   nominationId: number,
   nomination: Partial<PrismaNomination>
 ): Promise<Nomination> => {
+  console.log('Updating nomination');
   try {
     const updatedNomination = await prismaContext.prisma.nomination.update({
       where: {

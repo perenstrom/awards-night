@@ -11,6 +11,7 @@ export const createFilm = async (
   film: Film,
   ctx: Context
 ): Promise<Nullable<Film>> => {
+  console.log('Creating film');
   const formattedFilm = prismaMap.film.toPrisma(film);
 
   const result = await ctx.prisma.film.create({
@@ -27,6 +28,7 @@ export const createFilm = async (
 export const FILM_TAG = 'films';
 export const getFilms = unstable_cache(
   async (films: string[]): Promise<Film[]> => {
+    console.log('Getting films');
     const args: Prisma.FilmFindManyArgs =
       films.length > 0
         ? {
@@ -50,6 +52,7 @@ export const getFilms = unstable_cache(
 );
 
 export const getFilm = async (film: string): Promise<Nullable<Film>> => {
+  console.log(`Finding film with id ${film}`);
   const filmResult = await prismaContext.prisma.film.findUnique({
     where: {
       imdbId: film
