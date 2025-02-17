@@ -1,11 +1,6 @@
 import { cache } from 'react';
-import {
-  getCategories,
-  getFilms,
-  getNominations,
-  getYear,
-  getYears
-} from 'services/prisma';
+import { getCategories, getFilm, getYear, getYears } from 'services/prisma';
+import { getNomination } from 'services/prisma/nominations';
 import {
   NormalizedCategories,
   NormalizedFilms,
@@ -33,15 +28,22 @@ export const getNominationData = cache(
         normalizedCategories[c.slug] = c;
       });
 
-      const nominations = await getNominations(yearData.nominations);
+      const unfilteredNominations = await Promise.all(
+        yearData.nominations.map((nom) => getNomination(nom))
+      );
+      const nominations = unfilteredNominations.filter((n) => !!n);
 
       const normalizedNominations: NormalizedNominations = {};
       nominations.forEach((n) => {
+        if (!n) return;
         normalizedNominations[n.id] = n;
         normalizedCategories[n.category].nominations.push(n.id);
       });
 
-      const films = await getFilms(nominations.map((n) => n.film));
+      const unfilteredFilms = await Promise.all(
+        nominations.map((n) => getFilm(n.film))
+      );
+      const films = unfilteredFilms.filter((f) => !!f);
       const normalizedFilms: NormalizedFilms = {};
       films.forEach((f) => (normalizedFilms[f.imdbId] = f));
 

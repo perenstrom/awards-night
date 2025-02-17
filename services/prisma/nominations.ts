@@ -24,6 +24,23 @@ export const createNominations = async (
   }
 };
 
+export const getNomination = cache(
+  async (nomination: number): Promise<Nomination | null> => {
+    console.log('Finding single nomination: ', nomination);
+    const result = await prismaContext.prisma.nomination.findUnique({
+      where: {
+        id: nomination
+      }
+    });
+
+    if (result) {
+      return prismaMap.nomination.fromPrisma(result);
+    } else {
+      return null;
+    }
+  }
+);
+
 export const getNominations = cache(
   async (nominations: number[]): Promise<Nomination[]> => {
     console.log('Finding nominations');

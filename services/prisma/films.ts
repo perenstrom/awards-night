@@ -46,7 +46,7 @@ export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
   }
 });
 
-export const getFilm = async (film: string): Promise<Nullable<Film>> => {
+export const getFilm = cache(async (film: string): Promise<Nullable<Film>> => {
   console.log(`Finding film with id ${film}`);
   const filmResult = await prismaContext.prisma.film.findUnique({
     where: {
@@ -59,4 +59,4 @@ export const getFilm = async (film: string): Promise<Nullable<Film>> => {
   } else {
     return prismaMap.film.fromPrisma(filmResult);
   }
-};
+});
