@@ -97,13 +97,13 @@ export const getBetsForPlayer = cache(
           }
         });
 
-    console.log(
+    /*     console.log(
       'prisma returned the following bets result for player id: ' +
         playerId +
         ' and year: ' +
         year
     );
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(result, null, 2)); */
 
     if (!result || result.length === 0) {
       return [];

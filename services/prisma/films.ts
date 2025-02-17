@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 
 import type { Film } from 'types/nominations';
@@ -25,31 +25,26 @@ export const createFilm = async (
   }
 };
 
-export const FILM_TAG = 'films';
-export const getFilms = unstable_cache(
-  async (films: string[]): Promise<Film[]> => {
-    console.log('Getting films');
-    const args: Prisma.FilmFindManyArgs =
-      films.length > 0
-        ? {
-            where: {
-              imdbId: { in: films }
-            }
+export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
+  console.log('Getting films');
+  const args: Prisma.FilmFindManyArgs =
+    films.length > 0
+      ? {
+          where: {
+            imdbId: { in: films }
           }
-        : {};
-    const result = await prismaContext.prisma.film.findMany(args);
+        }
+      : {};
+  const result = await prismaContext.prisma.film.findMany(args);
 
-    if (result.length === 0) {
-      return [];
-    } else {
-      return result
-        .map((film) => prismaMap.film.fromPrisma(film))
-        .sort((a, b) => a.name.localeCompare(b.name));
-    }
-  },
-  ['films'],
-  { tags: [FILM_TAG] }
-);
+  if (result.length === 0) {
+    return [];
+  } else {
+    return result
+      .map((film) => prismaMap.film.fromPrisma(film))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+});
 
 export const getFilm = async (film: string): Promise<Nullable<Film>> => {
   console.log(`Finding film with id ${film}`);

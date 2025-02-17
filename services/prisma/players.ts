@@ -1,4 +1,3 @@
-import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 import { Player } from 'types/nominations';
@@ -27,8 +26,7 @@ export const getPlayersWithBetsForGroup = async (
   }
 };
 
-export const PLAYER_WITH_BETS_TAG = 'playerWithBets';
-export const getPlayerWithBets = unstable_cache(
+export const getPlayerWithBets = cache(
   async (playerId: number): Promise<Player | null> => {
     console.log(`Finding player with bets for player ${playerId}`);
     const result = await prismaContext.prisma.player.findUnique({
@@ -45,9 +43,7 @@ export const getPlayerWithBets = unstable_cache(
     } else {
       return prismaMap.playerWithBets.fromPrisma(result);
     }
-  },
-  ['playerWithBets'],
-  { tags: [PLAYER_WITH_BETS_TAG] }
+  }
 );
 
 export const getPlayerByAuth0Id = cache(

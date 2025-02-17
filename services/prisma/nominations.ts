@@ -1,5 +1,5 @@
 import { Nomination as PrismaNomination, Prisma } from '@prisma/client';
-import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nomination } from 'types/nominations';
 import type { PartialBy } from 'types/utilityTypes';
@@ -24,8 +24,7 @@ export const createNominations = async (
   }
 };
 
-export const NOMINATIONS_TAG = 'nominations';
-export const getNominations = unstable_cache(
+export const getNominations = cache(
   async (nominations: number[]): Promise<Nomination[]> => {
     console.log('Finding nominations');
     const result = await prismaContext.prisma.nomination.findMany({
@@ -39,9 +38,7 @@ export const getNominations = unstable_cache(
     } else {
       return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
     }
-  },
-  ['nominations'],
-  { tags: [NOMINATIONS_TAG] }
+  }
 );
 
 export const updateNomination = async (

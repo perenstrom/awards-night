@@ -16,7 +16,6 @@ import {
 import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
-export const NOMINATION_DATA_TAG = 'nominationData';
 export const getNominationData = cache(
   async (year: number): Promise<Nullable<NominationData>> => {
     try {
@@ -88,17 +87,19 @@ export const getAllNominationData = async (): Promise<
   Nullable<NominationData[]>
 > => {
   try {
+    console.log('Getting all nomination data');
     const years = await getYears();
     if (!years) {
       throw new Error('Error when fetching years');
     }
+    console.log('Step 2');
 
     const nominationData = await Promise.all(
       years.map(async (year) => {
         return getNominationData(year.year);
       })
     );
-
+    console.log('Step 3');
     return nominationData.filter(Boolean) as NominationData[];
   } catch (error) {
     console.log(error);
