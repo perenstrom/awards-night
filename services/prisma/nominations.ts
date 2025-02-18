@@ -1,5 +1,6 @@
 import { Nomination as PrismaNomination, Prisma } from '@prisma/client';
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nomination } from 'types/nominations';
 import type { PartialBy } from 'types/utilityTypes';
@@ -24,38 +25,47 @@ export const createNominations = async (
   }
 };
 
+export const NOMINATION_CACHE_KEY = 'nominations';
 export const getNomination = cache(
-  async (nomination: number): Promise<Nomination | null> => {
-    console.log('Finding single nomination: ', nomination);
-    const result = await prismaContext.prisma.nomination.findUnique({
-      where: {
-        id: nomination
-      }
-    });
+  unstable_cache(
+    async (nomination: number): Promise<Nomination | null> => {
+      console.log('Finding single nomination: ', nomination);
+      const result = await prismaContext.prisma.nomination.findUnique({
+        where: {
+          id: nomination
+        }
+      });
 
-    if (result) {
-      return prismaMap.nomination.fromPrisma(result);
-    } else {
-      return null;
-    }
-  }
+      if (result) {
+        return prismaMap.nomination.fromPrisma(result);
+      } else {
+        return null;
+      }
+    },
+    [],
+    { tags: [NOMINATION_CACHE_KEY] }
+  )
 );
 
 export const getNominations = cache(
-  async (nominations: number[]): Promise<Nomination[]> => {
-    console.log('Finding nominations');
-    const result = await prismaContext.prisma.nomination.findMany({
-      where: {
-        id: { in: nominations }
-      }
-    });
+  unstable_cache(
+    async (nominations: number[]): Promise<Nomination[]> => {
+      console.log('Finding nominations');
+      const result = await prismaContext.prisma.nomination.findMany({
+        where: {
+          id: { in: nominations }
+        }
+      });
 
-    if (result.length === 0) {
-      return [];
-    } else {
-      return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
-    }
-  }
+      if (result.length === 0) {
+        return [];
+      } else {
+        return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
+      }
+    },
+    [],
+    { tags: [NOMINATION_CACHE_KEY] }
+  )
 );
 
 export const updateNomination = async (
