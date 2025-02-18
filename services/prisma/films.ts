@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 
 import type { Film } from 'types/nominations';
@@ -46,17 +47,24 @@ export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
   }
 });
 
-export const getFilm = cache(async (film: string): Promise<Nullable<Film>> => {
-  console.log(`Finding film with id ${film}`);
-  const filmResult = await prismaContext.prisma.film.findUnique({
-    where: {
-      imdbId: film
-    }
-  });
+export const FILMS_CACHE_KEY = 'films';
+export const getFilm = cache(
+  unstable_cache(
+    async (film: string): Promise<Nullable<Film>> => {
+      console.log(`Finding film with id ${film}`);
+      const filmResult = await prismaContext.prisma.film.findUnique({
+        where: {
+          imdbId: film
+        }
+      });
 
-  if (!filmResult) {
-    return null;
-  } else {
-    return prismaMap.film.fromPrisma(filmResult);
-  }
-});
+      if (!filmResult) {
+        return null;
+      } else {
+        return prismaMap.film.fromPrisma(filmResult);
+      }
+    },
+    [],
+    { tags: [FILMS_CACHE_KEY] }
+  )
+);
