@@ -4,14 +4,16 @@ import { revalidateTag } from 'next/cache';
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
-import { FILM_TAG } from 'services/prisma/films';
 import { searchFilms as searchFilmsTmdb } from 'services/tmdb';
 import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
-import { NOMINATION_DATA_TAG, getNominationData } from 'lib/getNominationData';
-import { updateNomination } from 'services/prisma/nominations';
+import { getNominationData } from 'lib/getNominationData';
+import {
+  NOMINATION_CACHE_KEY,
+  updateNomination
+} from 'services/prisma/nominations';
 
 export const createFilm = async (
   previousState: StatusMessage | null | undefined,
@@ -23,9 +25,6 @@ export const createFilm = async (
   if (!imdb) return;
 
   const result = await saveFilm(imdb);
-  if (result.severity === 'success') {
-    revalidateTag(FILM_TAG);
-  }
 
   return result;
 };
@@ -40,9 +39,6 @@ export const createFilmByTmdb = async (
   if (!tmdbId) return;
 
   const result = await saveFilmByTmdbId(tmdbId);
-  if (result.severity === 'success') {
-    revalidateTag(FILM_TAG);
-  }
 
   return result;
 };
@@ -160,5 +156,5 @@ export const setWinner = async (formData: FormData) => {
     ]);
   }
 
-  revalidateTag(NOMINATION_DATA_TAG);
+  revalidateTag(NOMINATION_CACHE_KEY);
 };

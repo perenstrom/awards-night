@@ -1,10 +1,13 @@
 import { NumberRecord } from './utilityTypes';
 
-export interface Year {
+export interface BaseYear {
   year: number;
   name: string;
   date: string;
   bettingOpen: boolean;
+}
+
+export interface Year extends BaseYear {
   categories: string[];
   nominations: number[];
 }
