@@ -7,7 +7,7 @@ import React, {
   useActionState
 } from 'react';
 import { useFormStatus } from 'react-dom';
-import { BaseYear, Category, Film } from 'types/nominations';
+import { Category, Film, Year } from 'types/nominations';
 import { Button } from 'components/base/Button';
 import { Typography } from 'components/base/Typography';
 import { LoadingSpinner } from 'components/base/LoadingSpinner';
@@ -81,7 +81,7 @@ const SaveButton: React.FC<{}> = () => {
 };
 
 interface Props {
-  availableYears: BaseYear[];
+  availableYears: Year[];
   availableCategories: Category[];
   availableFilms: Film[];
 }

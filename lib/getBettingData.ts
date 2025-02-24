@@ -1,5 +1,9 @@
-import { cache } from 'react';
-import { getBetsForNominations, getBetsForPlayer } from 'services/prisma/bets';
+import { unstable_cache } from 'next/cache';
+import {
+  BETS_TAG,
+  getBetsForNominations,
+  getBetsForPlayer
+} from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
 import {
   Bet,
@@ -40,7 +44,7 @@ const addStylesToPlayer = (
   return playersWithStyle;
 };
 
-export const getBettingData = cache(
+export const getBettingData = unstable_cache(
   async (
     nominationData: NominationData,
     group: number
@@ -86,10 +90,12 @@ export const getBettingData = cache(
         nominationBets: nominationBets
       };
     }
-  }
+  },
+  ['bettingData'],
+  { tags: [BETS_TAG] }
 );
 
-export const getBettingDataForPlayer = cache(
+export const getBettingDataForPlayer = unstable_cache(
   async (
     playerId: number,
     nominationData: NominationData[]
@@ -114,5 +120,8 @@ export const getBettingDataForPlayer = cache(
       bets,
       yearBets
     };
-  }
+  },
+
+  ['bettingDataForPlayer'],
+  { tags: [BETS_TAG] }
 );

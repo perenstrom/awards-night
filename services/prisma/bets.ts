@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import { Bet } from 'types/nominations';
 import { Nullable, PartialBy } from 'types/utilityTypes';
@@ -10,7 +10,6 @@ export const BETS_TAG = 'bets';
 export const createBet = async (
   bet: PartialBy<Bet, 'id'>
 ): Promise<Nullable<Bet>> => {
-  console.log('Creating bet');
   const formattedBet = prismaMap.bet.toPrisma(bet);
 
   const result = await prismaContext.prisma.bet.create({
@@ -24,64 +23,56 @@ export const createBet = async (
   }
 };
 
-export const getBets = cache(
-  async (bets: number[], ctx: Context): Promise<Bet[]> => {
-    console.log('Finding bets');
-    const result = await ctx.prisma.bet.findMany({
-      where: {
-        id: { in: bets }
-      }
-    });
-
-    if (!result || result.length === 0) {
-      return [];
-    } else {
-      return result.map((bet) => prismaMap.bet.fromPrisma(bet));
+export const getBets = async (bets: number[], ctx: Context): Promise<Bet[]> => {
+  const result = await ctx.prisma.bet.findMany({
+    where: {
+      id: { in: bets }
     }
+  });
+
+  if (!result || result.length === 0) {
+    return [];
+  } else {
+    return result.map((bet) => prismaMap.bet.fromPrisma(bet));
   }
-);
+};
 
-export const getBet = cache(
-  async (bet: number, ctx: Context): Promise<Nullable<Bet>> => {
-    console.log(`Finding bet with id ${bet}`);
-    const betResult = await ctx.prisma.bet.findUnique({
-      where: {
-        id: bet
-      }
-    });
-
-    if (!betResult) {
-      return null;
-    } else {
-      return prismaMap.bet.fromPrisma(betResult);
+export const getBet = async (
+  bet: number,
+  ctx: Context
+): Promise<Nullable<Bet>> => {
+  const betResult = await ctx.prisma.bet.findUnique({
+    where: {
+      id: bet
     }
+  });
+
+  if (!betResult) {
+    return null;
+  } else {
+    return prismaMap.bet.fromPrisma(betResult);
   }
-);
+};
 
-export const getBetsForNominations = cache(
-  async (nominations: number[], ctx: Context): Promise<Bet[]> => {
-    console.log('Finding bets for nominations');
-
-    const result = await ctx.prisma.bet.findMany({
-      where: {
-        nominationId: { in: nominations }
-      }
-    });
-
-    if (!result || result.length === 0) {
-      return [];
-    } else {
-      return result.map((bet) => prismaMap.bet.fromPrisma(bet));
+export const getBetsForNominations = async (
+  nominations: number[],
+  ctx: Context
+): Promise<Bet[]> => {
+  const result = await ctx.prisma.bet.findMany({
+    where: {
+      nominationId: { in: nominations }
     }
-  }
-);
+  });
 
-export const getBetsForPlayer = cache(
+  if (!result || result.length === 0) {
+    return [];
+  } else {
+    return result.map((bet) => prismaMap.bet.fromPrisma(bet));
+  }
+};
+
+export const getBetsForPlayer = unstable_cache(
   async (playerId: number, year?: number): Promise<Bet[]> => {
-    console.log(
-      'Finding bets for player id: ' + playerId + ' and year: ' + year
-    );
-
     const result = year
       ? await prismaContext.prisma.bet.findMany({
           where: {
@@ -97,27 +88,28 @@ export const getBetsForPlayer = cache(
           }
         });
 
-    /*     console.log(
+    console.log(
       'prisma returned the following bets result for player id: ' +
         playerId +
         ' and year: ' +
         year
     );
-    console.log(JSON.stringify(result, null, 2)); */
+    console.log(JSON.stringify(result, null, 2));
 
     if (!result || result.length === 0) {
       return [];
     } else {
       return result.map((bet) => prismaMap.bet.fromPrisma(bet));
     }
-  }
+  },
+  ['betsForPlayer'],
+  { tags: [BETS_TAG] }
 );
 
 export const updateBet = async (
   betId: number,
   nominationId: number
 ): Promise<Bet> => {
-  console.log(`Updating bet with id ${betId} to nomination ${nominationId}`);
   try {
     const updatedBet = await prismaContext.prisma.bet.update({
       where: {
@@ -142,7 +134,6 @@ export const updateBet = async (
 };
 
 export const deleteBet = async (betId: number): Promise<boolean> => {
-  console.log(`Deleting bet with id ${betId}`);
   try {
     const deletedBet = await prismaContext.prisma.bet.delete({
       where: {

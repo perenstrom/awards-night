@@ -1,6 +1,11 @@
-import { cache } from 'react';
-import { getCategories, getFilm, getYear, getYears } from 'services/prisma';
-import { getNomination } from 'services/prisma/nominations';
+import { unstable_cache } from 'next/cache';
+import {
+  getCategories,
+  getFilms,
+  getNominations,
+  getYear,
+  getYears
+} from 'services/prisma';
 import {
   NormalizedCategories,
   NormalizedFilms,
@@ -11,7 +16,8 @@ import {
 import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
-export const getNominationData = cache(
+export const NOMINATION_DATA_TAG = 'nominationData';
+export const getNominationData = unstable_cache(
   async (year: number): Promise<Nullable<NominationData>> => {
     try {
       const yearData = await getYear(year);
@@ -28,22 +34,15 @@ export const getNominationData = cache(
         normalizedCategories[c.slug] = c;
       });
 
-      const unfilteredNominations = await Promise.all(
-        yearData.nominations.map((nom) => getNomination(nom))
-      );
-      const nominations = unfilteredNominations.filter((n) => !!n);
+      const nominations = await getNominations(yearData.nominations);
 
       const normalizedNominations: NormalizedNominations = {};
       nominations.forEach((n) => {
-        if (!n) return;
         normalizedNominations[n.id] = n;
         normalizedCategories[n.category].nominations.push(n.id);
       });
 
-      const unfilteredFilms = await Promise.all(
-        nominations.map((n) => getFilm(n.film))
-      );
-      const films = unfilteredFilms.filter((f) => !!f);
+      const films = await getFilms(nominations.map((n) => n.film));
       const normalizedFilms: NormalizedFilms = {};
       films.forEach((f) => (normalizedFilms[f.imdbId] = f));
 
@@ -82,26 +81,26 @@ export const getNominationData = cache(
       console.log(error);
       return null;
     }
-  }
+  },
+  ['nominationData'],
+  { tags: [NOMINATION_DATA_TAG] }
 );
 
 export const getAllNominationData = async (): Promise<
   Nullable<NominationData[]>
 > => {
   try {
-    console.log('Getting all nomination data');
     const years = await getYears();
     if (!years) {
       throw new Error('Error when fetching years');
     }
-    console.log('Step 2');
 
     const nominationData = await Promise.all(
       years.map(async (year) => {
         return getNominationData(year.year);
       })
     );
-    console.log('Step 3');
+
     return nominationData.filter(Boolean) as NominationData[];
   } catch (error) {
     console.log(error);

@@ -4,7 +4,6 @@ import {
   Nomination as PrismaNomination,
   Bet as PrismaBet,
   Player as PrismaPlayer,
-  Year as PrismaYear,
   Prisma
 } from '@prisma/client';
 import {
@@ -13,7 +12,6 @@ import {
   YearWithNominationsAndCategories
 } from 'services/prisma/prisma.types';
 import {
-  BaseYear,
   Bet,
   Category,
   Film,
@@ -24,14 +22,6 @@ import {
 import { PartialBy } from 'types/utilityTypes';
 
 export const prismaMap = {
-  baseYear: {
-    fromPrisma: (yearResponse: PrismaYear): BaseYear => ({
-      year: yearResponse.year,
-      name: yearResponse.name,
-      date: yearResponse.date.toISOString(),
-      bettingOpen: yearResponse.bettingOpen
-    })
-  },
   year: {
     fromPrisma: (yearResponse: YearWithNominationsAndCategories): Year => ({
       year: yearResponse.year,

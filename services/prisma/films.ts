@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 
@@ -12,7 +11,6 @@ export const createFilm = async (
   film: Film,
   ctx: Context
 ): Promise<Nullable<Film>> => {
-  console.log('Creating film');
   const formattedFilm = prismaMap.film.toPrisma(film);
 
   const result = await ctx.prisma.film.create({
@@ -26,45 +24,41 @@ export const createFilm = async (
   }
 };
 
-export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
-  console.log('Getting films');
-  const args: Prisma.FilmFindManyArgs =
-    films.length > 0
-      ? {
-          where: {
-            imdbId: { in: films }
+export const FILM_TAG = 'films';
+export const getFilms = unstable_cache(
+  async (films: string[]): Promise<Film[]> => {
+    const args: Prisma.FilmFindManyArgs =
+      films.length > 0
+        ? {
+            where: {
+              imdbId: { in: films }
+            }
           }
-        }
-      : {};
-  const result = await prismaContext.prisma.film.findMany(args);
+        : {};
+    const result = await prismaContext.prisma.film.findMany(args);
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    return result
-      .map((film) => prismaMap.film.fromPrisma(film))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }
-});
-
-export const FILMS_CACHE_KEY = 'films';
-export const getFilm = cache(
-  unstable_cache(
-    async (film: string): Promise<Nullable<Film>> => {
-      console.log(`Finding film with id ${film}`);
-      const filmResult = await prismaContext.prisma.film.findUnique({
-        where: {
-          imdbId: film
-        }
-      });
-
-      if (!filmResult) {
-        return null;
-      } else {
-        return prismaMap.film.fromPrisma(filmResult);
-      }
-    },
-    [],
-    { tags: [FILMS_CACHE_KEY] }
-  )
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result
+        .map((film) => prismaMap.film.fromPrisma(film))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    }
+  },
+  ['films'],
+  { tags: [FILM_TAG] }
 );
+
+export const getFilm = async (film: string): Promise<Nullable<Film>> => {
+  const filmResult = await prismaContext.prisma.film.findUnique({
+    where: {
+      imdbId: film
+    }
+  });
+
+  if (!filmResult) {
+    return null;
+  } else {
+    return prismaMap.film.fromPrisma(filmResult);
+  }
+};
