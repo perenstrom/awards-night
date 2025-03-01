@@ -69,6 +69,7 @@ export default async function Page(props: Props) {
   const bettingOpen = year.bettingOpen;
   const normalizedPlayers = normalizePlayers(players);
   const normalizedBets = normalizeBets(bets);
+  const playersSortedByCorrect = players.sort((a, b) => b.correct - a.correct);
 
   const prepareBets = (nominationId: number): BetIcon[] => {
     if (!normalizedPlayers || !normalizedBets || !nominationBets) {
@@ -137,7 +138,7 @@ export default async function Page(props: Props) {
                   </>
                 ) : (
                   <>
-                    {players.slice(0, 4).map((player) => (
+                    {playersSortedByCorrect.slice(0, 4).map((player) => (
                       <LeaderboardItem
                         key={player.id}
                         name={player.name}
@@ -146,9 +147,9 @@ export default async function Page(props: Props) {
                         itemStyle={player.style}
                       />
                     ))}
-                    {players.length > 4 && (
+                    {playersSortedByCorrect.length > 4 && (
                       <ol className={styles.leaderboardOverflow}>
-                        {players.slice(4, 9).map((player) => (
+                        {playersSortedByCorrect.slice(4, 9).map((player) => (
                           <LeaderboardItemSmall
                             key={player.id}
                             name={player.name}
@@ -156,14 +157,14 @@ export default async function Page(props: Props) {
                             itemStyle={player.style}
                           />
                         ))}
-                        {players.length > 10 ? (
+                        {playersSortedByCorrect.length > 10 ? (
                           <LeaderboardItemRest />
                         ) : (
-                          players.length === 10 && (
+                          playersSortedByCorrect.length === 10 && (
                             <LeaderboardItemSmall
-                              name={players[9].name}
-                              correct={players[9].correct}
-                              itemStyle={players[9].style}
+                              name={playersSortedByCorrect[9].name}
+                              correct={playersSortedByCorrect[9].correct}
+                              itemStyle={playersSortedByCorrect[9].style}
                             />
                           )
                         )}
