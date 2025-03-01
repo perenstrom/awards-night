@@ -2,11 +2,6 @@
   margin-bottom: 0.6em;
   font-size: 1em;
 
-  &::before {
-    counter-increment: position;
-    content: counter(position) '.';
-  }
-
   &:first-of-type {
     font-size: 1.5em;
     margin-bottom: 0.4em;
@@ -16,10 +11,6 @@
 
 .wrapperSmall {
   flex-grow: 1;
-
-  &::before {
-    counter-increment: position;
-  }
 }
 
 .wrapperRest {
@@ -29,10 +20,6 @@
   align-items: center;
 
   background: #989898;
-
-  &::before {
-    counter-increment: position;
-  }
 }
 
 .playerColor0 {
