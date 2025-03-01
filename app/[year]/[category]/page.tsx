@@ -138,13 +138,14 @@ export default async function Page(props: Props) {
                   </>
                 ) : (
                   <>
-                    {playersSortedByCorrect.slice(0, 4).map((player) => (
+                    {playersSortedByCorrect.slice(0, 4).map((player, index) => (
                       <LeaderboardItem
                         key={player.id}
                         name={player.name}
                         correct={player.correct}
                         total={completedCategoriesCount}
                         itemStyle={player.style}
+                        place={index + 1}
                       />
                     ))}
                     {playersSortedByCorrect.length > 4 && (

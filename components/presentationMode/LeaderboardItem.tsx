@@ -6,22 +6,22 @@ interface props {
   correct: number;
   total: number;
   itemStyle: number;
+  place?: number;
 }
 
 export const LeaderboardItem: React.FC<props> = ({
   name,
   correct,
   total,
-  itemStyle
+  itemStyle,
+  place
 }) => {
+  const text = place ? `${place}. ${name}` : name;
   return (
     <li
-      className={clsx(
-        styles.wrapperLarge,
-        styles[`playerColor${itemStyle}`]
-      )}
+      className={clsx(styles.wrapperLarge, styles[`playerColor${itemStyle}`])}
     >
-      <div className={styles.name}>{name}</div>
+      <div className={styles.name}>{text}</div>
       <div className={styles.score}>
         {correct} / {total}
       </div>
