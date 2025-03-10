@@ -1,20 +1,17 @@
 import { Nomination as PrismaNomination, Prisma } from '@prisma/client';
 import { cache } from 'react';
-import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nomination } from 'types/nominations';
 import type { PartialBy } from 'types/utilityTypes';
-import { prismaContext } from 'lib/prisma';
-import type { Context } from './prisma.types';
+import prisma from 'lib/prisma';
 
 export const createNominations = async (
-  nominations: PartialBy<Nomination, 'id'>[],
-  ctx: Context
+  nominations: PartialBy<Nomination, 'id'>[]
 ): Promise<boolean> => {
   console.log('Creating nominations');
   const formattedNominations = nominations.map(prismaMap.nomination.toPrisma);
 
-  const result = await ctx.prisma.nomination.createMany({
+  const result = await prisma.nomination.createMany({
     data: formattedNominations
   });
 
@@ -25,47 +22,38 @@ export const createNominations = async (
   }
 };
 
-export const NOMINATION_CACHE_KEY = 'nominations';
 export const getNomination = cache(
-  unstable_cache(
-    async (nomination: number): Promise<Nomination | null> => {
-      console.log('Finding single nomination: ', nomination);
-      const result = await prismaContext.prisma.nomination.findUnique({
-        where: {
-          id: nomination
-        }
-      });
-
-      if (result) {
-        return prismaMap.nomination.fromPrisma(result);
-      } else {
-        return null;
+  async (nomination: number): Promise<Nomination | null> => {
+    console.log('Finding single nomination: ', nomination);
+    const result = await prisma.nomination.findUnique({
+      where: {
+        id: nomination
       }
-    },
-    [],
-    { tags: [NOMINATION_CACHE_KEY] }
-  )
+    });
+
+    if (result) {
+      return prismaMap.nomination.fromPrisma(result);
+    } else {
+      return null;
+    }
+  }
 );
 
 export const getNominations = cache(
-  unstable_cache(
-    async (nominations: number[]): Promise<Nomination[]> => {
-      console.log('Finding nominations');
-      const result = await prismaContext.prisma.nomination.findMany({
-        where: {
-          id: { in: nominations }
-        }
-      });
-
-      if (result.length === 0) {
-        return [];
-      } else {
-        return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
+  async (nominations: number[]): Promise<Nomination[]> => {
+    console.log('Finding nominations');
+    const result = await prisma.nomination.findMany({
+      where: {
+        id: { in: nominations }
       }
-    },
-    [],
-    { tags: [NOMINATION_CACHE_KEY] }
-  )
+    });
+
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result.map((nom) => prismaMap.nomination.fromPrisma(nom));
+    }
+  }
 );
 
 export const updateNomination = async (
@@ -74,7 +62,7 @@ export const updateNomination = async (
 ): Promise<Nomination> => {
   console.log('Updating nomination');
   try {
-    const updatedNomination = await prismaContext.prisma.nomination.update({
+    const updatedNomination = await prisma.nomination.update({
       where: {
         id: nominationId
       },

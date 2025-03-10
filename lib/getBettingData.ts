@@ -9,7 +9,6 @@ import {
   Player
 } from 'types/nominations';
 import { addPlayersWinnings } from 'utils/nominations';
-import { prismaContext } from './prisma';
 
 const calculateNominationBets = (bets: Bet[]) => {
   let nominationBets: NominationBets = {};
@@ -47,11 +46,8 @@ export const getBettingData = cache(
   ): Promise<BettingData> => {
     const { bettingOpen } = nominationData.year;
 
-    const players = await getPlayersWithBetsForGroup(group, prismaContext);
-    const bets = await getBetsForNominations(
-      nominationData.year.nominations,
-      prismaContext
-    );
+    const players = await getPlayersWithBetsForGroup(group);
+    const bets = await getBetsForNominations(nominationData.year.nominations);
 
     const betIds = bets.map((b) => b.id);
     players.forEach((player) => {

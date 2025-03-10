@@ -1,21 +1,16 @@
 import { Prisma } from '@prisma/client';
 import { cache } from 'react';
-import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 
 import type { Film } from 'types/nominations';
 import type { Nullable } from 'types/utilityTypes';
-import { prismaContext } from 'lib/prisma';
-import type { Context } from './prisma.types';
+import prisma from 'lib/prisma';
 
-export const createFilm = async (
-  film: Film,
-  ctx: Context
-): Promise<Nullable<Film>> => {
+export const createFilm = async (film: Film): Promise<Nullable<Film>> => {
   console.log('Creating film');
   const formattedFilm = prismaMap.film.toPrisma(film);
 
-  const result = await ctx.prisma.film.create({
+  const result = await prisma.film.create({
     data: formattedFilm
   });
 
@@ -36,7 +31,7 @@ export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
           }
         }
       : {};
-  const result = await prismaContext.prisma.film.findMany(args);
+  const result = await prisma.film.findMany(args);
 
   if (result.length === 0) {
     return [];
@@ -47,24 +42,17 @@ export const getFilms = cache(async (films: string[]): Promise<Film[]> => {
   }
 });
 
-export const FILMS_CACHE_KEY = 'films';
-export const getFilm = cache(
-  unstable_cache(
-    async (film: string): Promise<Nullable<Film>> => {
-      console.log(`Finding film with id ${film}`);
-      const filmResult = await prismaContext.prisma.film.findUnique({
-        where: {
-          imdbId: film
-        }
-      });
+export const getFilm = cache(async (film: string): Promise<Nullable<Film>> => {
+  console.log(`Finding film with id ${film}`);
+  const filmResult = await prisma.film.findUnique({
+    where: {
+      imdbId: film
+    }
+  });
 
-      if (!filmResult) {
-        return null;
-      } else {
-        return prismaMap.film.fromPrisma(filmResult);
-      }
-    },
-    [],
-    { tags: [FILMS_CACHE_KEY] }
-  )
-);
+  if (!filmResult) {
+    return null;
+  } else {
+    return prismaMap.film.fromPrisma(filmResult);
+  }
+});
