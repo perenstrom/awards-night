@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { getCategories, getFilm, getYear, getYears } from 'services/prisma';
 import { getNomination } from 'services/prisma/nominations';
@@ -11,8 +12,9 @@ import {
 import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
-export const getNominationData = cache(
-  async (year: number): Promise<Nullable<NominationData>> => {
+export const NOMINATION_DATA_CACHE_KEY = 'NOMINATION_DATA_CACHE_KEY';
+export const getNominationData = unstable_cache(
+  cache(async (year: number): Promise<Nullable<NominationData>> => {
     try {
       const yearData = await getYear(year);
       if (!yearData) {
@@ -82,7 +84,9 @@ export const getNominationData = cache(
       console.log(error);
       return null;
     }
-  }
+  }),
+  [],
+  { tags: [NOMINATION_DATA_CACHE_KEY] }
 );
 
 export const getAllNominationData = async (): Promise<
