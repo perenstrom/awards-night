@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
@@ -10,10 +9,7 @@ import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
 import { getNominationData } from 'lib/getNominationData';
-import {
-  NOMINATION_CACHE_KEY,
-  updateNomination
-} from 'services/prisma/nominations';
+import { updateNomination } from 'services/prisma/nominations';
 
 export const createFilm = async (
   previousState: StatusMessage | null | undefined,
@@ -156,5 +152,5 @@ export const setWinner = async (formData: FormData) => {
     ]);
   }
 
-  revalidateTag(NOMINATION_CACHE_KEY);
+  //revalidateTag(NOMINATION_CACHE_KEY);
 };
