@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag as revalidateTagNext } from 'next/cache';
+import { revalidateTag as nextRevalidateTag } from 'next/cache';
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
@@ -10,8 +10,11 @@ import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
 import {
+  CATEGORIES_CACHE_KEY,
+  FILMS_CACHE_KEY,
   getNominationData,
-  NOMINATION_DATA_CACHE_KEY
+  NOMINATION_DATA_CACHE_KEY,
+  YEAR_CACHE_KEY
 } from 'lib/getNominationData';
 import { updateNomination } from 'services/prisma/nominations';
 import { getStatusMessage } from 'utils/statusMessages';
@@ -26,6 +29,7 @@ export const createFilm = async (
   if (!imdb) return;
 
   const result = await saveFilm(imdb);
+  nextRevalidateTag(FILMS_CACHE_KEY);
 
   return result;
 };
@@ -40,6 +44,7 @@ export const createFilmByTmdb = async (
   if (!tmdbId) return;
 
   const result = await saveFilmByTmdbId(tmdbId);
+  nextRevalidateTag(FILMS_CACHE_KEY);
 
   return result;
 };
@@ -81,7 +86,9 @@ export const createNominations = async (
     nominees
   });
 
-  revalidateTagNext(NOMINATION_DATA_CACHE_KEY);
+  nextRevalidateTag(NOMINATION_DATA_CACHE_KEY);
+  nextRevalidateTag(YEAR_CACHE_KEY);
+  nextRevalidateTag(CATEGORIES_CACHE_KEY);
   return result;
 };
 
@@ -160,7 +167,9 @@ export const setWinner = async (formData: FormData) => {
     ]);
   }
 
-  revalidateTagNext(NOMINATION_DATA_CACHE_KEY);
+  nextRevalidateTag(NOMINATION_DATA_CACHE_KEY);
+  nextRevalidateTag(YEAR_CACHE_KEY);
+  nextRevalidateTag(CATEGORIES_CACHE_KEY);
 };
 
 export const revalidateTag = async (
@@ -172,7 +181,7 @@ export const revalidateTag = async (
   const tag = formData.get('tag') as string;
   if (!tag) return;
 
-  revalidateTagNext(tag);
+  nextRevalidateTag(tag);
 
   return getStatusMessage('info', `Tag ${tag} revalidated.`);
 };
