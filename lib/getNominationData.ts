@@ -1,6 +1,11 @@
 import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
-import { getCategories, getFilm, getYear, getYears } from 'services/prisma';
+import {
+  getCategories as prismaGetCategories,
+  getFilm,
+  getYear as prismaGetYear,
+  getYears
+} from 'services/prisma';
 import { getNomination } from 'services/prisma/nominations';
 import {
   NormalizedCategories,
@@ -13,8 +18,46 @@ import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
 export const NOMINATION_DATA_CACHE_KEY = 'NOMINATION_DATA_CACHE_KEY';
-export const getNominationData = unstable_cache(
-  cache(async (year: number): Promise<Nullable<NominationData>> => {
+
+export const YEAR_CACHE_KEY = 'YEAR_CACHE_KEY';
+const getYear = unstable_cache(
+  async (year: number) => prismaGetYear(year),
+  [],
+  { tags: [YEAR_CACHE_KEY] }
+);
+
+export const CATEGORIES_CACHE_KEY = 'CATEGORIES_CACHE_KEY';
+const getCategories = unstable_cache(
+  async (categories: string[]) => prismaGetCategories(categories),
+  [],
+  { tags: [CATEGORIES_CACHE_KEY] }
+);
+
+export const NOMINATIONS_CACHE_KEY = 'NOMINATIONS_CACHE_KEY';
+const getNominations = unstable_cache(
+  async (nominationIDs: number[]) => {
+    const unfilteredNominations = await Promise.all(
+      nominationIDs.map((nom) => getNomination(nom))
+    );
+
+    return unfilteredNominations.filter((n) => !!n);
+  },
+  [],
+  { tags: [NOMINATIONS_CACHE_KEY] }
+);
+
+export const FILMS_CACHE_KEY = 'FILMS_CACHE_KEY';
+const getFilms = unstable_cache(
+  async (ids: string[]) => {
+    const films = await Promise.all(ids.map((id) => getFilm(id)));
+    return films.filter((f) => !!f);
+  },
+  [],
+  { tags: [FILMS_CACHE_KEY] }
+);
+
+export const getNominationData = cache(
+  async (year: number): Promise<Nullable<NominationData>> => {
     try {
       const yearData = await getYear(year);
       if (!yearData) {
@@ -30,10 +73,7 @@ export const getNominationData = unstable_cache(
         normalizedCategories[c.slug] = c;
       });
 
-      const unfilteredNominations = await Promise.all(
-        yearData.nominations.map((nom) => getNomination(nom))
-      );
-      const nominations = unfilteredNominations.filter((n) => !!n);
+      const nominations = await getNominations(yearData.nominations);
 
       const normalizedNominations: NormalizedNominations = {};
       nominations.forEach((n) => {
@@ -42,10 +82,8 @@ export const getNominationData = unstable_cache(
         normalizedCategories[n.category].nominations.push(n.id);
       });
 
-      const unfilteredFilms = await Promise.all(
-        nominations.map((n) => getFilm(n.film))
-      );
-      const films = unfilteredFilms.filter((f) => !!f);
+      const films = await getFilms(nominations.map((n) => n.film));
+
       const normalizedFilms: NormalizedFilms = {};
       films.forEach((f) => (normalizedFilms[f.imdbId] = f));
 
@@ -84,9 +122,7 @@ export const getNominationData = unstable_cache(
       console.log(error);
       return null;
     }
-  }),
-  [],
-  { tags: [NOMINATION_DATA_CACHE_KEY] }
+  }
 );
 
 export const getAllNominationData = async (): Promise<

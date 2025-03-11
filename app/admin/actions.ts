@@ -9,7 +9,10 @@ import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
-import { getNominationData } from 'lib/getNominationData';
+import {
+  getNominationData,
+  NOMINATION_DATA_CACHE_KEY
+} from 'lib/getNominationData';
 import { updateNomination } from 'services/prisma/nominations';
 import { getStatusMessage } from 'utils/statusMessages';
 
@@ -71,12 +74,15 @@ export const createNominations = async (
 
   if (!category || !year || !films || !nominees) return;
 
-  return await saveNominations({
+  const result = await saveNominations({
     category,
     year: parseInt(year, 10),
     films,
     nominees
   });
+
+  revalidateTagNext(NOMINATION_DATA_CACHE_KEY);
+  return result;
 };
 
 export const setNominationsCount = async (
@@ -154,7 +160,7 @@ export const setWinner = async (formData: FormData) => {
     ]);
   }
 
-  //revalidateTag(NOMINATION_CACHE_KEY);
+  revalidateTagNext(NOMINATION_DATA_CACHE_KEY);
 };
 
 export const revalidateTag = async (

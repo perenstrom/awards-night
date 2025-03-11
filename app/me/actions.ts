@@ -70,6 +70,6 @@ export const setBet = async (formData: FormData) => {
     });
   }
 
-  console.log('revalidating');
-  revalidatePath('/me/[year]', 'page');
+  //console.log('revalidating');
+  //revalidatePath('/me/[year]', 'page');
 };
