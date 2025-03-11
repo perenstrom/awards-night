@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { getNominationData } from 'lib/getNominationData';
 import { getLoggedInPlayer } from 'lib/player';
 import {
@@ -69,7 +68,4 @@ export const setBet = async (formData: FormData) => {
       nomination: nominationId
     });
   }
-
-  //console.log('revalidating');
-  //revalidatePath('/me/[year]', 'page');
 };
