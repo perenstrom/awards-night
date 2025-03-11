@@ -1,13 +1,17 @@
 'use server';
 
+import { revalidateTag } from 'next/cache';
 import { getNominationData } from 'lib/getNominationData';
 import { getLoggedInPlayer } from 'lib/player';
 import {
+  BETS_FOR_NOMINATIONS_CACHE_KEY,
+  BETS_FOR_PLAYER_CACHE_KEY,
   createBet,
   deleteBet,
   getBetsForPlayer,
   updateBet
 } from 'services/prisma/bets';
+import { PLAYERS_WITH_BETS_CACHE_KEY } from 'services/prisma/players';
 import { getBetForNomination } from 'utils/nominations';
 
 export const setBet = async (formData: FormData) => {
@@ -68,4 +72,8 @@ export const setBet = async (formData: FormData) => {
       nomination: nominationId
     });
   }
+
+  revalidateTag(PLAYERS_WITH_BETS_CACHE_KEY);
+  revalidateTag(BETS_FOR_PLAYER_CACHE_KEY);
+  revalidateTag(BETS_FOR_NOMINATIONS_CACHE_KEY);
 };

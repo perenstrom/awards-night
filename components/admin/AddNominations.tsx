@@ -1,5 +1,17 @@
-import { getCategories, getFilms, getYears } from 'services/prisma';
+import { unstable_cache } from 'next/cache';
+import {
+  getCategories as prismaGetCategories,
+  getFilms,
+  getYears
+} from 'services/prisma';
+import { CATEGORIES_CACHE_KEY } from 'lib/getNominationData';
 import { AddNominationsForm } from './AddNominationsForm';
+
+const getCategories = unstable_cache(
+  async (categories: string[]) => prismaGetCategories(categories),
+  [],
+  { tags: [CATEGORIES_CACHE_KEY] }
+);
 
 export const AddNominations: React.FC<{}> = async () => {
   const categories = await getCategories([]);

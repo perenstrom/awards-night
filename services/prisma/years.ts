@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nullable } from 'types/utilityTypes';
 import type { BaseYear, Year } from 'types/nominations';
@@ -23,22 +24,27 @@ export const getYear = cache(async (year: number): Promise<Nullable<Year>> => {
   }
 });
 
-export const getYears = cache(async (): Promise<BaseYear[]> => {
-  console.log('Getting years');
-  const result = await prisma.year.findMany({
-    orderBy: [
-      {
-        year: 'desc'
-      }
-    ]
-  });
+export const YEARS_CACHE_KEY = 'YEARS_CACHE_KEY';
+export const getYears = unstable_cache(
+  cache(async (): Promise<BaseYear[]> => {
+    console.log('Getting years');
+    const result = await prisma.year.findMany({
+      orderBy: [
+        {
+          year: 'desc'
+        }
+      ]
+    });
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    return result.map((year) => prismaMap.baseYear.fromPrisma(year));
-  }
-});
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result.map((year) => prismaMap.baseYear.fromPrisma(year));
+    }
+  }),
+  [],
+  { tags: [YEARS_CACHE_KEY] }
+);
 
 export const connectCategoryToYear = async (
   category: string,
