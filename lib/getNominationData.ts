@@ -17,8 +17,6 @@ import {
 import { Nullable } from 'types/utilityTypes';
 import { calculateCompletedCategories } from 'utils/nominations';
 
-export const NOMINATION_DATA_CACHE_KEY = 'NOMINATION_DATA_CACHE_KEY';
-
 export const YEAR_CACHE_KEY = 'YEAR_CACHE_KEY';
 const getYear = unstable_cache(
   async (year: number) => prismaGetYear(year),
@@ -82,7 +80,10 @@ export const getNominationData = cache(
         normalizedCategories[n.category].nominations.push(n.id);
       });
 
-      const films = await getFilms(nominations.map((n) => n.film));
+      const filmsToFetch = nominations
+        .map((n) => n.film)
+        .sort((a, b) => b.localeCompare(a));
+      const films = await getFilms(filmsToFetch);
 
       const normalizedFilms: NormalizedFilms = {};
       films.forEach((f) => (normalizedFilms[f.imdbId] = f));

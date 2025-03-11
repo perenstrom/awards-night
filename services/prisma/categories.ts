@@ -4,6 +4,33 @@ import { prismaMap } from 'services/maps/prismaMap';
 import type { Category, Nomination } from 'types/nominations';
 import prisma from 'lib/prisma';
 
+export const getCategoryWithNominationsForYear = cache(
+  async (
+    category: string,
+    year: number
+  ): Promise<{ category: Category; nominations: Nomination[] } | null> => {
+    console.log('Getting category: ', category);
+    const result = await prisma.category.findUnique({
+      where: {
+        slug: category
+      },
+      include: {
+        nominations: {
+          where: {
+            yearId: year
+          }
+        }
+      }
+    });
+
+    if (result) {
+      return prismaMap.category.withNominations.fromPrisma(result);
+    } else {
+      return null;
+    }
+  }
+);
+
 export const getCategories = cache(
   async (categories: string[]): Promise<Category[]> => {
     console.log('Getting categories');

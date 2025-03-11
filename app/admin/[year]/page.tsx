@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
 import { setWinner } from 'app/admin/actions';
@@ -39,12 +38,7 @@ export default async function Page(props: Props) {
       <Typography variant="h1" color="white">
         Admin page for {year.year}
       </Typography>
-      <Suspense>
-        <NominationList
-          formAction={setWinner}
-          nominationData={nominationData}
-        />
-      </Suspense>
+      <NominationList formAction={setWinner} nominationData={nominationData} />
     </MainContainer>
   );
 }

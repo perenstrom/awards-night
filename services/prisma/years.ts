@@ -12,7 +12,11 @@ export const getYear = cache(async (year: number): Promise<Nullable<Year>> => {
       year: year
     },
     include: {
-      nominations: true,
+      nominations: {
+        orderBy: {
+          id: 'asc'
+        }
+      },
       yearsCategories: true
     }
   });
