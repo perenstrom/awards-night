@@ -5,7 +5,7 @@ import { getNominationData } from 'lib/getNominationData';
 import { MainContainer } from 'components/MainContainer';
 import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
-import { getBetsForPlayer } from 'services/prisma/bets';
+import { getBetsForPlayerCached } from 'services/prisma/bets';
 import { Typography } from 'components/base/Typography';
 import { Button } from 'components/base/Button';
 import { setBet } from '../actions';
@@ -38,7 +38,7 @@ export default async function Page(props: Props) {
 
   const { year, categories } = nominationData;
 
-  const bets = await getBetsForPlayer(player.id, year.year);
+  const bets = await getBetsForPlayerCached(player.id, year.year);
 
   return (
     <MainContainer>

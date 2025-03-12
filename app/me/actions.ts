@@ -1,15 +1,31 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import { getNominationData } from 'lib/getNominationData';
+import { revalidateTag, unstable_cache } from 'next/cache';
 import { getLoggedInPlayer } from 'lib/player';
 import {
+  BETS_FOR_NOMINATIONS_CACHE_KEY,
+  BETS_FOR_PLAYER_CACHE_KEY,
   createBet,
   deleteBet,
   getBetsForPlayer,
   updateBet
 } from 'services/prisma/bets';
-import { getBetForNomination } from 'utils/nominations';
+import { PLAYERS_WITH_BETS_CACHE_KEY } from 'services/prisma/players';
+import { getNomination } from 'services/prisma/nominations';
+import { getCategoryWithNominationsForYear } from 'services/prisma/categories';
+import {
+  CATEGORIES_CACHE_KEY,
+  NOMINATIONS_CACHE_KEY
+} from 'lib/getNominationData';
+
+const getNominationCached = unstable_cache(getNomination, [], {
+  tags: [NOMINATIONS_CACHE_KEY]
+});
+const getCategoryWithNominationsForYearCached = unstable_cache(
+  getCategoryWithNominationsForYear,
+  [],
+  { tags: [NOMINATIONS_CACHE_KEY, CATEGORIES_CACHE_KEY] }
+);
 
 export const setBet = async (formData: FormData) => {
   const player = await getLoggedInPlayer();
@@ -22,46 +38,38 @@ export const setBet = async (formData: FormData) => {
   const year = formData.get('year') as string;
   if (!year) return;
 
-  const nominationData = await getNominationData(parseInt(year, 10));
-  if (!nominationData) return;
+  const nomination = await getNominationCached(nominationId);
+  if (!nomination) return;
 
-  const nomination = nominationData.nominations[nominationId];
-  const category = nominationData.categories[nomination.category];
+  const category = await getCategoryWithNominationsForYearCached(
+    nomination.category,
+    parseInt(year, 10)
+  );
+  if (!category) return;
 
-  const bets = await getBetsForPlayer(player.id, parseInt(year, 10));
+  const allBets = await getBetsForPlayer(player.id, parseInt(year, 10));
 
-  const nominationsWithExistingBets = category.nominations.filter(
-    (nominationId) => bets.map((b) => b.nomination).includes(nominationId)
+  const nominationIdsInCategory = category.nominations.map((n) => n.id);
+  const betsInCurrentCategory = allBets.filter((b) =>
+    nominationIdsInCategory.includes(b.nomination)
   );
 
-  if (nominationsWithExistingBets.length > 1) {
-    throw new Error('Multiple bets for one category');
+  if (betsInCurrentCategory.length > 1) {
+    throw new Error('Multiple bets in one category');
   }
 
-  if (nominationsWithExistingBets[0] === nominationId) {
+  const currentBet =
+    betsInCurrentCategory.length === 1 ? betsInCurrentCategory[0] : null;
+
+  if (currentBet && currentBet.nomination === nominationId) {
     // Clicked nomination already predicted as winner
     // Removing bet
-    const existingBet = getBetForNomination(
-      bets,
-      nominationsWithExistingBets[0]
-    );
-    if (!existingBet) {
-      throw new Error('No bet found');
-    }
-
-    await deleteBet(existingBet.id);
-  } else if (nominationsWithExistingBets.length > 0) {
+    await deleteBet(currentBet.id);
+  } else if (currentBet && currentBet.nomination !== nominationId) {
     // Clicked nomination when another already predicted as winner
     // Updating bet in category
-    const existingBet = getBetForNomination(
-      bets,
-      nominationsWithExistingBets[0]
-    );
-    if (!existingBet) {
-      throw new Error('No bet found');
-    }
 
-    await updateBet(existingBet.id, nominationId);
+    await updateBet(currentBet.id, nominationId);
   } else {
     // First bet in category
     await createBet({
@@ -70,6 +78,7 @@ export const setBet = async (formData: FormData) => {
     });
   }
 
-  console.log('revalidating');
-  revalidatePath('/me/[year]', 'page');
+  revalidateTag(PLAYERS_WITH_BETS_CACHE_KEY);
+  revalidateTag(BETS_FOR_PLAYER_CACHE_KEY);
+  revalidateTag(BETS_FOR_NOMINATIONS_CACHE_KEY);
 };

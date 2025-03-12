@@ -1,18 +1,22 @@
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nullable } from 'types/utilityTypes';
 import type { BaseYear, Year } from 'types/nominations';
-import { prismaContext } from 'lib/prisma';
-import type { Context } from './prisma.types';
+import prisma from 'lib/prisma';
 
 export const getYear = cache(async (year: number): Promise<Nullable<Year>> => {
   console.log(`Finding year ${year}`);
-  const result = await prismaContext.prisma.year.findUnique({
+  const result = await prisma.year.findUnique({
     where: {
       year: year
     },
     include: {
-      nominations: true,
+      nominations: {
+        orderBy: {
+          id: 'asc'
+        }
+      },
       yearsCategories: true
     }
   });
@@ -24,30 +28,34 @@ export const getYear = cache(async (year: number): Promise<Nullable<Year>> => {
   }
 });
 
-export const getYears = cache(async (): Promise<BaseYear[]> => {
-  console.log('Getting years');
-  const result = await prismaContext.prisma.year.findMany({
-    orderBy: [
-      {
-        year: 'desc'
-      }
-    ]
-  });
+export const YEARS_CACHE_KEY = 'YEARS_CACHE_KEY';
+export const getYears = unstable_cache(
+  cache(async (): Promise<BaseYear[]> => {
+    console.log('Getting years');
+    const result = await prisma.year.findMany({
+      orderBy: [
+        {
+          year: 'desc'
+        }
+      ]
+    });
 
-  if (result.length === 0) {
-    return [];
-  } else {
-    return result.map((year) => prismaMap.baseYear.fromPrisma(year));
-  }
-});
+    if (result.length === 0) {
+      return [];
+    } else {
+      return result.map((year) => prismaMap.baseYear.fromPrisma(year));
+    }
+  }),
+  [],
+  { tags: [YEARS_CACHE_KEY] }
+);
 
 export const connectCategoryToYear = async (
   category: string,
-  year: number,
-  ctx: Context
+  year: number
 ): Promise<boolean> => {
   console.log(`Connecting category ${category} to year ${year}`);
-  const result = await ctx.prisma.yearToCategory.create({
+  const result = await prisma.yearToCategory.create({
     data: {
       categories: {
         connect: {

@@ -3,8 +3,9 @@ import { Metadata } from 'next';
 import { Auth0Provider } from '@auth0/nextjs-auth0';
 import { auth0 } from 'lib/auth0';
 
+const title = 'Awards Night – Social prediction for the Academy Awards';
 export const metadata: Metadata = {
-  title: 'Awards Night – Social prediction for the Academy Awards'
+  title: process.env.NODE_ENV !== 'production' ? `DEV: ${title}` : title
 };
 
 export default async function RootLayout({

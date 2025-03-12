@@ -1,19 +1,19 @@
 import { Prisma } from '@prisma/client';
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';
 import { Bet } from 'types/nominations';
 import { Nullable, PartialBy } from 'types/utilityTypes';
-import { prismaContext } from 'lib/prisma';
+import prisma from 'lib/prisma';
 import { Context } from './prisma.types';
 
-export const BETS_TAG = 'bets';
 export const createBet = async (
   bet: PartialBy<Bet, 'id'>
 ): Promise<Nullable<Bet>> => {
   console.log('Creating bet');
   const formattedBet = prismaMap.bet.toPrisma(bet);
 
-  const result = await prismaContext.prisma.bet.create({
+  const result = await prisma.bet.create({
     data: formattedBet
   });
 
@@ -58,11 +58,12 @@ export const getBet = cache(
   }
 );
 
-export const getBetsForNominations = cache(
-  async (nominations: number[], ctx: Context): Promise<Bet[]> => {
+export const BETS_FOR_NOMINATIONS_CACHE_KEY = 'BETS_FOR_NOMINATIONS_CACHE_KEY';
+export const getBetsForNominations = unstable_cache(
+  cache(async (nominations: number[]): Promise<Bet[]> => {
     console.log('Finding bets for nominations');
 
-    const result = await ctx.prisma.bet.findMany({
+    const result = await prisma.bet.findMany({
       where: {
         nominationId: { in: nominations }
       }
@@ -73,7 +74,9 @@ export const getBetsForNominations = cache(
     } else {
       return result.map((bet) => prismaMap.bet.fromPrisma(bet));
     }
-  }
+  }),
+  [],
+  { tags: [BETS_FOR_NOMINATIONS_CACHE_KEY] }
 );
 
 export const getBetsForPlayer = cache(
@@ -83,7 +86,7 @@ export const getBetsForPlayer = cache(
     );
 
     const result = year
-      ? await prismaContext.prisma.bet.findMany({
+      ? await prisma.bet.findMany({
           where: {
             playerId: playerId,
             nomination: {
@@ -91,19 +94,11 @@ export const getBetsForPlayer = cache(
             }
           }
         })
-      : await prismaContext.prisma.bet.findMany({
+      : await prisma.bet.findMany({
           where: {
             playerId: playerId
           }
         });
-
-    /*     console.log(
-      'prisma returned the following bets result for player id: ' +
-        playerId +
-        ' and year: ' +
-        year
-    );
-    console.log(JSON.stringify(result, null, 2)); */
 
     if (!result || result.length === 0) {
       return [];
@@ -112,6 +107,10 @@ export const getBetsForPlayer = cache(
     }
   }
 );
+export const BETS_FOR_PLAYER_CACHE_KEY = 'BETS_FOR_PLAYER_CACHE_KEY';
+export const getBetsForPlayerCached = unstable_cache(getBetsForPlayer, [], {
+  tags: [BETS_FOR_PLAYER_CACHE_KEY]
+});
 
 export const updateBet = async (
   betId: number,
@@ -119,7 +118,7 @@ export const updateBet = async (
 ): Promise<Bet> => {
   console.log(`Updating bet with id ${betId} to nomination ${nominationId}`);
   try {
-    const updatedBet = await prismaContext.prisma.bet.update({
+    const updatedBet = await prisma.bet.update({
       where: {
         id: betId
       },
@@ -144,7 +143,7 @@ export const updateBet = async (
 export const deleteBet = async (betId: number): Promise<boolean> => {
   console.log(`Deleting bet with id ${betId}`);
   try {
-    const deletedBet = await prismaContext.prisma.bet.delete({
+    const deletedBet = await prisma.bet.delete({
       where: {
         id: betId
       }

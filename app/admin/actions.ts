@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidateTag as nextRevalidateTag } from 'next/cache';
 import { isAdmin } from 'lib/authorization';
 import { saveFilm, saveFilmByTmdbId } from 'lib/saveFilm';
 import { saveNominations } from 'lib/saveNominations';
@@ -9,11 +9,15 @@ import { TmdbFilmResult } from 'types/nominations';
 import { Maybe, StatusMessage } from 'types/utilityTypes';
 import { ERROR_CODES, getError } from 'utils/errors';
 import { createError, createSuccess } from 'utils/maybeHelper';
-import { getNominationData } from 'lib/getNominationData';
 import {
-  NOMINATION_CACHE_KEY,
-  updateNomination
-} from 'services/prisma/nominations';
+  CATEGORIES_CACHE_KEY,
+  FILMS_CACHE_KEY,
+  NOMINATIONS_CACHE_KEY,
+  YEAR_CACHE_KEY
+} from 'lib/getNominationData';
+import { getNomination, updateNomination } from 'services/prisma/nominations';
+import { getStatusMessage } from 'utils/statusMessages';
+import { getCategoryWithNominationsForYear } from 'services/prisma/categories';
 
 export const createFilm = async (
   previousState: StatusMessage | null | undefined,
@@ -25,6 +29,7 @@ export const createFilm = async (
   if (!imdb) return;
 
   const result = await saveFilm(imdb);
+  nextRevalidateTag(FILMS_CACHE_KEY);
 
   return result;
 };
@@ -39,6 +44,7 @@ export const createFilmByTmdb = async (
   if (!tmdbId) return;
 
   const result = await saveFilmByTmdbId(tmdbId);
+  nextRevalidateTag(FILMS_CACHE_KEY);
 
   return result;
 };
@@ -73,12 +79,17 @@ export const createNominations = async (
 
   if (!category || !year || !films || !nominees) return;
 
-  return await saveNominations({
+  const result = await saveNominations({
     category,
     year: parseInt(year, 10),
     films,
     nominees
   });
+
+  nextRevalidateTag(NOMINATIONS_CACHE_KEY);
+  nextRevalidateTag(YEAR_CACHE_KEY);
+  nextRevalidateTag(CATEGORIES_CACHE_KEY);
+  return result;
 };
 
 export const setNominationsCount = async (
@@ -103,14 +114,17 @@ export const setWinner = async (formData: FormData) => {
   const year = formData.get('year') as string;
   if (!year) return;
 
-  const nominationData = await getNominationData(parseInt(year, 10));
-  if (!nominationData) return;
+  const nomination = await getNomination(nominationId);
+  if (!nomination) return;
 
-  const nomination = nominationData.nominations[nominationId];
-  const category = nominationData.categories[nomination.category];
+  const category = await getCategoryWithNominationsForYear(
+    nomination.category,
+    nomination.year
+  );
+  if (!category) return;
 
   const winningNominationsInCategory = category.nominations.filter(
-    (n) => nominationData.nominations[n].won
+    (n) => n.won
   );
 
   if (winningNominationsInCategory.length > 1) {
@@ -118,23 +132,28 @@ export const setWinner = async (formData: FormData) => {
   }
 
   const relatedNominations = category.nominations.filter(
-    (n) => n !== nominationId && n !== winningNominationsInCategory[0]
+    (n) => n.id !== nominationId
   );
 
-  if (winningNominationsInCategory[0] === nominationId) {
+  if (
+    winningNominationsInCategory.length === 1 &&
+    winningNominationsInCategory[0].id === nominationId
+  ) {
     console.log('Clicked nomination already marked as winner');
     // Clicked nomination already marked as winner
     // Remove win
     await Promise.all([
       updateNomination(nominationId, { won: false, decided: false }),
-      ...relatedNominations.map((n) => updateNomination(n, { decided: false }))
+      ...relatedNominations.map((n) =>
+        updateNomination(n.id, { decided: false })
+      )
     ]);
-  } else if (winningNominationsInCategory[0]) {
+  } else if (winningNominationsInCategory.length === 1) {
     console.log('Clicked nomination when another already marked as winner');
     // Clicked nomination when another already marked as winner
     // Update both old and new
     await Promise.all([
-      updateNomination(winningNominationsInCategory[0], {
+      updateNomination(winningNominationsInCategory[0].id, {
         won: false
       }),
       updateNomination(nominationId, {
@@ -150,11 +169,27 @@ export const setWinner = async (formData: FormData) => {
         won: true,
         decided: true
       }),
-      ...relatedNominations.map((nominationId) =>
-        updateNomination(nominationId, { decided: true })
+      ...relatedNominations.map((n) =>
+        updateNomination(n.id, { decided: true })
       )
     ]);
   }
 
-  revalidateTag(NOMINATION_CACHE_KEY);
+  nextRevalidateTag(NOMINATIONS_CACHE_KEY);
+  nextRevalidateTag(YEAR_CACHE_KEY);
+  nextRevalidateTag(CATEGORIES_CACHE_KEY);
+};
+
+export const revalidateTag = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const tag = formData.get('tag') as string;
+  if (!tag) return;
+
+  nextRevalidateTag(tag);
+
+  return getStatusMessage('info', `Tag ${tag} revalidated.`);
 };

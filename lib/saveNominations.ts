@@ -7,7 +7,6 @@ import { getGenericErrorMessage } from 'utils/statusMessages';
 
 import type { Nomination } from 'types/nominations';
 import type { PartialBy, StatusMessage } from 'types/utilityTypes';
-import { prismaContext } from './prisma';
 
 const getData = async (data: { category: string; year: number }) => {
   const { category, year } = data;
@@ -20,8 +19,7 @@ const getData = async (data: { category: string; year: number }) => {
 
     const fullCategoryResult = await getCategoriesWithNominationsForYear(
       [category],
-      year,
-      prismaContext
+      year
     );
     const fullCategory = fullCategoryResult[0].category;
     const existingNominations = fullCategoryResult[0].nominations;
@@ -84,11 +82,9 @@ export const saveNominations = async (data: {
 
   const categorySavedOnYear = fullYear.categories.includes(fullCategory.slug);
   if (!categorySavedOnYear) {
-    await connectCategoryToYear(fullCategory.slug, year, prismaContext).catch(
-      () => {
-        getGenericErrorMessage();
-      }
-    );
+    await connectCategoryToYear(fullCategory.slug, year).catch(() => {
+      getGenericErrorMessage();
+    });
   }
 
   let saveNominationsResult = false;
@@ -104,10 +100,7 @@ export const saveNominations = async (data: {
       })
     );
 
-    saveNominationsResult = await createNominations(
-      nominationsToSave,
-      prismaContext
-    );
+    saveNominationsResult = await createNominations(nominationsToSave);
   } catch (error) {
     console.log(error);
     return getGenericErrorMessage();

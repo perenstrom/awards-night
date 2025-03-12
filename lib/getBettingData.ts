@@ -1,5 +1,8 @@
 import { cache } from 'react';
-import { getBetsForNominations, getBetsForPlayer } from 'services/prisma/bets';
+import {
+  getBetsForNominations,
+  getBetsForPlayerCached
+} from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
 import {
   Bet,
@@ -9,7 +12,6 @@ import {
   Player
 } from 'types/nominations';
 import { addPlayersWinnings } from 'utils/nominations';
-import { prismaContext } from './prisma';
 
 const calculateNominationBets = (bets: Bet[]) => {
   let nominationBets: NominationBets = {};
@@ -47,11 +49,8 @@ export const getBettingData = cache(
   ): Promise<BettingData> => {
     const { bettingOpen } = nominationData.year;
 
-    const players = await getPlayersWithBetsForGroup(group, prismaContext);
-    const bets = await getBetsForNominations(
-      nominationData.year.nominations,
-      prismaContext
-    );
+    const players = await getPlayersWithBetsForGroup(group);
+    const bets = await getBetsForNominations(nominationData.year.nominations);
 
     const betIds = bets.map((b) => b.id);
     players.forEach((player) => {
@@ -94,7 +93,7 @@ export const getBettingDataForPlayer = cache(
     playerId: number,
     nominationData: NominationData[]
   ): Promise<{ bets: Bet[]; yearBets: { [key: number]: number[] } }> => {
-    const bets = await getBetsForPlayer(playerId);
+    const bets = await getBetsForPlayerCached(playerId);
     if (!bets) {
       return {
         bets: [],

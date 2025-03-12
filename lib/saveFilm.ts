@@ -6,7 +6,6 @@ import {
 } from 'services/tmdb';
 import { getGenericErrorMessage, getStatusMessage } from 'utils/statusMessages';
 import { createFilm, getFilm } from 'services/prisma/films';
-import { prismaContext } from './prisma';
 
 export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
   let film: Nullable<Film>;
@@ -39,7 +38,7 @@ export const saveFilm = async (imdbId: string): Promise<StatusMessage> => {
 
     let savedFilm = null;
     try {
-      savedFilm = await createFilm(filmDetails, prismaContext);
+      savedFilm = await createFilm(filmDetails);
     } catch (error) {
       // Error in prisma call
       console.error(error);
@@ -95,7 +94,7 @@ export const saveFilmByTmdbId = async (
     // Film is not already in the system
     let savedFilm = null;
     try {
-      savedFilm = await createFilm(filmDetails, prismaContext);
+      savedFilm = await createFilm(filmDetails);
     } catch (error) {
       // Error in prisma call
       console.error(error);
