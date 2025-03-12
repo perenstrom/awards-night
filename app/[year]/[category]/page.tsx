@@ -59,6 +59,7 @@ export default async function Page(props: Props) {
   const { players, bets, nominationBets } = bettingData;
   const normalizedPlayers = normalizePlayers(players);
   const normalizedBets = normalizeBets(bets);
+  const playersSortedByCorrect = players.sort((a, b) => b.correct - a.correct);
 
   const prepareBets = (nominationId: number): BetIcon[] => {
     if (!normalizedPlayers || !normalizedBets || !nominationBets) {
