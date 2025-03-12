@@ -1,5 +1,8 @@
 import { cache } from 'react';
-import { getBetsForNominations, getBetsForPlayer } from 'services/prisma/bets';
+import {
+  getBetsForNominations,
+  getBetsForPlayerCached
+} from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
 import {
   Bet,
@@ -90,7 +93,7 @@ export const getBettingDataForPlayer = cache(
     playerId: number,
     nominationData: NominationData[]
   ): Promise<{ bets: Bet[]; yearBets: { [key: number]: number[] } }> => {
-    const bets = await getBetsForPlayer(playerId);
+    const bets = await getBetsForPlayerCached(playerId);
     if (!bets) {
       return {
         bets: [],

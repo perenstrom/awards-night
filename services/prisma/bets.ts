@@ -79,9 +79,8 @@ export const getBetsForNominations = unstable_cache(
   { tags: [BETS_FOR_NOMINATIONS_CACHE_KEY] }
 );
 
-export const BETS_FOR_PLAYER_CACHE_KEY = 'BETS_FOR_PLAYER_CACHE_KEY';
-export const getBetsForPlayer = unstable_cache(
-  cache(async (playerId: number, year?: number): Promise<Bet[]> => {
+export const getBetsForPlayer = cache(
+  async (playerId: number, year?: number): Promise<Bet[]> => {
     console.log(
       'Finding bets for player id: ' + playerId + ' and year: ' + year
     );
@@ -106,10 +105,12 @@ export const getBetsForPlayer = unstable_cache(
     } else {
       return result.map((bet) => prismaMap.bet.fromPrisma(bet));
     }
-  }),
-  [],
-  { tags: [BETS_FOR_PLAYER_CACHE_KEY] }
+  }
 );
+export const BETS_FOR_PLAYER_CACHE_KEY = 'BETS_FOR_PLAYER_CACHE_KEY';
+export const getBetsForPlayerCached = unstable_cache(getBetsForPlayer, [], {
+  tags: [BETS_FOR_PLAYER_CACHE_KEY]
+});
 
 export const updateBet = async (
   betId: number,
