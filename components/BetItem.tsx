@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { memo } from 'react';
 import { FilmPoster } from './FilmPoster';
 import styles from './BetItem.module.scss';
-import { PredictionCheckbox } from './dashboard/PredictionCheckbox';
+import { CheckboxWrapper } from './dashboard/CheckboxWrapper';
 
 interface Props {
   nominationId: number;
@@ -38,7 +38,7 @@ export const BetItemComponent: React.FC<Props> = ({
         })}
         key={nominationId}
       >
-        <PredictionCheckbox selected={activeBet} />
+        <CheckboxWrapper selected={activeBet} nominationId={nominationId} />
         <FilmPoster poster={poster} />
         <div className={styles.innerWrapper}>
           <h3 className={styles.title}>{filmName}</h3>

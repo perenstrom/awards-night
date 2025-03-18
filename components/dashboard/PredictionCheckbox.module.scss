@@ -9,6 +9,20 @@
   color: var(--color-text-primary);
 }
 
+.rotate {
+  animation: rotate 1.2s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @container (width < 38rem) {
   .icon {
     width: 1.3rem;
