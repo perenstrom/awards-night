@@ -12,39 +12,37 @@ export const NominationList: React.FC<{
 }> = async ({ formAction, nominationData, playerBets }) => {
   const { year, categories, nominations, films } = nominationData;
 
-  return (
-    <form action={formAction}>
+  return (Object.values(categories) as Category[]).map((category) => (
+    <form action={formAction} key={category.slug}>
       <input type="hidden" name="year" value={year.year} />
-      {(Object.values(categories) as Category[]).map((category) => (
-        <div className={styles.categoryWrapper} key={category.slug}>
-          <Typography variant="h2" color="white">
-            {category.name}
-          </Typography>
-          <ul className={styles.listWrapper}>
-            {category.nominations.map((nominationId) => {
-              const nomination = nominations[nominationId];
+      <div className={styles.categoryWrapper}>
+        <Typography variant="h2" color="white">
+          {category.name}
+        </Typography>
+        <ul className={styles.listWrapper}>
+          {category.nominations.map((nominationId) => {
+            const nomination = nominations[nominationId];
 
-              return (
-                <BetItem
-                  key={nomination.id}
-                  nominationId={nomination.id}
-                  won={nomination.won}
-                  decided={nomination.decided}
-                  filmName={films[nomination.film].name}
-                  poster={films[nomination.film].poster}
-                  nominee={nomination.nominee}
-                  activeBet={
-                    playerBets
-                      ? !!getBetForNomination(playerBets, nomination.id)
-                      : false
-                  }
-                  bettingOpen={year.bettingOpen}
-                />
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+            return (
+              <BetItem
+                key={nomination.id}
+                nominationId={nomination.id}
+                won={nomination.won}
+                decided={nomination.decided}
+                filmName={films[nomination.film].name}
+                poster={films[nomination.film].poster}
+                nominee={nomination.nominee}
+                activeBet={
+                  playerBets
+                    ? !!getBetForNomination(playerBets, nomination.id)
+                    : false
+                }
+                bettingOpen={year.bettingOpen}
+              />
+            );
+          })}
+        </ul>
+      </div>
     </form>
-  );
+  ));
 };
