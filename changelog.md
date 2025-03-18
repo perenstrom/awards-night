@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.0
+
+- Add data cache to basically everything
+- Add loading state to prediction checkbox
+
 ## 4.2.1
 
 - Update styles for /me
