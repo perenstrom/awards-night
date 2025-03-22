@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.1
+
+- Prevent update of predictions when betting is closed
+
 ## 4.3.0
 
 - Add data cache to basically everything
