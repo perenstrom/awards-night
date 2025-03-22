@@ -30,6 +30,7 @@ export const BetItemComponent: React.FC<Props> = ({
       type="submit"
       name="nominationId"
       value={nominationId}
+      disabled={!bettingOpen}
     >
       <li
         className={clsx(styles.wrapper, {
