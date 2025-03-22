@@ -15,12 +15,18 @@ interface Props {
   bettingOpen?: boolean;
 }
 
+const getState = (won: boolean, decided: boolean, activeBet: boolean) => {
+  if (!decided || !activeBet) return 'neutral';
+  return won && activeBet ? 'correct' : 'incorrect';
+};
+
 export const BetItemComponent: React.FC<Props> = ({
   nominationId,
   won,
   filmName,
   poster,
   nominee,
+  decided,
   activeBet = false,
   bettingOpen = true
 }) => {
@@ -39,7 +45,11 @@ export const BetItemComponent: React.FC<Props> = ({
         })}
         key={nominationId}
       >
-        <CheckboxWrapper selected={activeBet} nominationId={nominationId} />
+        <CheckboxWrapper
+          selected={activeBet}
+          nominationId={nominationId}
+          state={getState(won, decided, activeBet)}
+        />
         <FilmPoster poster={poster} />
         <div className={styles.innerWrapper}>
           <h3 className={styles.title}>{filmName}</h3>

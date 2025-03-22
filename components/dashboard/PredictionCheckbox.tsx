@@ -4,12 +4,21 @@ import styles from './PredictionCheckbox.module.scss';
 interface Props {
   selected: boolean;
   loading: boolean;
+  state: 'neutral' | 'correct' | 'incorrect';
 }
 
-export const PredictionCheckbox = ({ selected, loading }: Props) => {
+export const PredictionCheckbox = ({
+  selected,
+  loading,
+  state = 'neutral'
+}: Props) => {
   return (
     <svg
-      className={clsx(styles.icon, { [styles.selected]: selected })}
+      className={clsx(styles.icon, {
+        [styles.selected]: selected,
+        [styles.correct]: state === 'correct',
+        [styles.incorrect]: state === 'incorrect'
+      })}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
     >
