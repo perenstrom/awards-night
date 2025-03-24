@@ -5,6 +5,7 @@ export interface BaseYear {
   name: string;
   date: string;
   bettingOpen: boolean;
+  awardsFinished: boolean;
 }
 
 export interface Year extends BaseYear {

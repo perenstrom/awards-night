@@ -29,7 +29,8 @@ export const prismaMap = {
       year: yearResponse.year,
       name: yearResponse.name,
       date: yearResponse.date.toISOString(),
-      bettingOpen: yearResponse.bettingOpen
+      bettingOpen: yearResponse.bettingOpen,
+      awardsFinished: yearResponse.awardsFinished
     })
   },
   year: {
@@ -38,6 +39,7 @@ export const prismaMap = {
       name: yearResponse.name,
       date: yearResponse.date.toISOString(),
       bettingOpen: yearResponse.bettingOpen,
+      awardsFinished: yearResponse.awardsFinished,
       categories: yearResponse.yearsCategories.map(
         (yearCat) => yearCat.categoryId
       ),
