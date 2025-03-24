@@ -13,6 +13,7 @@
     "tsc": "tsc --noemit",
     "prisma:generate": "dotenv -e .env.local -- npx prisma generate",
     "prisma:migrate:dev": "dotenv -e .env.local -- npx prisma migrate dev",
+    "prisma:migrate:deploy": "dotenv -e .env.local -- npx prisma migrate deploy",
     "prisma:migrate:reset": "dotenv -e .env.local -- npx prisma migrate reset",
     "prisma:seed:local": "dotenv -e .env.local -- npx prisma db seed",
     "prisma:pull:local": "dotenv -e .env.local -- npx prisma db pull",

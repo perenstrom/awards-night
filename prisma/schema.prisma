@@ -76,6 +76,7 @@ model Year {
   name            String
   date            DateTime         @db.Date
   bettingOpen     Boolean          @default(true) @map("betting_open")
+  awardsFinished  Boolean          @default(false) @map("awards_finished")
   nominations     Nomination[]
   yearsCategories YearToCategory[]
 
