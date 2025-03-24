@@ -6,9 +6,10 @@ import { revalidatePath } from 'app/[year]/[category]/actions';
 
 export const NominationsPoller = (props: {
   bettingOpen: boolean;
+  awardsFinished: boolean;
   children: React.ReactNode;
 }) => {
-  const { children, bettingOpen } = props;
+  const { children, bettingOpen, awardsFinished } = props;
   const pathName = usePathname();
 
   const refreshNominations = useCallback(async () => {
@@ -16,12 +17,12 @@ export const NominationsPoller = (props: {
   }, [pathName]);
 
   useEffect(() => {
-    if (!bettingOpen) {
+    if (!bettingOpen && !awardsFinished) {
       const interval = setInterval(refreshNominations, 10000);
 
       return () => clearInterval(interval);
     }
-  }, [bettingOpen, refreshNominations]);
+  }, [awardsFinished, bettingOpen, refreshNominations]);
 
   return <>{children}</>;
 };

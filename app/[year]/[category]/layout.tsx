@@ -74,7 +74,10 @@ export default async function CategoryLayout(
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <NominationsPoller bettingOpen={year.bettingOpen}>
+    <NominationsPoller
+      bettingOpen={year.bettingOpen}
+      awardsFinished={year.awardsFinished}
+    >
       <NominationsWrapper>
         <div className={styles.sidebar}>
           {!!players.length && (
