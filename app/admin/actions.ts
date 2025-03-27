@@ -18,7 +18,10 @@ import {
 import { getNomination, updateNomination } from 'services/prisma/nominations';
 import { getStatusMessage } from 'utils/statusMessages';
 import { getCategoryWithNominationsForYear } from 'services/prisma/categories';
-import { closeYear as closeYearPrisma } from 'services/prisma/years';
+import {
+  closeYear as closeYearPrisma,
+  closeBetting as closeBettingPrisma
+} from 'services/prisma/years';
 
 export const createFilm = async (
   previousState: StatusMessage | null | undefined,
@@ -189,6 +192,18 @@ export const closeYear = async (formData: FormData) => {
   const year = parseInt(rawYear, 10);
 
   await closeYearPrisma(year);
+
+  nextRevalidateTag(YEAR_CACHE_KEY);
+};
+
+export const closeBetting = async (formData: FormData) => {
+  if (!isAdmin()) return;
+
+  const rawYear = formData.get('year') as string;
+  if (!rawYear) return;
+  const year = parseInt(rawYear, 10);
+
+  await closeBettingPrisma(year);
 
   nextRevalidateTag(YEAR_CACHE_KEY);
 };

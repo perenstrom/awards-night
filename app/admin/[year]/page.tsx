@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
-import { closeYear, setWinner } from 'app/admin/actions';
+import { closeBetting, closeYear, setWinner } from 'app/admin/actions';
 import { NominationList } from 'components/NominationList';
 import { isAdmin } from 'lib/authorization';
 import { Typography } from 'components/base/Typography';
@@ -33,14 +33,24 @@ export default async function Page(props: Props) {
 
   const nominationData = await getNominationData(parseInt(yearParam, 10));
   if (!nominationData) redirect('/admin');
-  const { year } = nominationData;
+  const { year, meta, categories: normalizedCategories } = nominationData;
+
+  const completedCategoriesCount = meta.completedCategories;
+  const categories = Object.values(normalizedCategories);
+  const allCategoriesDecided = completedCategoriesCount === categories.length;
 
   return (
     <MainContainer>
       <Typography variant="h1" color="white">
         Admin page for {year.year}
       </Typography>
-      {!year.awardsFinished && (
+      {year.bettingOpen && (
+        <form action={closeBetting} className={styles.closeWrapper}>
+          <input type="hidden" name="year" value={year.year} />
+          <Button type="submit">Close betting</Button>
+        </form>
+      )}
+      {!year.bettingOpen && !year.awardsFinished && allCategoriesDecided && (
         <form action={closeYear} className={styles.closeWrapper}>
           <input type="hidden" name="year" value={year.year} />
           <Button type="submit">Close year</Button>

@@ -95,3 +95,21 @@ export const closeYear = async (year: number): Promise<boolean> => {
     return false;
   }
 };
+
+export const closeBetting = async (year: number): Promise<boolean> => {
+  console.log(`Closing betting ${year}`);
+  const result = await prisma.year.update({
+    where: {
+      year: year
+    },
+    data: {
+      bettingOpen: false
+    }
+  });
+
+  if (result) {
+    return true;
+  } else {
+    return false;
+  }
+};
