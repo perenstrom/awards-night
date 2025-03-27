@@ -46,7 +46,11 @@ export default async function Page(props: Props) {
           <Button type="submit">Close year</Button>
         </form>
       )}
-      <NominationList formAction={setWinner} nominationData={nominationData} />
+      <NominationList
+        formAction={setWinner}
+        nominationData={nominationData}
+        actionDisabled={year.bettingOpen || year.awardsFinished}
+      />
     </MainContainer>
   );
 }
