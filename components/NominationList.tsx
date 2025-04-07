@@ -9,7 +9,8 @@ export const NominationList: React.FC<{
   formAction: FormAction;
   nominationData: NominationData;
   playerBets?: Bet[];
-}> = async ({ formAction, nominationData, playerBets }) => {
+  actionDisabled: boolean;
+}> = async ({ formAction, nominationData, playerBets, actionDisabled }) => {
   const { year, categories, nominations, films } = nominationData;
 
   return (Object.values(categories) as Category[]).map((category) => (
@@ -37,7 +38,7 @@ export const NominationList: React.FC<{
                     ? !!getBetForNomination(playerBets, nomination.id)
                     : false
                 }
-                bettingOpen={year.bettingOpen}
+                disabled={actionDisabled}
               />
             );
           })}

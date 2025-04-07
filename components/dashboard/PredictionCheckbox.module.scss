@@ -9,6 +9,14 @@
   color: var(--color-text-primary);
 }
 
+.correct {
+  color: var(--color-active-green);
+}
+
+.incorrect {
+  color: var(--color-incorrect-red);
+}
+
 .rotate {
   animation: rotate 1.2s linear infinite;
   transform-origin: center;

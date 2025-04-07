@@ -66,6 +66,7 @@ export default async function Page(props: Props) {
         formAction={setBet}
         nominationData={nominationData}
         playerBets={bets}
+        actionDisabled={!year.bettingOpen}
       />
     </MainContainer>
   );

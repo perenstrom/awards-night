@@ -12,8 +12,13 @@ interface Props {
   poster: string;
   nominee: string;
   activeBet?: boolean;
-  bettingOpen?: boolean;
+  disabled?: boolean;
 }
+
+const getState = (won: boolean, decided: boolean, activeBet: boolean) => {
+  if (!decided || !activeBet) return 'neutral';
+  return won && activeBet ? 'correct' : 'incorrect';
+};
 
 export const BetItemComponent: React.FC<Props> = ({
   nominationId,
@@ -21,8 +26,9 @@ export const BetItemComponent: React.FC<Props> = ({
   filmName,
   poster,
   nominee,
+  decided,
   activeBet = false,
-  bettingOpen = true
+  disabled = false
 }) => {
   return (
     <button
@@ -30,16 +36,20 @@ export const BetItemComponent: React.FC<Props> = ({
       type="submit"
       name="nominationId"
       value={nominationId}
-      disabled={!bettingOpen}
+      disabled={disabled}
     >
       <li
         className={clsx(styles.wrapper, {
           [styles.winner]: won,
-          [styles.pointer]: bettingOpen
+          [styles.pointer]: !disabled
         })}
         key={nominationId}
       >
-        <CheckboxWrapper selected={activeBet} nominationId={nominationId} />
+        <CheckboxWrapper
+          selected={activeBet}
+          nominationId={nominationId}
+          state={getState(won, decided, activeBet)}
+        />
         <FilmPoster poster={poster} />
         <div className={styles.innerWrapper}>
           <h3 className={styles.title}>{filmName}</h3>
