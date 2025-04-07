@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.4.0
+
+- Add correct/incorrect colors to prediction list
+- Add admin functionality to close betting
+- Add admin functionality to close year
+- Stop polling for updates on presentation view if year is closed
+
 ## 4.3.1
 
 - Prevent update of predictions when betting is closed
