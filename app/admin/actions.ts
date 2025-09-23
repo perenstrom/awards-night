@@ -65,7 +65,7 @@ export const searchFilms = async (
   try {
     const result = await searchFilmsTmdb(query);
     return createSuccess(result);
-  } catch (error) {
+  } catch {
     return createError(getError(ERROR_CODES.TMDB_SEARCH_ERROR));
   }
 };

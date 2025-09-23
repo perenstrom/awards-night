@@ -12,8 +12,8 @@ export const YearCardChevron = ({ year }: Props) => {
   const isCurrentRoute = pathname.includes(year.toString());
 
   const className = isCurrentRoute
-    ? 'fill-[--color-primary-weak-invisible]'
-    : 'fill-[--color-primary-weak]';
+    ? 'fill-primary-weak-invisible'
+    : 'fill-primary-weak';
 
   return (
     <svg

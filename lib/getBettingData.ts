@@ -14,7 +14,7 @@ import {
 import { addPlayersWinnings } from 'utils/nominations';
 
 const calculateNominationBets = (bets: Bet[]) => {
-  let nominationBets: NominationBets = {};
+  const nominationBets: NominationBets = {};
   bets.forEach((bet) => {
     if (nominationBets[bet.nomination]) {
       nominationBets[bet.nomination].push(bet.id);
@@ -101,7 +101,7 @@ export const getBettingDataForPlayer = cache(
       };
     }
 
-    let yearBets: { [key: number]: number[] } = {};
+    const yearBets: { [key: number]: number[] } = {};
     nominationData.forEach((yearData) => {
       const filteredBets = bets.filter((bet) =>
         yearData.year.nominations.includes(bet.nomination)

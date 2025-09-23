@@ -38,7 +38,7 @@ const FormContent: React.FC<{
   );
 };
 
-export const AddFilm: React.FC<{}> = () => {
+export const AddFilm = () => {
   const [statusMessage, createFilmAction] = useActionState(createFilm, null);
   const imdbIdInputElement = useRef<HTMLInputElement>(null);
 

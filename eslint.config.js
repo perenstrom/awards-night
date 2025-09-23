@@ -2,6 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
+import { configs, parser } from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,15 +18,16 @@ const config = [
     'plugin:import/recommended',
     'plugin:import/typescript'
   ),
+  ...configs.recommended,
   {
+    files: ['**/*.ts', '**/*.tsx'],
     plugins: {
-      '@typescript-eslint': (await import('@typescript-eslint/eslint-plugin'))
-        .default,
       import: (await import('eslint-plugin-import')).default
     },
     languageOptions: {
-      parser: (await import('@typescript-eslint/parser')).default,
+      parser: parser,
       parserOptions: {
+        project: './tsconfig.json',
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: {

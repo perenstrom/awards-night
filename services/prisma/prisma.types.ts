@@ -1,24 +1,16 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
-const yearWithNominationsAndCategories =
-  Prisma.validator<Prisma.YearDefaultArgs>()({
-    include: { nominations: true, yearsCategories: true }
-  });
-export type YearWithNominationsAndCategories = Prisma.YearGetPayload<
-  typeof yearWithNominationsAndCategories
->;
+export type YearWithNominationsAndCategories = Prisma.YearGetPayload<{
+  include: { nominations: true; yearsCategories: true };
+}>;
 
-const playerWithBets = Prisma.validator<Prisma.PlayerDefaultArgs>()({
-  include: { bets: true }
-});
-export type PlayerWithBets = Prisma.PlayerGetPayload<typeof playerWithBets>;
+export type PlayerWithBets = Prisma.PlayerGetPayload<{
+  include: { bets: true };
+}>;
 
-const categoryWithNominations = Prisma.validator<Prisma.CategoryDefaultArgs>()({
-  include: { nominations: true }
-});
-export type CategoryWithNominations = Prisma.CategoryGetPayload<
-  typeof categoryWithNominations
->;
+export type CategoryWithNominations = Prisma.CategoryGetPayload<{
+  include: { nominations: true };
+}>;
 
 export type Context = {
   prisma: PrismaClient;
