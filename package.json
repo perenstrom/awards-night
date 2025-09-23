@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "next lint",
+    "lint": "eslint .",
     "tsc": "tsc --noemit",
     "prisma:generate": "dotenv -e .env.local -- npx prisma generate",
     "prisma:migrate:dev": "dotenv -e .env.local -- npx prisma migrate dev",
@@ -31,6 +31,8 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.0.0",
     "@prisma/client": "^6.1.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^22.10.2",
