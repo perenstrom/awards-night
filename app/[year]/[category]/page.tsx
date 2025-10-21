@@ -49,7 +49,7 @@ export default async function Page(props: Props) {
 
   const player = await getLoggedInPlayer();
   const bettingData: BettingData = player
-    ? await getBettingData(nominationData, player.group || 0)
+    ? await getBettingData(nominationData, player.groups?.[0] || 0)
     : {
         bets: [],
         players: [],

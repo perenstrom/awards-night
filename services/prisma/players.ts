@@ -11,10 +11,15 @@ export const getPlayersWithBetsForGroup = unstable_cache(
     console.log(`Finding players with bets for group ${group}`);
     const result = await prisma.player.findMany({
       where: {
-        groupId: group
+        groups: {
+          some: {
+            groupId: group
+          }
+        }
       },
       include: {
-        bets: true
+        bets: true,
+        groups: true
       }
     });
 
@@ -38,7 +43,8 @@ export const getPlayerWithBets = cache(
         id: playerId
       },
       include: {
-        bets: true
+        bets: true,
+        groups: true
       }
     });
 
@@ -57,13 +63,16 @@ export const getPlayerByAuth0Id = unstable_cache(
     const result = await prisma.player.findUnique({
       where: {
         auth0UserId: auth0Id
+      },
+      include: {
+        groups: true
       }
     });
 
     if (!result) {
       return null;
     } else {
-      return prismaMap.player.fromPrisma(result);
+      return prismaMap.playerWithGroups.fromPrisma(result);
     }
   }),
   [],

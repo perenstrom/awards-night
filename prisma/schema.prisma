@@ -38,8 +38,9 @@ model Film {
 }
 
 model Group {
-  id      Int      @id @default(autoincrement())
-  players Player[]
+  id      Int             @id @default(autoincrement())
+  name    String?
+  players PlayerToGroup[]
 
   @@map("groups")
 }
@@ -61,14 +62,23 @@ model Nomination {
 }
 
 model Player {
-  id          Int     @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   name        String
-  auth0UserId String? @unique @map("auth0_user_id")
-  groupId     Int?    @map("group_id")
-  groups      Group?  @relation(fields: [groupId], references: [id], onDelete: NoAction)
+  auth0UserId String?         @unique @map("auth0_user_id")
+  groups      PlayerToGroup[]
   bets        Bet[]
 
   @@map("players")
+}
+
+model PlayerToGroup {
+  playerId Int    @map("player_id")
+  groupId  Int    @map("group_id")
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@id([playerId, groupId])
+  @@map("player_to_group")
 }
 
 model Year {

@@ -68,12 +68,17 @@ export interface BetIcon {
   style: number;
 }
 
+export interface Group {
+  id: number;
+  name?: string | null;
+}
+
 export interface Player {
   id: number;
   name: string;
   correct: number;
   bets: number[];
-  group?: number | null;
+  groups: number[];
   auth0UserId?: string | null;
   style: number;
 }

@@ -53,7 +53,7 @@ export default async function CategoryLayout(
   } = nominationData;
 
   const bettingData: BettingData = player
-    ? await getBettingData(nominationData, player.group || 0)
+    ? await getBettingData(nominationData, player.groups?.[0] || 0)
     : {
         bets: [],
         players: [],
