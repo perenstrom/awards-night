@@ -1,12 +1,29 @@
 import './global.scss';
 import { Metadata } from 'next';
 import { Auth0Provider } from '@auth0/nextjs-auth0';
+import { Inter, Roboto, Charis_SIL } from 'next/font/google';
 import { auth0 } from 'lib/auth0';
 
 const title = 'Awards Night – Social prediction for the Academy Awards';
 export const metadata: Metadata = {
   title: process.env.NODE_ENV !== 'production' ? `DEV: ${title}` : title
 };
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '500', '700'],
+  display: 'swap'
+});
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  display: 'swap'
+});
+const charis_SIL = Charis_SIL({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap'
+});
 
 export default async function RootLayout({
   children
@@ -16,31 +33,16 @@ export default async function RootLayout({
   const session = await auth0.getSession();
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${inter.className} ${roboto.className} ${charis_SIL.className}`}
+    >
       <head>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
         />
         <meta charSet="utf-8" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital@0;1&display=swap"
-          rel="stylesheet"
-        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"

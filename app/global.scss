@@ -1,6 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@use 'tailwindcss';
+
+:root {
+  --color-text-primary: #e5e7f8;
+  --color-primary-weak: #828392;
+  --color-primary-weak-invisible: #82839200;
+  --color-background-grey-1: #333;
+  --color-winner-yellow: #ffcb00;
+  --color-active-green: hsla(112, 45%, 42%, 1);
+  --color-active-green-invisible: hsla(112, 45%, 42%, 0);
+  --color-incorrect-red: rgb(255, 68, 0);
+}
+
+@theme {
+  --color-text-primary: var(--color-text-primary);
+  --color-primary-weak: var(--color-primary-weak);
+  --color-primary-weak-invisible: var(--color-primary-weak-invisible);
+  --color-background-grey-1: var(--color-background-grey-1);
+  --color-winner-yellow: var(--color-winner-yellow);
+  --color-active-green: var(--color-active-green);
+  --color-active-green-invisible: var(--color-active-green-invisible);
+  --color-incorrect-red: var(--color-incorrect-red);
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Catamaran:wght@500&family=Merriweather+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
@@ -65,14 +85,6 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, #24242e 0, #111115 12rem) no-repeat,
     #111115;
-  --color-text-primary: #e5e7f8;
-  --color-primary-weak: #828392;
-  --color-primary-weak-invisible: #82839200;
-  --color-background-grey-1: #333;
-  --color-winner-yellow: #ffcb00;
-  --color-active-green: hsla(112, 45%, 42%, 1);
-  --color-active-green-invisible: hsla(112, 45%, 42%, 0);
-  --color-incorrect-red: rgb(255, 68, 0);
 
   --shadow-color: 240deg 19% 6%;
   --shadow-elevation-medium: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.36),

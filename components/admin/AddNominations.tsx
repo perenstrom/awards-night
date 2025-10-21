@@ -13,7 +13,7 @@ const getCategories = unstable_cache(
   { tags: [CATEGORIES_CACHE_KEY] }
 );
 
-export const AddNominations: React.FC<{}> = async () => {
+export const AddNominations = async () => {
   const categories = await getCategories([]);
   const years = await getYears();
   const films = await getFilms([]);

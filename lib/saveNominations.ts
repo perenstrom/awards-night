@@ -32,7 +32,7 @@ const getData = async (data: { category: string; year: number }) => {
         existingNominations
       }
     };
-  } catch (error) {
+  } catch {
     return {
       success: false as const,
       data: null

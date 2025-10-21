@@ -16,9 +16,11 @@ export const addPlayersWinnings = (
 
   bets.forEach((bet) => {
     if (nominations[bet.nomination].won) {
-      playerWins[bet.player]
-        ? (playerWins[bet.player] += 1)
-        : (playerWins[bet.player] = 1);
+      if (playerWins[bet.player]) {
+        playerWins[bet.player] += 1;
+      } else {
+        playerWins[bet.player] = 1;
+      }
     }
   });
 

@@ -65,7 +65,7 @@ export const saveFilmByTmdbId = async (
   let filmDetails: Nullable<Film> = null;
   try {
     filmDetails = await getFilmFromTmdbByTmdbId(tmdbId);
-  } catch (error) {
+  } catch {
     // Network error
     return getStatusMessage(
       'error',

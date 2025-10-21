@@ -7,10 +7,7 @@ interface Props {
   index: number;
 }
 
-export const NominationFields: React.FC<Props> = ({
-  availableFilms,
-  index
-}) => {
+export const NominationFields = ({ availableFilms, index }: Props) => {
   return (
     <div className="flex flex-wrap items-end gap-4 mt-4">
       <div className="flex flex-col gap-1">

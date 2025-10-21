@@ -33,7 +33,7 @@ const FormContent: React.FC<{
   );
 };
 
-export const RevalidateTag: React.FC<{}> = () => {
+export const RevalidateTag = () => {
   const [statusMessage, revalidateTagAction] = useActionState(
     revalidateTag,
     null

@@ -60,7 +60,7 @@ const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
   );
 };
 
-export const AddFilmBySearch: React.FC<{}> = () => {
+export const AddFilmBySearch = () => {
   const [searchResultsResponse, searchAction] = useActionState(
     searchFilms,
     null

@@ -3,7 +3,7 @@ import { getPlayerByAuth0Id } from 'services/prisma/players';
 import { auth0 } from 'lib/auth0';
 import styles from './LoginLink.module.scss';
 
-export const LoginLink: React.FC<{}> = async ({}) => {
+export const LoginLink = async () => {
   const session = await auth0.getSession();
   const auth0id = (session?.user?.sub as string) || null;
 

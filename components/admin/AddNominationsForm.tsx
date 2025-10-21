@@ -19,7 +19,7 @@ import {
 import { NominationFields } from './NominationFields';
 
 const renderNominationFields = (availableFilms: Film[], count: number) => {
-  let elements: ReactElement<any>[] = [];
+  const elements: ReactElement<React.JSX.Element>[] = [];
   for (let i = 0; i < count; i++) {
     elements.push(
       <NominationFields
@@ -33,7 +33,7 @@ const renderNominationFields = (availableFilms: Film[], count: number) => {
   return elements;
 };
 
-const LoadingSpinnerWrapper: React.FC<{}> = () => {
+const LoadingSpinnerWrapper = () => {
   const { pending } = useFormStatus();
 
   return (
@@ -64,7 +64,7 @@ const SaveNominationCountButton: React.FC<{
   );
 };
 
-const SaveButton: React.FC<{}> = () => {
+const SaveButton = () => {
   const { pending } = useFormStatus();
 
   return (
