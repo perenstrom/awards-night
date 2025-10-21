@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.4.1
+
+- Update dependencies
+
 ## 4.4.0
 
 - Add correct/incorrect colors to prediction list
