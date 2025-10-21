@@ -50,8 +50,8 @@ export default async function Page(props: Props) {
         </Typography>
         <div className={styles.buttonWrapper}>
           <div className={styles.backLink}>
-            <Button element="a" href="/me">
-              &lt; Dashboard
+            <Button element="a" href="/me/bets">
+              &lt; My Bets
             </Button>
           </div>
           <Button
