@@ -40,6 +40,9 @@ export default async function Page(props: Props) {
 
   const bets = await getBetsForPlayerCached(player.id, year.year);
 
+  // Go to presentation mode without group slug - let the presentation mode handle group selection
+  const presentationUrl = `/${year.year}/${Object.values(categories)[0].slug}`;
+
   return (
     <MainContainer>
       <div className={styles.header}>
@@ -54,10 +57,7 @@ export default async function Page(props: Props) {
               &lt; My Bets
             </Button>
           </div>
-          <Button
-            element="a"
-            href={`/${year.year}/${Object.values(categories)[0].slug}`}
-          >
+          <Button element="a" href={presentationUrl}>
             Go to presentation mode &gt;
           </Button>
         </div>

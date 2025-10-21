@@ -4,6 +4,7 @@ import {
   getBetsForPlayerCached
 } from 'services/prisma/bets';
 import { getPlayersWithBetsForGroup } from 'services/prisma/players';
+import { getGroupBySlug } from 'services/prisma/groups';
 import {
   Bet,
   BettingData,
@@ -79,12 +80,43 @@ export const getBettingData = cache(
         bets
       );
 
+      // Filter nominationBets to only include bets from players in the current group
+      const playerIds = new Set(playingPlayers.map((p) => p.id));
+      const filteredNominationBets: NominationBets = {};
+      Object.keys(nominationBets).forEach((nominationId) => {
+        const nominationIdNum = parseInt(nominationId, 10);
+        filteredNominationBets[nominationIdNum] = nominationBets[
+          nominationIdNum
+        ].filter((betId) => {
+          const bet = bets.find((b) => b.id === betId);
+          return bet && playerIds.has(bet.player);
+        });
+      });
+
       return {
         bets: bets,
         players: addStylesToPlayer(playersWithWins),
-        nominationBets: nominationBets
+        nominationBets: filteredNominationBets
       };
     }
+  }
+);
+
+export const getBettingDataBySlug = cache(
+  async (
+    nominationData: NominationData,
+    groupSlug: string
+  ): Promise<BettingData> => {
+    const group = await getGroupBySlug(groupSlug);
+    if (!group) {
+      return {
+        bets: [],
+        players: [],
+        nominationBets: {}
+      };
+    }
+
+    return getBettingData(nominationData, group.id);
   }
 );
 

@@ -5,6 +5,7 @@ import {
   Bet as PrismaBet,
   Player as PrismaPlayer,
   Year as PrismaYear,
+  Group as PrismaGroup,
   Prisma
 } from '@prisma/client';
 import {
@@ -18,6 +19,7 @@ import {
   Bet,
   Category,
   Film,
+  Group,
   Nomination,
   Player,
   Year
@@ -156,6 +158,13 @@ export const prismaMap = {
         ? playerResponse.groups.map((g) => g.groupId)
         : [],
       style: 0
+    })
+  },
+  group: {
+    fromPrisma: (groupResponse: PrismaGroup): Group => ({
+      id: groupResponse.id,
+      name: groupResponse.name,
+      slug: groupResponse.slug
     })
   }
 };

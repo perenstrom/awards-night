@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-import { revalidatePath } from 'app/[year]/[category]/actions';
+import { revalidatePath } from 'app/[year]/[category]/[[...groupSlug]]/actions';
 
 export const NominationsPoller = (props: {
   bettingOpen: boolean;

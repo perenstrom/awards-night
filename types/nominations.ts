@@ -71,6 +71,7 @@ export interface BetIcon {
 export interface Group {
   id: number;
   name?: string | null;
+  slug: string;
 }
 
 export interface Player {
