@@ -19,10 +19,7 @@
     "prisma:migrate:reset": "dotenv -e .env.local -- npx prisma migrate reset",
     "prisma:seed:local": "dotenv -e .env.local -- npx prisma db seed",
     "prisma:pull:local": "dotenv -e .env.local -- npx prisma db pull",
-    "prisma:push:local": "dotenv -e .env.local -- npx prisma db push",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "prisma:push:local": "dotenv -e .env.local -- npx prisma db push"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.0.0-beta.10",
@@ -55,8 +52,7 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.44.1",
-    "vitest": "^3.2.4",
-    "wrangler": "^4.40.3"
+    "vitest": "^3.2.4"
   },
   "prisma": {
     "seed": "./prisma/seed.sh"
