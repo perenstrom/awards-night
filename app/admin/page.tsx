@@ -7,6 +7,7 @@ import { AddNominations } from 'components/admin/AddNominations';
 import { isAdmin } from 'lib/authorization';
 import { Typography } from 'components/base/Typography';
 import { RevalidateTag } from 'components/admin/RevalidateTag';
+import { GroupAdmin } from 'components/admin/GroupAdmin';
 
 export const metadata: Metadata = {
   title: 'Admin dashboard – Awards Night'
@@ -25,6 +26,7 @@ export default async function Page() {
       <AddFilmBySearch />
       <AddNominations />
       <RevalidateTag />
+      <GroupAdmin />
     </MainContainer>
   );
 }

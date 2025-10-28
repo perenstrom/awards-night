@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.0
+
+- Add possibility to be part of multiple groups
+- Change url for presentation mode to be group specific
+
 ## 4.4.1
 
 - Update dependencies
