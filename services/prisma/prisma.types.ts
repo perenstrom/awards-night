@@ -16,6 +16,10 @@ export type CategoryWithNominations = Prisma.CategoryGetPayload<{
   include: { nominations: true };
 }>;
 
+export type CategoryWithYears = Prisma.CategoryGetPayload<{
+  include: { yearsCategories: true };
+}>;
+
 export type Context = {
   prisma: PrismaClient;
 };

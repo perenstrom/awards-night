@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Category, Nomination } from 'types/nominations';
+import type { CategoryWithYears } from './prisma.types';
 import prisma from 'lib/prisma';
 
 export const getCategoryWithNominationsForYear = cache(
@@ -39,16 +40,25 @@ export const getCategories = cache(
         ? {
             where: {
               slug: { in: categories }
+            },
+            include: {
+              yearsCategories: true
             }
           }
-        : {};
-    const result = await prisma.category.findMany(args);
+        : {
+            include: {
+              yearsCategories: true
+            }
+          };
+    const result = (await prisma.category.findMany(
+      args
+    )) as CategoryWithYears[];
 
     if (result.length === 0) {
       return [];
     } else {
       const formattedCategories = result
-        .map((category) => prismaMap.category.fromPrisma(category))
+        .map((category) => prismaMap.category.withYears.fromPrisma(category))
         .sort((a, b) => a.name.localeCompare(b.name));
 
       return addAdjacentCategories(formattedCategories);

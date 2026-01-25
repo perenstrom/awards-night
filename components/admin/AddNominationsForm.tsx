@@ -123,6 +123,18 @@ export const AddNominationsForm: React.FC<Props> = ({
     });
   }, [availableFilms, selectedYear]);
 
+  // Filter categories based on selected year
+  const filteredCategories = useMemo(() => {
+    return availableCategories.filter((category) => {
+      // If category doesn't have years info, include it (backward compatibility)
+      if (!category.years || category.years.length === 0) {
+        return true;
+      }
+      // Include category if it's available for the selected year
+      return category.years.includes(selectedYear);
+    });
+  }, [availableCategories, selectedYear]);
+
   const onUpdateNominationCount: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
@@ -195,7 +207,7 @@ export const AddNominationsForm: React.FC<Props> = ({
                 name="category"
                 className="border border-gray-300 rounded-md p-2 hover:border-black"
               >
-                {availableCategories.map((category) => (
+                {filteredCategories.map((category) => (
                   <option key={category.slug} value={category.slug}>
                     {category.name}
                   </option>
