@@ -113,3 +113,41 @@ export const closeBetting = async (year: number): Promise<boolean> => {
     return false;
   }
 };
+
+export const createYear = async (
+  year: number,
+  name: string,
+  date: Date,
+  bettingOpen: boolean,
+  awardsFinished: boolean,
+  categories: string[]
+): Promise<boolean> => {
+  console.log(`Creating year ${year}`);
+  
+  try {
+    // Create the year
+    const result = await prisma.year.create({
+      data: {
+        year: year,
+        name: name,
+        date: date,
+        bettingOpen: bettingOpen,
+        awardsFinished: awardsFinished
+      }
+    });
+
+    if (!result) {
+      return false;
+    }
+
+    // Connect all selected categories to the year
+    await Promise.all(
+      categories.map((category) => connectCategoryToYear(category, year))
+    );
+
+    return true;
+  } catch (error) {
+    console.error('Error creating year:', error);
+    return false;
+  }
+};

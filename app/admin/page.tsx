@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { MainContainer } from 'components/MainContainer';
+import { AddYear } from 'components/admin/AddYear';
 import { AddFilm } from 'components/admin/AddFilm';
 import { AddFilmBySearch } from 'components/admin/AddFilmBySearch';
 import { AddNominations } from 'components/admin/AddNominations';
@@ -22,6 +23,7 @@ export default async function Page() {
       <Typography variant="h1" color="white">
         Admin panel
       </Typography>
+      <AddYear />
       <AddFilm />
       <AddFilmBySearch />
       <AddNominations />
