@@ -1,12 +1,13 @@
 {
   "name": "awards-night",
-  "version": "4.4.1",
+  "version": "4.5.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack -p 3400",
     "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate && prisma migrate deploy",
     "what": "ECHO Package system: npm",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -23,8 +24,10 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.0.0-beta.10",
+    "@prisma/client": "^6.1.0",
     "clsx": "^2.1.0",
     "next": "^15.1.2",
+    "prisma": "^6.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "sass": "^1.70.0",
@@ -33,7 +36,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.0.0",
-    "@prisma/client": "^6.1.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
@@ -48,7 +50,6 @@
     "eslint-plugin-import": "^2.29.1",
     "jsdom": "^27.0.0",
     "postcss": "^8.4.49",
-    "prisma": "^6.1.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.44.1",

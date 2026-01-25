@@ -102,7 +102,7 @@ const players: Player[] = [
     bets: [1, 3],
     correct: 0,
     name: 'Player A',
-    group: 1,
+    groups: [1],
     style: 0
   },
   {
@@ -110,7 +110,7 @@ const players: Player[] = [
     bets: [2, 4],
     correct: 0,
     name: 'Player B',
-    group: 1,
+    groups: [1],
     style: 1
   }
 ];
@@ -155,7 +155,7 @@ describe('calculatePlayerWinnings', () => {
         bets: [1, 3],
         correct: 1,
         name: 'Player A',
-        group: 1,
+        groups: [1],
         style: 0
       },
       {
@@ -163,7 +163,7 @@ describe('calculatePlayerWinnings', () => {
         bets: [2, 4],
         correct: 2,
         name: 'Player B',
-        group: 1,
+        groups: [1],
         style: 1
       }
     ];

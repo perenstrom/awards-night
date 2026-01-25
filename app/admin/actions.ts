@@ -221,3 +221,132 @@ export const revalidateTag = async (
 
   return getStatusMessage('info', `Tag ${tag} revalidated.`);
 };
+
+export const createGroup = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const rawName = formData.get('groupName') as string;
+  const rawSlug = formData.get('groupSlug') as string;
+
+  if (!rawName || !rawSlug) {
+    return getStatusMessage('error', 'Name and slug are required.');
+  }
+
+  try {
+    const { createGroup: createGroupService } = await import(
+      'services/prisma/groups'
+    );
+
+    await createGroupService(rawName, rawSlug);
+
+    nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
+    return getStatusMessage(
+      'success',
+      `Group "${rawName}" created successfully.`
+    );
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to create group.';
+    return getStatusMessage('error', errorMessage);
+  }
+};
+
+export const addPlayerToGroup = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const rawPlayerId = formData.get('playerId') as string;
+  const rawGroupId = formData.get('groupId') as string;
+
+  if (!rawPlayerId || !rawGroupId) return;
+
+  try {
+    const playerId = parseInt(rawPlayerId, 10);
+    const groupId = parseInt(rawGroupId, 10);
+
+    const { addPlayerToGroup: addPlayerToGroupService } = await import(
+      'services/prisma/groups'
+    );
+
+    await addPlayerToGroupService(playerId, groupId);
+
+    nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
+    nextRevalidateTag('ALL_PLAYERS_CACHE_KEY');
+    return getStatusMessage('success', 'Player added to group.');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to add player to group.';
+
+    // Handle the "already in group" case as info instead of error
+    if (errorMessage.includes('already in this group')) {
+      return getStatusMessage('info', errorMessage);
+    }
+
+    return getStatusMessage('error', errorMessage);
+  }
+};
+
+export const removePlayerFromGroup = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const rawPlayerId = formData.get('playerId') as string;
+  const rawGroupId = formData.get('groupId') as string;
+
+  if (!rawPlayerId || !rawGroupId) return;
+
+  try {
+    const playerId = parseInt(rawPlayerId, 10);
+    const groupId = parseInt(rawGroupId, 10);
+
+    const { removePlayerFromGroup: removePlayerFromGroupService } =
+      await import('services/prisma/groups');
+
+    await removePlayerFromGroupService(playerId, groupId);
+
+    nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
+    nextRevalidateTag('ALL_PLAYERS_CACHE_KEY');
+    return getStatusMessage('success', 'Player removed from group.');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'Failed to remove player from group.';
+    return getStatusMessage('error', errorMessage);
+  }
+};
+
+export const deleteGroup = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const rawGroupId = formData.get('groupId') as string;
+
+  if (!rawGroupId) return;
+
+  try {
+    const groupId = parseInt(rawGroupId, 10);
+
+    const { deleteGroup: deleteGroupService } = await import(
+      'services/prisma/groups'
+    );
+
+    await deleteGroupService(groupId);
+
+    nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
+    return getStatusMessage('success', 'Group deleted successfully.');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to delete group.';
+    return getStatusMessage('error', errorMessage);
+  }
+};

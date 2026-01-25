@@ -5,11 +5,13 @@ import {
   Bet as PrismaBet,
   Player as PrismaPlayer,
   Year as PrismaYear,
+  Group as PrismaGroup,
   Prisma
 } from '@prisma/client';
 import {
   CategoryWithNominations,
   PlayerWithBets,
+  PlayerWithGroups,
   YearWithNominationsAndCategories
 } from 'services/prisma/prisma.types';
 import {
@@ -17,6 +19,7 @@ import {
   Bet,
   Category,
   Film,
+  Group,
   Nomination,
   Player,
   Year
@@ -127,7 +130,7 @@ export const prismaMap = {
       name: playerResponse.name,
       correct: 0,
       bets: [],
-      group: playerResponse.groupId,
+      groups: [],
       style: 0
     })
   },
@@ -138,8 +141,30 @@ export const prismaMap = {
       name: playerResponse.name,
       correct: 0,
       bets: playerResponse.bets ? playerResponse.bets.map((b) => b.id) : [],
-      group: playerResponse.groupId,
+      groups: playerResponse.groups
+        ? playerResponse.groups.map((g) => g.groupId)
+        : [],
       style: 0
+    })
+  },
+  playerWithGroups: {
+    fromPrisma: (playerResponse: PlayerWithGroups): Player => ({
+      id: playerResponse.id,
+      auth0UserId: playerResponse.auth0UserId,
+      name: playerResponse.name,
+      correct: 0,
+      bets: [],
+      groups: playerResponse.groups
+        ? playerResponse.groups.map((g) => g.groupId)
+        : [],
+      style: 0
+    })
+  },
+  group: {
+    fromPrisma: (groupResponse: PrismaGroup): Group => ({
+      id: groupResponse.id,
+      name: groupResponse.name,
+      slug: groupResponse.slug
     })
   }
 };

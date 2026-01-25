@@ -5,7 +5,11 @@ export type YearWithNominationsAndCategories = Prisma.YearGetPayload<{
 }>;
 
 export type PlayerWithBets = Prisma.PlayerGetPayload<{
-  include: { bets: true };
+  include: { bets: true; groups: true };
+}>;
+
+export type PlayerWithGroups = Prisma.PlayerGetPayload<{
+  include: { groups: true };
 }>;
 
 export type CategoryWithNominations = Prisma.CategoryGetPayload<{

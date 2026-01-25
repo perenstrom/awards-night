@@ -208,7 +208,7 @@ export const YearCard: React.FC<Props> = ({ nominationData, bets }) => {
   );
 
   return (
-    <Link className={styles.link} href={`/me/${year.year}`}>
+    <Link className={styles.link} href={`/me/bets/${year.year}`}>
       <YearCardWrapper year={year.year}>
         <h2 className={styles.heading}>
           {year.year}
