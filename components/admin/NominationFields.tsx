@@ -1,6 +1,5 @@
-import React from 'react';
-import { Film } from 'types/nominations';
 import { InputField } from 'components/base/InputField';
+import { Film } from 'types/nominations';
 
 interface Props {
   availableFilms: Film[];

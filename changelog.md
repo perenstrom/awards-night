@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.1
+
+- Filter movie list when adding nominations to current and last two years
+
 ## 4.5.0
 
 - Add possibility to be part of multiple groups

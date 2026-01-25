@@ -2,6 +2,7 @@
 import React, {
   ReactElement,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useActionState
@@ -98,6 +99,30 @@ export const AddNominationsForm: React.FC<Props> = ({
     null
   );
 
+  // Track selected year for filtering films
+  const [selectedYear, setSelectedYear] = useState<number>(
+    availableYears[0]?.year || new Date().getFullYear()
+  );
+
+  // Filter films based on selected year (show films from selected year, previous year, and two years ago)
+  const filteredFilms = useMemo(() => {
+    return availableFilms.filter((film) => {
+      // Exclude films without release date
+      if (!film.releaseDate) {
+        return false;
+      }
+
+      const releaseYear = new Date(film.releaseDate).getFullYear();
+
+      // Include films from selected year, previous year, and two years ago
+      return (
+        releaseYear === selectedYear ||
+        releaseYear === selectedYear - 1 ||
+        releaseYear === selectedYear - 2
+      );
+    });
+  }, [availableFilms, selectedYear]);
+
   const onUpdateNominationCount: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
@@ -153,6 +178,8 @@ export const AddNominationsForm: React.FC<Props> = ({
                 id="year"
                 name="year"
                 className="border border-gray-300 rounded-md p-2 hover:border-black"
+                onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                value={selectedYear}
               >
                 {availableYears.map((year) => (
                   <option key={year.year} value={year.year}>
@@ -177,7 +204,7 @@ export const AddNominationsForm: React.FC<Props> = ({
             </div>
           </div>
           {renderNominationFields(
-            availableFilms,
+            filteredFilms,
             nominationCountResult || nominationCount
           )}
           <div className="mt-4">
