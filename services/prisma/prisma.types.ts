@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/generated';
 
 export type YearWithNominationsAndCategories = Prisma.YearGetPayload<{
   include: { nominations: true; yearsCategories: true };

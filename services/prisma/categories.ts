@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/generated';
 import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Category, Nomination } from 'types/nominations';

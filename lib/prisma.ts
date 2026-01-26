@@ -1,6 +1,19 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
+import pg from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/generated';
 
-const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'] });
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.DB_CONNECTION_STRING,
+});
+
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ 
+  adapter,
+  log: ['query', 'info', 'warn', 'error'] 
+});
 
 const globalForPrisma = global as unknown as { prisma: typeof prisma };
 

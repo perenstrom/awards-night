@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/generated';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { prismaMap } from 'services/maps/prismaMap';

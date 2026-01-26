@@ -7,7 +7,7 @@ import {
   Year as PrismaYear,
   Group as PrismaGroup,
   Prisma
-} from '@prisma/client';
+} from '@prisma/generated';
 import {
   CategoryWithNominations,
   CategoryWithYears,
