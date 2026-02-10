@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.0",
-  "engineVersion": "0c19ccc313cf9911a90d99d2ac2eb0280c76c513",
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Bet {\n  id           Int        @id @default(autoincrement())\n  nominationId Int        @map(\"nomination_id\")\n  playerId     Int        @map(\"player_id\")\n  nomination   Nomination @relation(fields: [nominationId], references: [id], onDelete: NoAction)\n  player       Player     @relation(fields: [playerId], references: [id], onDelete: NoAction)\n\n  @@map(\"bets\")\n}\n\nmodel Category {\n  slug            String           @id\n  name            String\n  nominations     Nomination[]\n  yearsCategories YearToCategory[]\n\n  @@map(\"categories\")\n}\n\nmodel Film {\n  imdbId      String       @id @map(\"imdb_id\")\n  name        String\n  releaseDate DateTime?    @map(\"release_date\") @db.Date\n  posterUrl   String?      @map(\"poster_url\")\n  nominations Nomination[]\n\n  @@map(\"films\")\n}\n\nmodel Group {\n  id      Int             @id @default(autoincrement())\n  name    String?\n  slug    String          @unique\n  players PlayerToGroup[]\n\n  @@map(\"groups\")\n}\n\nmodel Nomination {\n  id         Int      @id @default(autoincrement())\n  yearId     Int      @map(\"year_id\")\n  categoryId String   @map(\"category_id\")\n  nominee    String?\n  won        Boolean  @default(false)\n  decided    Boolean  @default(false)\n  filmId     String   @map(\"film_id\")\n  category   Category @relation(fields: [categoryId], references: [slug], onDelete: NoAction)\n  film       Film     @relation(fields: [filmId], references: [imdbId], onDelete: NoAction)\n  year       Year     @relation(fields: [yearId], references: [year], onDelete: NoAction)\n  bets       Bet[]\n\n  @@map(\"nominations\")\n}\n\nmodel Player {\n  id          Int             @id @default(autoincrement())\n  name        String\n  auth0UserId String?         @unique @map(\"auth0_user_id\")\n  groups      PlayerToGroup[]\n  bets        Bet[]\n\n  @@map(\"players\")\n}\n\nmodel PlayerToGroup {\n  playerId Int    @map(\"player_id\")\n  groupId  Int    @map(\"group_id\")\n  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)\n  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)\n\n  @@id([playerId, groupId])\n  @@map(\"player_to_group\")\n}\n\nmodel Year {\n  year            Int              @id\n  name            String\n  date            DateTime         @db.Date\n  bettingOpen     Boolean          @default(true) @map(\"betting_open\")\n  awardsFinished  Boolean          @default(false) @map(\"awards_finished\")\n  nominations     Nomination[]\n  yearsCategories YearToCategory[]\n\n  @@map(\"years\")\n}\n\nmodel YearToCategory {\n  categoryId String   @map(\"category_id\")\n  yearId     Int      @map(\"year_id\")\n  categories Category @relation(fields: [categoryId], references: [slug], onDelete: NoAction)\n  years      Year     @relation(fields: [yearId], references: [year], onDelete: NoAction)\n\n  @@unique([categoryId, yearId], map: \"years_categories_category_id_year_id_idx\")\n  @@map(\"years_categories\")\n}\n",
   "runtimeDataModel": {
@@ -37,12 +37,14 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
-  }
+  },
+
+  importName: "./query_compiler_fast_bg.js"
 }
 
 
@@ -62,7 +64,7 @@ export interface PrismaClientConstructor {
    * const bets = await prisma.bet.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +86,7 @@ export interface PrismaClientConstructor {
  * const bets = await prisma.bet.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +115,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +127,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +138,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +150,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
