@@ -11,7 +11,7 @@ export default function YearListWrapper({
   children: React.ReactNode;
 }) {
   const pathName = usePathname();
-  const isDashboardRoot = pathName === '/me';
+  const isDashboardRoot = pathName === '/me/bets';
 
   return (
     <div
