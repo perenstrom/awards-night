@@ -1,4 +1,4 @@
-import { Nomination as PrismaNomination, Prisma } from '@prisma/client';
+import { Nomination as PrismaNomination, Prisma } from '@prisma/generated';
 import { cache } from 'react';
 import { prismaMap } from 'services/maps/prismaMap';
 import type { Nomination } from 'types/nominations';

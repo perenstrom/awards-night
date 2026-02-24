@@ -57,24 +57,22 @@ export const getPlayerWithBets = cache(
 );
 
 export const PLAYER_BY_AUTH_ID_CACHE_KEY = 'PLAYER_BY_AUTH_ID_CACHE_KEY';
-export const getPlayerByAuth0Id = unstable_cache(
-  cache(async (auth0Id: string): Promise<Nullable<Player>> => {
-    console.log(`Finding player with auth0id ${auth0Id}`);
-    const result = await prisma.player.findUnique({
-      where: {
-        auth0UserId: auth0Id
-      },
-      include: {
-        groups: true
-      }
-    });
-
-    if (!result) {
-      return null;
-    } else {
-      return prismaMap.playerWithGroups.fromPrisma(result);
+export const getPlayerByAuth0Id = async (
+  auth0Id: string
+): Promise<Nullable<Player>> => {
+  console.log(`Finding player with auth0id ${auth0Id}`);
+  const result = await prisma.player.findUnique({
+    where: {
+      auth0UserId: auth0Id
+    },
+    include: {
+      groups: true
     }
-  }),
-  [],
-  { tags: [PLAYER_BY_AUTH_ID_CACHE_KEY] }
-);
+  });
+
+  if (!result) {
+    return null;
+  } else {
+    return prismaMap.playerWithGroups.fromPrisma(result);
+  }
+};

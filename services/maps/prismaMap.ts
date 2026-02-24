@@ -7,9 +7,10 @@ import {
   Year as PrismaYear,
   Group as PrismaGroup,
   Prisma
-} from '@prisma/client';
+} from '@prisma/generated';
 import {
   CategoryWithNominations,
+  CategoryWithYears,
   PlayerWithBets,
   PlayerWithGroups,
   YearWithNominationsAndCategories
@@ -58,6 +59,17 @@ export const prismaMap = {
       nextCategory: null,
       decided: false
     }),
+    withYears: {
+      fromPrisma: (categoryResponse: CategoryWithYears): Category => ({
+        slug: categoryResponse.slug,
+        name: categoryResponse.name,
+        nominations: [],
+        previousCategory: null,
+        nextCategory: null,
+        decided: false,
+        years: categoryResponse.yearsCategories.map((yc) => yc.yearId)
+      })
+    },
     withNominations: {
       fromPrisma: (
         categoryResponse: CategoryWithNominations

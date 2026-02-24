@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/generated';
 
 export type YearWithNominationsAndCategories = Prisma.YearGetPayload<{
   include: { nominations: true; yearsCategories: true };
@@ -14,6 +14,10 @@ export type PlayerWithGroups = Prisma.PlayerGetPayload<{
 
 export type CategoryWithNominations = Prisma.CategoryGetPayload<{
   include: { nominations: true };
+}>;
+
+export type CategoryWithYears = Prisma.CategoryGetPayload<{
+  include: { yearsCategories: true };
 }>;
 
 export type Context = {

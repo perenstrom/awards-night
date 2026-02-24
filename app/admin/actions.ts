@@ -20,7 +20,9 @@ import { getStatusMessage } from 'utils/statusMessages';
 import { getCategoryWithNominationsForYear } from 'services/prisma/categories';
 import {
   closeYear as closeYearPrisma,
-  closeBetting as closeBettingPrisma
+  closeBetting as closeBettingPrisma,
+  createYear as createYearPrisma,
+  getYear
 } from 'services/prisma/years';
 
 export const createFilm = async (
@@ -347,6 +349,75 @@ export const deleteGroup = async (
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Failed to delete group.';
+    return getStatusMessage('error', errorMessage);
+  }
+};
+
+export const createYear = async (
+  previousState: StatusMessage | null | undefined,
+  formData: FormData
+) => {
+  if (!isAdmin()) return;
+
+  const rawYear = formData.get('year') as string;
+  const name = formData.get('name') as string;
+  const rawDate = formData.get('date') as string;
+  const categories = formData.getAll('categories') as string[];
+
+  // Use default values for bettingOpen and awardsFinished
+  const bettingOpen = true;
+  const awardsFinished = false;
+
+  // Validate required fields
+  if (!rawYear || !name || !rawDate) {
+    return getStatusMessage('error', 'Year, name, and date are required.');
+  }
+
+  // Parse and validate year
+  const year = parseInt(rawYear, 10);
+  if (isNaN(year) || year < 1900 || year > 2100) {
+    return getStatusMessage('error', 'Year must be a valid number between 1900 and 2100.');
+  }
+
+  // Validate at least one category selected
+  if (categories.length === 0) {
+    return getStatusMessage('error', 'At least one category must be selected.');
+  }
+
+  // Check if year already exists
+  const existingYear = await getYear(year);
+  if (existingYear) {
+    return getStatusMessage('error', `Year ${year} already exists.`);
+  }
+
+  // Parse date
+  const date = new Date(rawDate);
+  if (isNaN(date.getTime())) {
+    return getStatusMessage('error', 'Invalid date format.');
+  }
+
+  try {
+    const result = await createYearPrisma(
+      year,
+      name,
+      date,
+      bettingOpen,
+      awardsFinished,
+      categories
+    );
+
+    if (!result) {
+      return getStatusMessage('error', 'Failed to create year.');
+    }
+
+    nextRevalidateTag(YEAR_CACHE_KEY);
+    nextRevalidateTag(CATEGORIES_CACHE_KEY);
+    nextRevalidateTag(NOMINATIONS_CACHE_KEY);
+
+    return getStatusMessage('success', `Year ${year} created successfully.`);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to create year.';
     return getStatusMessage('error', errorMessage);
   }
 };

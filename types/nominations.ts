@@ -35,6 +35,7 @@ export interface Category {
   previousCategory: string | null;
   nextCategory: string | null;
   decided: boolean;
+  years?: number[];
 }
 
 export type NormalizedCategories = Record<string, Category>;
