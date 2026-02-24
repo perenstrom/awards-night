@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.2
+
+- Update prisma and fix cascading bugs
+
 ## 4.5.1
 
 - Filter movie list when adding nominations to current and last two years
