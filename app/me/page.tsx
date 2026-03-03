@@ -10,22 +10,21 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <MainContainer>
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="mb-8">
         <Typography variant="h1" noMargin={true} color="white">
           Dashboard
         </Typography>
       </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="flex flex-col gap-4">
         <Button element="a" href="/me/bets">
           My Predictions
         </Button>
 
-        <div style={{ marginTop: '2rem' }}>
+        <div className="mt-8">
           <Typography variant="h2" color="white">
             Group Memberships
           </Typography>
-          <div style={{ marginTop: '0.5rem' }}>
+          <div className="mt-2">
             <Typography variant="body" color="white">
               Coming soon...
             </Typography>
