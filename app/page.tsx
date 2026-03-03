@@ -1,77 +1,84 @@
 import { LoginLink } from 'components/LoginLink';
-import styles from './index.module.scss';
+import { GridItem } from './_components/GridItem';
+import { GridWrapper } from './_components/GridWrapper';
+import { CardImage } from './_components/CardImage';
+import { Container } from './_components/Container';
+import { CardContent } from './_components/CardContent';
+import { FeatureHeading } from './_components/FeatureHeading';
+import { BodyText } from './_components/BodyText';
 
 export default function Page() {
   return (
-    <div className={styles.main}>
-      <div className={styles.heroWrapper}>
+    <div className="bg-white">
+      <div className="flex flex-col justify-center w-full h-[20rem] bg-black bg-[url(/images/hero.jpg)] bg-no-repeat bg-center bg-cover">
         <LoginLink />
-        <div className={styles.mainWrapper}>
-          <div className={styles.myContainer}>
-            <h1 className={styles.heading}>Awards Night</h1>
-            <h2 className={styles.subHeading}>
+        <div className="flex flex-1 justify-center items-center">
+          <Container noPaddingTop>
+            <h1 className="text-7xl text-white text-center text-shadow-lg mb-4">
+              Awards Night
+            </h1>
+            <h2 className="text-xl text-white text-center text-shadow-lg">
               Social Prediction for the Academy Awards
             </h2>
-          </div>
+          </Container>
         </div>
       </div>
-      <div className={styles.mainWrapper}>
-        <div className={styles.featuresContainer}>
-          <div className={styles.gridWrapper}>
-            <div className={styles.gridItem}>
-              <img
-                className={styles.cardImage}
+      <div className="flex flex-1 justify-center items-center">
+        <Container>
+          <GridWrapper>
+            <GridItem>
+              <CardImage
                 src="/images/gather.jpg"
                 alt="Image of friends sitting around a camp fire"
                 height="220"
               />
-              <div className={styles.cardContent}>
-                <h3 className={styles.featureHeading}>Gather your friends</h3>
-                <p className={styles.bodyText}>
+              <CardContent>
+                <FeatureHeading>Gather your friends</FeatureHeading>
+                <BodyText>
                   Find the cinephiles amongst your friends and challenge them
-                </p>
-              </div>
-            </div>
-            <div className={styles.gridItem}>
-              <img
-                className={styles.cardImage}
+                </BodyText>
+              </CardContent>
+            </GridItem>
+            <GridItem>
+              <CardImage
                 src="/images/predict.png"
                 alt="Screenshot of a list of movies being marked"
                 height="220"
               />
-              <div className={styles.cardContent}>
-                <h3 className={styles.featureHeading}>Predict winners</h3>
-                <p className={styles.bodyText}>
+              <CardContent>
+                <FeatureHeading>Predict winners</FeatureHeading>
+                <BodyText>
                   Privately choose which films will win in each category
-                </p>
-              </div>
-            </div>
-            <div className={styles.gridItem}>
-              <img
-                className={styles.cardImage}
+                </BodyText>
+              </CardContent>
+            </GridItem>
+            <GridItem>
+              <CardImage
                 src="/images/live-view.png"
                 alt="Screenshot of a category of movies with a score board"
                 height="220"
               />
-              <div className={styles.cardContent}>
-                <h3 className={styles.featureHeading}>See results live</h3>
-                <p className={styles.bodyText}>
+              <CardContent>
+                <FeatureHeading>See results live</FeatureHeading>
+                <BodyText>
                   Follow the ceremony and see the results update live
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className={styles.accessWrapper}>
-            <h2 className={styles.accessHeading}>Get access!</h2>
-            <p className={styles.bodyText}>
+                </BodyText>
+              </CardContent>
+            </GridItem>
+          </GridWrapper>
+          <div className="py-12 w-[60%] my-0 mx-auto text-center">
+            <h2 className="text-3xl text-black font-bold m-0 mb-4">
+              Get access!
+            </h2>
+            <BodyText>
               Awards Night is currently under development and in closed alpha.
               If you want to be a part of the alpha testing, send me an e-mail
               at{' '}
               <a href="mailto:hello@awardsnight.app">hello@awardsnight.app</a>.
-            </p>
-            <p className={styles.bodyText}>– Per Enström.</p>
+            </BodyText>
+            <BodyText>– Per Enström.</BodyText>
           </div>
-        </div>
+        </Container>
       </div>
     </div>
   );
