@@ -1,4 +1,4 @@
-import './global.scss';
+import './global.css';
 import { Metadata } from 'next';
 import { Auth0Provider } from '@auth0/nextjs-auth0';
 import { Inter, Roboto, Charis_SIL } from 'next/font/google';
