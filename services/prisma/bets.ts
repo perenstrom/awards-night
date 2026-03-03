@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/generated';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
+import { Prisma } from '@prisma/generated';
 import { prismaMap } from 'services/maps/prismaMap';
 import { Bet } from 'types/nominations';
 import { Nullable, PartialBy } from 'types/utilityTypes';

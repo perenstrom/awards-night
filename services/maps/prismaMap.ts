@@ -176,7 +176,8 @@ export const prismaMap = {
     fromPrisma: (groupResponse: PrismaGroup): Group => ({
       id: groupResponse.id,
       name: groupResponse.name,
-      slug: groupResponse.slug
+      slug: groupResponse.slug,
+      ownerId: groupResponse.ownerId
     })
   }
 };

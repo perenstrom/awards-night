@@ -232,9 +232,15 @@ export const createGroup = async (
 
   const rawName = formData.get('groupName') as string;
   const rawSlug = formData.get('groupSlug') as string;
+  const rawOwnerId = formData.get('ownerId') as string;
 
-  if (!rawName || !rawSlug) {
-    return getStatusMessage('error', 'Name and slug are required.');
+  if (!rawName || !rawSlug || !rawOwnerId) {
+    return getStatusMessage('error', 'Name, slug, and owner are required.');
+  }
+
+  const ownerId = parseInt(rawOwnerId, 10);
+  if (isNaN(ownerId)) {
+    return getStatusMessage('error', 'Invalid owner ID.');
   }
 
   try {
@@ -242,7 +248,7 @@ export const createGroup = async (
       'services/prisma/groups'
     );
 
-    await createGroupService(rawName, rawSlug);
+    await createGroupService(rawName, rawSlug, ownerId);
 
     nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
     return getStatusMessage(

@@ -108,7 +108,8 @@ export type FilmScalarFieldEnum = (typeof FilmScalarFieldEnum)[keyof typeof Film
 export const GroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  slug: 'slug'
+  slug: 'slug',
+  ownerId: 'ownerId'
 } as const
 
 export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
