@@ -35,7 +35,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.className} ${roboto.className} ${charis_SIL.className}`}
+      className={`dark ${inter.className} ${roboto.className} ${charis_SIL.className}`}
     >
       <head>
         <meta
@@ -65,7 +65,7 @@ export default async function RootLayout({
         <meta name="msapplication-TileColor" content="#bba267" />
         <meta name="theme-color" content="#bba267" />
       </head>
-      <body>
+      <body className="dark">
         <Auth0Provider user={session?.user}>{children}</Auth0Provider>
       </body>
     </html>
