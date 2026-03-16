@@ -73,6 +73,7 @@ export interface Group {
   id: number;
   name?: string | null;
   slug: string;
+  ownerId: number;
 }
 
 export interface Player {

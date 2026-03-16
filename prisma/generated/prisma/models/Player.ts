@@ -202,6 +202,7 @@ export type PlayerWhereInput = {
   auth0UserId?: Prisma.StringNullableFilter<"Player"> | string | null
   groups?: Prisma.PlayerToGroupListRelationFilter
   bets?: Prisma.BetListRelationFilter
+  ownedGroups?: Prisma.GroupListRelationFilter
 }
 
 export type PlayerOrderByWithRelationInput = {
@@ -210,6 +211,7 @@ export type PlayerOrderByWithRelationInput = {
   auth0UserId?: Prisma.SortOrderInput | Prisma.SortOrder
   groups?: Prisma.PlayerToGroupOrderByRelationAggregateInput
   bets?: Prisma.BetOrderByRelationAggregateInput
+  ownedGroups?: Prisma.GroupOrderByRelationAggregateInput
 }
 
 export type PlayerWhereUniqueInput = Prisma.AtLeast<{
@@ -221,6 +223,7 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Player"> | string
   groups?: Prisma.PlayerToGroupListRelationFilter
   bets?: Prisma.BetListRelationFilter
+  ownedGroups?: Prisma.GroupListRelationFilter
 }, "id" | "auth0UserId">
 
 export type PlayerOrderByWithAggregationInput = {
@@ -248,6 +251,7 @@ export type PlayerCreateInput = {
   auth0UserId?: string | null
   groups?: Prisma.PlayerToGroupCreateNestedManyWithoutPlayerInput
   bets?: Prisma.BetCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerUncheckedCreateInput = {
@@ -256,6 +260,7 @@ export type PlayerUncheckedCreateInput = {
   auth0UserId?: string | null
   groups?: Prisma.PlayerToGroupUncheckedCreateNestedManyWithoutPlayerInput
   bets?: Prisma.BetUncheckedCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerUpdateInput = {
@@ -263,6 +268,7 @@ export type PlayerUpdateInput = {
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   groups?: Prisma.PlayerToGroupUpdateManyWithoutPlayerNestedInput
   bets?: Prisma.BetUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUpdateManyWithoutOwnerNestedInput
 }
 
 export type PlayerUncheckedUpdateInput = {
@@ -271,6 +277,7 @@ export type PlayerUncheckedUpdateInput = {
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   groups?: Prisma.PlayerToGroupUncheckedUpdateManyWithoutPlayerNestedInput
   bets?: Prisma.BetUncheckedUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 export type PlayerCreateManyInput = {
@@ -335,6 +342,20 @@ export type PlayerUpdateOneRequiredWithoutBetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutBetsInput, Prisma.PlayerUpdateWithoutBetsInput>, Prisma.PlayerUncheckedUpdateWithoutBetsInput>
 }
 
+export type PlayerCreateNestedOneWithoutOwnedGroupsInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedCreateWithoutOwnedGroupsInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutOwnedGroupsInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutOwnedGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedCreateWithoutOwnedGroupsInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutOwnedGroupsInput
+  upsert?: Prisma.PlayerUpsertWithoutOwnedGroupsInput
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutOwnedGroupsInput, Prisma.PlayerUpdateWithoutOwnedGroupsInput>, Prisma.PlayerUncheckedUpdateWithoutOwnedGroupsInput>
+}
+
 export type PlayerCreateNestedOneWithoutGroupsInput = {
   create?: Prisma.XOR<Prisma.PlayerCreateWithoutGroupsInput, Prisma.PlayerUncheckedCreateWithoutGroupsInput>
   connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutGroupsInput
@@ -353,6 +374,7 @@ export type PlayerCreateWithoutBetsInput = {
   name: string
   auth0UserId?: string | null
   groups?: Prisma.PlayerToGroupCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerUncheckedCreateWithoutBetsInput = {
@@ -360,6 +382,7 @@ export type PlayerUncheckedCreateWithoutBetsInput = {
   name: string
   auth0UserId?: string | null
   groups?: Prisma.PlayerToGroupUncheckedCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerCreateOrConnectWithoutBetsInput = {
@@ -382,6 +405,7 @@ export type PlayerUpdateWithoutBetsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   groups?: Prisma.PlayerToGroupUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUpdateManyWithoutOwnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutBetsInput = {
@@ -389,12 +413,60 @@ export type PlayerUncheckedUpdateWithoutBetsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   groups?: Prisma.PlayerToGroupUncheckedUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUncheckedUpdateManyWithoutOwnerNestedInput
+}
+
+export type PlayerCreateWithoutOwnedGroupsInput = {
+  name: string
+  auth0UserId?: string | null
+  groups?: Prisma.PlayerToGroupCreateNestedManyWithoutPlayerInput
+  bets?: Prisma.BetCreateNestedManyWithoutPlayerInput
+}
+
+export type PlayerUncheckedCreateWithoutOwnedGroupsInput = {
+  id?: number
+  name: string
+  auth0UserId?: string | null
+  groups?: Prisma.PlayerToGroupUncheckedCreateNestedManyWithoutPlayerInput
+  bets?: Prisma.BetUncheckedCreateNestedManyWithoutPlayerInput
+}
+
+export type PlayerCreateOrConnectWithoutOwnedGroupsInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedCreateWithoutOwnedGroupsInput>
+}
+
+export type PlayerUpsertWithoutOwnedGroupsInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedUpdateWithoutOwnedGroupsInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedCreateWithoutOwnedGroupsInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutOwnedGroupsInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutOwnedGroupsInput, Prisma.PlayerUncheckedUpdateWithoutOwnedGroupsInput>
+}
+
+export type PlayerUpdateWithoutOwnedGroupsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  groups?: Prisma.PlayerToGroupUpdateManyWithoutPlayerNestedInput
+  bets?: Prisma.BetUpdateManyWithoutPlayerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutOwnedGroupsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  groups?: Prisma.PlayerToGroupUncheckedUpdateManyWithoutPlayerNestedInput
+  bets?: Prisma.BetUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerCreateWithoutGroupsInput = {
   name: string
   auth0UserId?: string | null
   bets?: Prisma.BetCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerUncheckedCreateWithoutGroupsInput = {
@@ -402,6 +474,7 @@ export type PlayerUncheckedCreateWithoutGroupsInput = {
   name: string
   auth0UserId?: string | null
   bets?: Prisma.BetUncheckedCreateNestedManyWithoutPlayerInput
+  ownedGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutOwnerInput
 }
 
 export type PlayerCreateOrConnectWithoutGroupsInput = {
@@ -424,6 +497,7 @@ export type PlayerUpdateWithoutGroupsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bets?: Prisma.BetUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUpdateManyWithoutOwnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutGroupsInput = {
@@ -431,6 +505,7 @@ export type PlayerUncheckedUpdateWithoutGroupsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   auth0UserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bets?: Prisma.BetUncheckedUpdateManyWithoutPlayerNestedInput
+  ownedGroups?: Prisma.GroupUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 
@@ -441,11 +516,13 @@ export type PlayerUncheckedUpdateWithoutGroupsInput = {
 export type PlayerCountOutputType = {
   groups: number
   bets: number
+  ownedGroups: number
 }
 
 export type PlayerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   groups?: boolean | PlayerCountOutputTypeCountGroupsArgs
   bets?: boolean | PlayerCountOutputTypeCountBetsArgs
+  ownedGroups?: boolean | PlayerCountOutputTypeCountOwnedGroupsArgs
 }
 
 /**
@@ -472,6 +549,13 @@ export type PlayerCountOutputTypeCountBetsArgs<ExtArgs extends runtime.Types.Ext
   where?: Prisma.BetWhereInput
 }
 
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountOwnedGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GroupWhereInput
+}
+
 
 export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -479,6 +563,7 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   auth0UserId?: boolean
   groups?: boolean | Prisma.Player$groupsArgs<ExtArgs>
   bets?: boolean | Prisma.Player$betsArgs<ExtArgs>
+  ownedGroups?: boolean | Prisma.Player$ownedGroupsArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["player"]>
 
@@ -504,6 +589,7 @@ export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   groups?: boolean | Prisma.Player$groupsArgs<ExtArgs>
   bets?: boolean | Prisma.Player$betsArgs<ExtArgs>
+  ownedGroups?: boolean | Prisma.Player$ownedGroupsArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PlayerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -514,6 +600,7 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     groups: Prisma.$PlayerToGroupPayload<ExtArgs>[]
     bets: Prisma.$BetPayload<ExtArgs>[]
+    ownedGroups: Prisma.$GroupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -915,6 +1002,7 @@ export interface Prisma__PlayerClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   groups<T extends Prisma.Player$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlayerToGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bets<T extends Prisma.Player$betsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$betsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ownedGroups<T extends Prisma.Player$ownedGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$ownedGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1380,6 +1468,30 @@ export type Player$betsArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   distinct?: Prisma.BetScalarFieldEnum | Prisma.BetScalarFieldEnum[]
+}
+
+/**
+ * Player.ownedGroups
+ */
+export type Player$ownedGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Group
+   */
+  select?: Prisma.GroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Group
+   */
+  omit?: Prisma.GroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupInclude<ExtArgs> | null
+  where?: Prisma.GroupWhereInput
+  orderBy?: Prisma.GroupOrderByWithRelationInput | Prisma.GroupOrderByWithRelationInput[]
+  cursor?: Prisma.GroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GroupScalarFieldEnum | Prisma.GroupScalarFieldEnum[]
 }
 
 /**

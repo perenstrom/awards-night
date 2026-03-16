@@ -60,6 +60,7 @@ export const getAllGroups = unstable_cache(
     console.log('Finding all groups');
     const result = await prisma.group.findMany({
       include: {
+        owner: true,
         players: {
           include: {
             player: true
@@ -105,9 +106,12 @@ export const slugExists = async (slug: string): Promise<boolean> => {
 
 export const createGroup = async (
   name: string,
-  slug: string
+  slug: string,
+  ownerId: number
 ): Promise<Group> => {
-  console.log(`Creating group with name: ${name}, slug: ${slug}`);
+  console.log(
+    `Creating group with name: ${name}, slug: ${slug}, owner: ${ownerId}`
+  );
 
   // Check if slug already exists
   const exists = await slugExists(slug);
@@ -115,10 +119,19 @@ export const createGroup = async (
     throw new Error('A group with this slug already exists.');
   }
 
+  // Verify owner exists
+  const owner = await prisma.player.findUnique({
+    where: { id: ownerId }
+  });
+  if (!owner) {
+    throw new Error('Invalid owner: player does not exist.');
+  }
+
   const result = await prisma.group.create({
     data: {
       name,
-      slug
+      slug,
+      ownerId
     }
   });
 

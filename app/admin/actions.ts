@@ -129,47 +129,34 @@ export const setWinner = async (formData: FormData) => {
   );
   if (!category) return;
 
-  const winningNominationsInCategory = category.nominations.filter(
-    (n) => n.won
-  );
-
-  if (winningNominationsInCategory.length > 1) {
-    throw new Error('Multiple wins for one category');
-  }
-
   const relatedNominations = category.nominations.filter(
     (n) => n.id !== nominationId
   );
 
-  if (
-    winningNominationsInCategory.length === 1 &&
-    winningNominationsInCategory[0].id === nominationId
-  ) {
-    console.log('Clicked nomination already marked as winner');
-    // Clicked nomination already marked as winner
-    // Remove win
-    await Promise.all([
-      updateNomination(nominationId, { won: false, decided: false }),
-      ...relatedNominations.map((n) =>
-        updateNomination(n.id, { decided: false })
-      )
-    ]);
-  } else if (winningNominationsInCategory.length === 1) {
-    console.log('Clicked nomination when another already marked as winner');
-    // Clicked nomination when another already marked as winner
-    // Update both old and new
-    await Promise.all([
-      updateNomination(winningNominationsInCategory[0].id, {
-        won: false
-      }),
-      updateNomination(nominationId, {
-        won: true
-      })
-    ]);
+  if (nomination.won) {
+    console.log('Toggling off winner');
+    // Nomination is currently a winner - toggle it off
+    // Check if there are other winners remaining in the category
+    const otherWinners = category.nominations.filter(
+      (n) => n.won && n.id !== nominationId
+    );
+    
+    if (otherWinners.length === 0) {
+      // This is the last winner - set all nominations to undecided
+      await Promise.all([
+        updateNomination(nominationId, { won: false, decided: false }),
+        ...relatedNominations.map((n) =>
+          updateNomination(n.id, { decided: false })
+        )
+      ]);
+    } else {
+      // There are other winners - just toggle this one off
+      await updateNomination(nominationId, { won: false });
+    }
   } else {
-    console.log('Clicked nomination when no other already marked as winner');
-    // Clicked nomination when no other already marked as winner
-    // Set new
+    console.log('Toggling on winner');
+    // Nomination is not a winner - toggle it on
+    // Mark this nomination as winner and set all nominations as decided
     await Promise.all([
       updateNomination(nominationId, {
         won: true,
@@ -232,9 +219,15 @@ export const createGroup = async (
 
   const rawName = formData.get('groupName') as string;
   const rawSlug = formData.get('groupSlug') as string;
+  const rawOwnerId = formData.get('ownerId') as string;
 
-  if (!rawName || !rawSlug) {
-    return getStatusMessage('error', 'Name and slug are required.');
+  if (!rawName || !rawSlug || !rawOwnerId) {
+    return getStatusMessage('error', 'Name, slug, and owner are required.');
+  }
+
+  const ownerId = parseInt(rawOwnerId, 10);
+  if (isNaN(ownerId)) {
+    return getStatusMessage('error', 'Invalid owner ID.');
   }
 
   try {
@@ -242,7 +235,7 @@ export const createGroup = async (
       'services/prisma/groups'
     );
 
-    await createGroupService(rawName, rawSlug);
+    await createGroupService(rawName, rawSlug, ownerId);
 
     nextRevalidateTag('ALL_GROUPS_CACHE_KEY');
     return getStatusMessage(

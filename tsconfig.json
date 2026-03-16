@@ -16,7 +16,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@prisma/generated": ["./prisma/generated/prisma/client"]
+      "@prisma/generated": ["./prisma/generated/prisma/client"],
+      "@/*": ["./*"]
     },
     "downlevelIteration": true,
     "incremental": true,

@@ -40,6 +40,8 @@ model Group {
   id      Int             @id @default(autoincrement())
   name    String?
   slug    String          @unique
+  ownerId Int             @map("owner_id")
+  owner   Player          @relation("OwnedGroups", fields: [ownerId], references: [id], onDelete: NoAction)
   players PlayerToGroup[]
 
   @@map("groups")
@@ -67,6 +69,7 @@ model Player {
   auth0UserId String?         @unique @map("auth0_user_id")
   groups      PlayerToGroup[]
   bets        Bet[]
+  ownedGroups Group[]         @relation("OwnedGroups")
 
   @@map("players")
 }

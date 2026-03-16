@@ -71,6 +71,27 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
           <div className="flex gap-4">
             <InputField id="group-name" name="groupName" label="Group Name" />
             <InputField id="group-slug" name="groupSlug" label="Group Slug" />
+            <div className="flex flex-col">
+              <label
+                htmlFor="owner-select"
+                className="text-sm font-medium mb-1"
+              >
+                Owner *
+              </label>
+              <select
+                id="owner-select"
+                name="ownerId"
+                required
+                className="border border-gray-300 rounded-md p-2"
+              >
+                <option value="">Select owner...</option>
+                {players.map((player) => (
+                  <option key={player.id} value={player.id}>
+                    {player.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex items-end">
               <Button type="submit">Create</Button>
             </div>
@@ -108,6 +129,11 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
                     </Typography>
                     <Typography variant="body" color="black">
                       Slug: {group.slug}
+                    </Typography>
+                    <Typography variant="body" color="black">
+                      Owner:{' '}
+                      {players.find((p) => p.id === group.ownerId)?.name ||
+                        'Unknown'}
                     </Typography>
                   </div>
                   {groupMembers.length === 0 && (
