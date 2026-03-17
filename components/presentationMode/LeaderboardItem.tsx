@@ -1,4 +1,3 @@
-
 interface props {
   name: string;
   correct: number;
