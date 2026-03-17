@@ -1,7 +1,6 @@
 import { clsx } from 'clsx';
 import { memo } from 'react';
 import { FilmPoster } from './FilmPoster';
-import styles from './BetItem.module.scss';
 import { CheckboxWrapper } from './dashboard/CheckboxWrapper';
 
 interface Props {
@@ -32,17 +31,21 @@ export const BetItemComponent: React.FC<Props> = ({
 }) => {
   return (
     <button
-      className={styles.button}
+      className="w-full border-0 bg-transparent p-0 m-0 text-left"
       type="submit"
       name="nominationId"
       value={nominationId}
       disabled={disabled}
     >
       <li
-        className={clsx(styles.wrapper, {
-          [styles.winner]: won,
-          [styles.pointer]: !disabled
-        })}
+        className={clsx(
+          'flex items-center gap-3 w-full list-none p-2 rounded-sm transition-colors duration-300 bg-background-grey-1 text-text-primary',
+          {
+            'cursor-pointer': !disabled,
+            'shadow-[0_0_0.5em_0.2em_var(--color-winner-yellow)] md:shadow-[0_0_1em_0.4em_var(--color-winner-yellow)]':
+              won
+          }
+        )}
         key={nominationId}
       >
         <CheckboxWrapper
@@ -51,9 +54,9 @@ export const BetItemComponent: React.FC<Props> = ({
           state={getState(won, decided, activeBet)}
         />
         <FilmPoster poster={poster} />
-        <div className={styles.innerWrapper}>
-          <h3 className={styles.title}>{filmName}</h3>
-          {nominee && <p className={styles.nominee}>{nominee}</p>}
+        <div className="flex flex-col py-1 md:py-2">
+          <h3 className="font-bold text-sm md:text-base">{filmName}</h3>
+          {nominee && <p className="text-xs md:text-sm">{nominee}</p>}
         </div>
       </li>
     </button>
