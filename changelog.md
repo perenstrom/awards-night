@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.6.0
+
+- Allow multiple winners
+- Add owners to groups
+- Migrate landing page to tailwind
+- Migrate me-page styles
+- Use ShadCN UI
+
 ## 4.5.2
 
 - Update prisma and fix cascading bugs
