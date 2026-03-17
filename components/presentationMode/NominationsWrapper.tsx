@@ -3,7 +3,7 @@
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { Nullable } from 'types/utilityTypes';
-import styles from './NominationsWrapper.module.scss';
+import styles from './NominationsWrapper.module.css';
 
 type RestrictedBy = 'height' | 'width';
 
@@ -41,10 +41,10 @@ export const NominationsWrapper: React.FC<{
   }, [restrictedBy]);
 
   return (
-    <div className={styles.main}>
+    <div className={clsx('flex h-screen w-full', styles.main)}>
       <div
         className={clsx(styles.mainWrapper, {
-          [styles.heightRestricted]: restrictedBy === 'height' || null,
+          [styles.heightRestricted]: restrictedBy === 'height',
           [styles.widthRestricted]: restrictedBy === 'width',
           [styles.visible]: visible
         })}

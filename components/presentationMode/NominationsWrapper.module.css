@@ -1,7 +1,4 @@
 .main {
-  display: flex;
-  height: 100vh;
-  width: 100%;
   background: linear-gradient(180deg, #24242e 0%, #111115 24.3%);
 }
 
@@ -70,3 +67,4 @@
 .visible {
   opacity: 1;
 }
+
