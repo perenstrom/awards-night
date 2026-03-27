@@ -1,5 +1,3 @@
-import styles from './InputField.module.scss';
-
 type Props =
   | React.InputHTMLAttributes<HTMLInputElement> & {
       inputRef?: React.RefObject<HTMLInputElement | null>;
@@ -10,9 +8,14 @@ export const InputField = (props: Props) => {
   const { inputRef, label, id, ...args } = props;
 
   return (
-    <div className={styles.inputWrapper}>
+    <div className="flex flex-col gap-[0.2rem]">
       <label htmlFor={id}>{label}</label>
-      <input id={id} className={styles.inputText} {...args} ref={inputRef} />
+      <input
+        id={id}
+        className="h-10 rounded border border-solid border-background-grey-1"
+        {...args}
+        ref={inputRef}
+      />
     </div>
   );
 };
