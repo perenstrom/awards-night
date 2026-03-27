@@ -15,7 +15,6 @@ import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItem
 import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { NominationsPoller } from 'components/presentationMode/NominationsPoller';
 import { GroupSelector } from 'components/presentationMode/GroupSelector';
-import styles from './layout.module.scss';
 
 interface Props {
   params: Promise<{ year: string; category: string; groupSlug?: string[] }>;
@@ -93,17 +92,17 @@ export default async function CategoryLayout(
       awardsFinished={year.awardsFinished}
     >
       <NominationsWrapper>
-        <div className={styles.sidebar}>
-          <div className={styles.sidebarContent}>
+        <div className="flex basis-[20em] grow-0 flex-col overflow-hidden border-r-[0.5px] border-solid border-[#696b7e] bg-[#363636] px-4 pb-4 pt-8 font-[Inter,sans-serif]">
+          <div className="flex flex-1 flex-col">
             {!!players.length && (
               <>
-                <h2 className={styles.subHeading}>
+                <h2 className="m-0 pb-[0.2em] font-[Inter,sans-serif] text-[1.7em] font-light text-text-primary">
                   {bettingOpen ? 'Players' : 'Leaderboard'}
                 </h2>
-                <ol className={styles.leaderboard}>
+                <ol className="mb-[0.5em] p-0 font-bold text-white [&_li]:flex [&_li]:items-baseline [&_li]:justify-between [&_li]:gap-[0.5em] [&_li]:overflow-hidden [&_li]:rounded-lg [&_li]:px-[0.5em] [&_li]:py-[0.2em] [&_li]:text-[0.8em] [&_ol]:[counter-reset:position]">
                   {bettingOpen ? (
                     <>
-                      <ol className={styles.leaderboardOverflow}>
+                      <ol className="grid grid-cols-3 gap-[0.5em] p-0 text-base">
                         {players.slice(0, 18).map((player) => (
                           <LeaderboardItemSmall
                             key={player.id}
@@ -142,7 +141,7 @@ export default async function CategoryLayout(
                           />
                         ))}
                       {playersSortedByCorrect.length > 4 && (
-                        <ol className={styles.leaderboardOverflow}>
+                        <ol className="grid grid-cols-3 gap-[0.5em] p-0 text-base">
                           {playersSortedByCorrect.slice(4, 9).map((player) => (
                             <LeaderboardItemSmall
                               key={player.id}
@@ -171,16 +170,19 @@ export default async function CategoryLayout(
             )}
             {!!completedCategories.length && (
               <>
-                <h2 className={styles.subHeadingSmall}>Completed categories</h2>
-                <ul className={styles.categories}>
+                <h2 className="mx-0 mb-[0.2em] mt-4 font-[Inter,sans-serif] text-[1.2em] font-light text-text-primary">
+                  Completed categories
+                </h2>
+                <ul className="mx-0 mb-[0.5em] mt-0 list-none p-0 font-[Inter,sans-serif] text-[0.8em] font-medium leading-normal text-text-primary">
                   {completedCategories.map((category) => (
-                    <li
-                      className={clsx(styles.categoryItem, {
-                        [styles.active]: categorySlug === category.slug
-                      })}
-                      key={category.slug}
-                    >
+                    <li className="p-0" key={category.slug}>
                       <Link
+                        className={clsx(
+                          'no-underline',
+                          categorySlug === category.slug
+                            ? 'text-[#ef8b2c]'
+                            : 'text-text-primary'
+                        )}
                         href={`/${year.year}/${category.slug}${
                           groupSlug ? `/${groupSlug}` : ''
                         }`}
@@ -194,16 +196,19 @@ export default async function CategoryLayout(
             )}
             {!!upcomingCategories.length && (
               <>
-                <h2 className={styles.subHeadingSmall}>Upcoming categories</h2>
-                <ul className={styles.categories}>
+                <h2 className="mx-0 mb-[0.2em] mt-4 font-[Inter,sans-serif] text-[1.2em] font-light text-text-primary">
+                  Upcoming categories
+                </h2>
+                <ul className="mx-0 mb-[0.5em] mt-0 list-none p-0 font-[Inter,sans-serif] text-[0.8em] font-medium leading-normal text-text-primary">
                   {upcomingCategories.map((category) => (
-                    <li
-                      className={clsx(styles.categoryItem, {
-                        [styles.active]: categorySlug === category.slug
-                      })}
-                      key={category.slug}
-                    >
+                    <li className="p-0" key={category.slug}>
                       <Link
+                        className={clsx(
+                          'no-underline',
+                          categorySlug === category.slug
+                            ? 'text-[#ef8b2c]'
+                            : 'text-text-primary'
+                        )}
                         href={`/${year.year}/${category.slug}${
                           groupSlug ? `/${groupSlug}` : ''
                         }`}

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { MainContainer } from 'components/MainContainer';
 import { getNominationData } from 'lib/getNominationData';
 import { Typography } from 'components/base/Typography';
-import styles from './year.module.scss';
 
 type Props = {
   params: Promise<{ year: number }>;
@@ -37,7 +36,7 @@ export default async function Page(props: Props) {
       <Typography variant="h1" color="white">
         Nominations for {year.year}
       </Typography>
-      <ul className={styles.list}>
+      <ul className="text-white [&_a]:text-white">
         {Object.values(nominationData.categories).map((category) => (
           <li key={category.slug}>
             <Link href={`/${year.year}/${category.slug}`}>{category.name}</Link>
