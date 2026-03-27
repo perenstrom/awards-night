@@ -7,7 +7,7 @@ import { closeBetting, closeYear, setWinner } from 'app/admin/actions';
 import { NominationList } from 'components/NominationList';
 import { isAdmin } from 'lib/authorization';
 import { Typography } from 'components/base/Typography';
-import { Button } from 'components/base/Button';
+import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Admin dashboard – Awards Night'

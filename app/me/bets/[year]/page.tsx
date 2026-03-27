@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getNominationData } from 'lib/getNominationData';
@@ -7,7 +8,7 @@ import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
 import { getBetsForPlayerCached } from 'services/prisma/bets';
 import { Typography } from 'components/base/Typography';
-import { Button } from 'components/base/Button';
+import { Button } from '@/components/ui/button';
 import { setBet } from '../actions';
 
 export const metadata: Metadata = {
@@ -52,12 +53,12 @@ export default async function Page(props: Props) {
         </Typography>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="md:hidden">
-            <Button element="a" href="/me/bets">
-              &lt; My Bets
+            <Button asChild>
+              <Link href="/me/bets">&lt; My Bets</Link>
             </Button>
           </div>
-          <Button element="a" href={presentationUrl}>
-            Go to presentation mode &gt;
+          <Button asChild>
+            <Link href={presentationUrl}>Go to presentation mode &gt;</Link>
           </Button>
         </div>
       </div>
