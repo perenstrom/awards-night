@@ -4,10 +4,16 @@ import React, { useEffect, useRef, useState, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Nullable, StatusMessage } from 'types/utilityTypes';
 import { TmdbFilmResult } from 'types/nominations';
-import { InputField } from 'components/base/InputField';
-import { LoadingSpinner } from 'components/base/LoadingSpinner';
-import { Button } from 'components/base/Button';
-import { Typography } from 'components/base/Typography';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { Button } from '@/components/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Alert } from 'components/base/Alert';
 import { createFilmByTmdb, searchFilms } from '../../app/admin/actions';
 
@@ -18,24 +24,21 @@ const SearchFormContent: React.FC<{
 
   return (
     <>
-      <div className="flex items-end gap-4">
-        <InputField
-          id="filmQuery"
-          inputRef={inputRef}
-          name="filmQuery"
-          label="Film name"
-        />
+      <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
+        <Field className="min-w-[12rem] max-w-md flex-1">
+          <FieldLabel htmlFor="filmQuery">Film name</FieldLabel>
+          <Input ref={inputRef} id="filmQuery" name="filmQuery" />
+        </Field>
         <Button
           name="action"
           value="searchFilms"
-          color="primary"
           type="submit"
           disabled={pending}
         >
           Search
         </Button>
-        {pending && <LoadingSpinner />}
-      </div>
+        {pending && <Spinner className="size-8" />}
+      </FieldGroup>
     </>
   );
 };
@@ -45,8 +48,9 @@ const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
 
   return (
     <li>
-      <button
-        className="px-4 py-2 w-full text-left hover:bg-gray-100"
+      <Button
+        variant="ghost"
+        className="h-auto w-full justify-start px-4 py-2 font-normal"
         type="submit"
         name="tmdbId"
         value={film.tmdbId}
@@ -55,7 +59,7 @@ const SearchResult: React.FC<{ film: TmdbFilmResult }> = ({ film }) => {
         {`${film.name} (${
           film.releaseDate ? film.releaseDate.slice(0, 4) : 'n/a'
         })`}
-      </button>
+      </Button>
     </li>
   );
 };
@@ -104,9 +108,11 @@ export const AddFilmBySearch = () => {
   }, [statusMessageCreate]);
 
   return (
-    <div className="mt-4 p-4 rounded-md bg-white">
-      <Typography variant="h2">Search and add films</Typography>
-      <div className="mt-4">
+    <Card className="mt-4">
+      <CardHeader>
+        <CardTitle className="text-xl">Search and add films</CardTitle>
+      </CardHeader>
+      <CardContent>
         <form action={searchAction}>
           <SearchFormContent inputRef={searchFilmInputElement} />
         </form>
@@ -127,7 +133,7 @@ export const AddFilmBySearch = () => {
             />
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

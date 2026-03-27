@@ -1,5 +1,15 @@
-import { InputField } from 'components/base/InputField';
+'use client';
+
+import { Input } from '@/components/ui/input';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { cn } from '@/lib/utils';
 import { Film } from 'types/nominations';
+
+const nativeSelectClassName = cn(
+  'flex h-9 w-full min-w-[12rem] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none',
+  'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
+  'disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30'
+);
 
 interface Props {
   availableFilms: Film[];
@@ -8,13 +18,13 @@ interface Props {
 
 export const NominationFields = ({ availableFilms, index }: Props) => {
   return (
-    <div className="flex flex-wrap items-end gap-4 mt-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor={`film-${index}`}>Film</label>
+    <FieldGroup className="mt-4 flex flex-row flex-wrap items-end gap-4">
+      <Field className="min-w-[12rem] flex-1">
+        <FieldLabel htmlFor={`film-${index}`}>Film</FieldLabel>
         <select
           id={`film-${index}`}
           name="films"
-          className="border border-gray-300 rounded-md p-2 hover:border-black"
+          className={nativeSelectClassName}
         >
           {availableFilms.map((film) => (
             <option key={film.imdbId} value={film.imdbId}>
@@ -25,8 +35,11 @@ export const NominationFields = ({ availableFilms, index }: Props) => {
             </option>
           ))}
         </select>
-      </div>
-      <InputField id={`nominee-${index}`} name={`nominees`} label="Nominee" />
-    </div>
+      </Field>
+      <Field className="min-w-[10rem] flex-1">
+        <FieldLabel htmlFor={`nominee-${index}`}>Nominee</FieldLabel>
+        <Input id={`nominee-${index}`} name={`nominees`} />
+      </Field>
+    </FieldGroup>
   );
 };

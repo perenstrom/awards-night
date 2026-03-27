@@ -2,10 +2,16 @@
 
 import React, { RefObject, useEffect, useRef, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Button } from 'components/base/Button';
-import { InputField } from 'components/base/InputField';
-import { LoadingSpinner } from 'components/base/LoadingSpinner';
-import { Typography } from 'components/base/Typography';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Alert } from 'components/base/Alert';
 import { createFilm } from '../../app/admin/actions';
 
@@ -16,24 +22,21 @@ const FormContent: React.FC<{
 
   return (
     <>
-      <div className="flex items-end gap-4">
-        <InputField
-          id="imdb-id"
-          inputRef={inputRef}
-          name="imdbId"
-          label="IMDb ID"
-        />
+      <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
+        <Field className="min-w-[12rem] max-w-md flex-1">
+          <FieldLabel htmlFor="imdb-id">IMDb ID</FieldLabel>
+          <Input ref={inputRef} id="imdb-id" name="imdbId" />
+        </Field>
         <Button
           name="action"
           value="addFilmByImdbId"
-          color="primary"
           type="submit"
           disabled={pending}
         >
           Add
         </Button>
-        {pending && <LoadingSpinner />}
-      </div>
+        {pending && <Spinner className="size-8" />}
+      </FieldGroup>
     </>
   );
 };
@@ -50,9 +53,11 @@ export const AddFilm = () => {
   }, [statusMessage]);
 
   return (
-    <div className="mt-4 p-4 rounded-md bg-white">
-      <Typography variant="h2">Add film</Typography>
-      <div className="mt-4">
+    <Card className="mt-4">
+      <CardHeader>
+        <CardTitle className="text-xl">Add film</CardTitle>
+      </CardHeader>
+      <CardContent>
         <form action={createFilmAction}>
           <FormContent inputRef={imdbIdInputElement} />
         </form>
@@ -64,7 +69,7 @@ export const AddFilm = () => {
             />
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

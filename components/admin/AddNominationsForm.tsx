@@ -9,15 +9,28 @@ import React, {
 } from 'react';
 import { useFormStatus } from 'react-dom';
 import { BaseYear, Category, Film } from 'types/nominations';
-import { Button } from 'components/base/Button';
-import { Typography } from 'components/base/Typography';
-import { LoadingSpinner } from 'components/base/LoadingSpinner';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { Alert } from 'components/base/Alert';
 import {
   createNominations,
   setNominationsCount
 } from '../../app/admin/actions';
 import { NominationFields } from './NominationFields';
+
+const nativeSelectClassName = cn(
+  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none',
+  'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
+  'disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30'
+);
 
 const renderNominationFields = (availableFilms: Film[], count: number) => {
   const elements: ReactElement<React.JSX.Element>[] = [];
@@ -40,7 +53,7 @@ const LoadingSpinnerWrapper = () => {
   return (
     pending && (
       <div className="mt-6">
-        <LoadingSpinner />
+        <Spinner className="size-8" />
       </div>
     )
   );
@@ -55,7 +68,6 @@ const SaveNominationCountButton: React.FC<{
     <Button
       name="action"
       value="changeNominationCount"
-      color="primary"
       type="submit"
       onClick={onUpdateNominationCount}
       disabled={pending}
@@ -72,7 +84,6 @@ const SaveButton = () => {
     <Button
       name="action"
       value="addNominations"
-      color="primary"
       type="submit"
       disabled={pending}
     >
@@ -99,22 +110,18 @@ export const AddNominationsForm: React.FC<Props> = ({
     null
   );
 
-  // Track selected year for filtering films
   const [selectedYear, setSelectedYear] = useState<number>(
     availableYears[0]?.year || new Date().getFullYear()
   );
 
-  // Filter films based on selected year (show films from selected year, previous year, and two years ago)
   const filteredFilms = useMemo(() => {
     return availableFilms.filter((film) => {
-      // Exclude films without release date
       if (!film.releaseDate) {
         return false;
       }
 
       const releaseYear = new Date(film.releaseDate).getFullYear();
 
-      // Include films from selected year, previous year, and two years ago
       return (
         releaseYear === selectedYear ||
         releaseYear === selectedYear - 1 ||
@@ -123,14 +130,11 @@ export const AddNominationsForm: React.FC<Props> = ({
     });
   }, [availableFilms, selectedYear]);
 
-  // Filter categories based on selected year
   const filteredCategories = useMemo(() => {
     return availableCategories.filter((category) => {
-      // If category doesn't have years info, include it (backward compatibility)
       if (!category.years || category.years.length === 0) {
         return true;
       }
-      // Include category if it's available for the selected year
       return category.years.includes(selectedYear);
     });
   }, [availableCategories, selectedYear]);
@@ -156,83 +160,87 @@ export const AddNominationsForm: React.FC<Props> = ({
   }, [statusMessage]);
 
   return (
-    <div className="mt-4 p-4 rounded-md bg-white">
-      <Typography variant="h2">Add nominations</Typography>
-      <form action={setNominationsAction}>
-        <div className="flex items-end gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="nominationCount">Nomination count</label>
-            <select
-              id="nominationCount"
-              name="nominationCount"
-              defaultValue={nominationCountResult || nominationCount}
-              ref={nominationCountElement}
-              className="border border-gray-300 rounded-md p-2 hover:border-black"
-            >
-              {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((count) => (
-                <option key={`category-count-${count}`} value={count}>
-                  {`${count} nominations`}
-                </option>
-              ))}
-            </select>
-          </div>
-          <SaveNominationCountButton
-            onUpdateNominationCount={onUpdateNominationCount}
-          />
-        </div>
-      </form>
-      <div className="mt-4">
-        <form action={formAction} ref={formElement}>
-          <div className="flex gap-4">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="year">Year</label>
+    <Card className="mt-4">
+      <CardHeader>
+        <CardTitle className="text-xl">Add nominations</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={setNominationsAction}>
+          <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
+            <Field className="min-w-[12rem]">
+              <FieldLabel htmlFor="nominationCount">Nomination count</FieldLabel>
               <select
-                id="year"
-                name="year"
-                className="border border-gray-300 rounded-md p-2 hover:border-black"
-                onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                value={selectedYear}
+                id="nominationCount"
+                name="nominationCount"
+                defaultValue={nominationCountResult || nominationCount}
+                ref={nominationCountElement}
+                className={nativeSelectClassName}
               >
-                {availableYears.map((year) => (
-                  <option key={year.year} value={year.year}>
-                    {year.year}
+                {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((count) => (
+                  <option key={`category-count-${count}`} value={count}>
+                    {`${count} nominations`}
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                name="category"
-                className="border border-gray-300 rounded-md p-2 hover:border-black"
-              >
-                {filteredCategories.map((category) => (
-                  <option key={category.slug} value={category.slug}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          {renderNominationFields(
-            filteredFilms,
-            nominationCountResult || nominationCount
-          )}
-          <div className="mt-4">
-            <SaveButton />
-          </div>
-          <LoadingSpinnerWrapper />
-        </form>
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
+            </Field>
+            <SaveNominationCountButton
+              onUpdateNominationCount={onUpdateNominationCount}
             />
-          </div>
-        )}
-      </div>
-    </div>
+          </FieldGroup>
+        </form>
+        <div className="mt-4">
+          <form action={formAction} ref={formElement}>
+            <FieldGroup className="flex flex-row flex-wrap gap-4">
+              <Field className="min-w-[8rem]">
+                <FieldLabel htmlFor="year">Year</FieldLabel>
+                <select
+                  id="year"
+                  name="year"
+                  className={nativeSelectClassName}
+                  onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                  value={selectedYear}
+                >
+                  {availableYears.map((year) => (
+                    <option key={year.year} value={year.year}>
+                      {year.year}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field className="min-w-[12rem] flex-1">
+                <FieldLabel htmlFor="category">Category</FieldLabel>
+                <select
+                  id="category"
+                  name="category"
+                  className={nativeSelectClassName}
+                >
+                  {filteredCategories.map((category) => (
+                    <option key={category.slug} value={category.slug}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </FieldGroup>
+            {renderNominationFields(
+              filteredFilms,
+              nominationCountResult || nominationCount
+            )}
+            <div className="mt-4">
+              <SaveButton />
+            </div>
+            <LoadingSpinnerWrapper />
+          </form>
+          {statusMessage && (
+            <div className="mt-4">
+              <Alert
+                severity={statusMessage.severity}
+                message={statusMessage.message}
+              />
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
