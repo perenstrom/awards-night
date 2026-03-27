@@ -1,0 +1,79 @@
+.progressWrapper {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+  font-size: 0;
+  margin: 0;
+  margin-top: 4px;
+}
+
+.progressBar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  border: none;
+  border-radius: 2px;
+}
+
+.progressBarSecondary {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.progressBar::-webkit-progress-bar {
+  border-radius: 2px;
+}
+.progressBar::-moz-progress-bar {
+  border-radius: 2px;
+}
+.progressBar::-webkit-progress-value {
+  border-radius: 2px;
+}
+
+.backgroundGray {
+  background-color: hsla(0, 0%, 45%, 1);
+}
+.backgroundGray::-webkit-progress-bar {
+  background-color: hsla(0, 0%, 45%, 1);
+}
+
+.backgroundTransparent {
+  background-color: transparent;
+}
+.backgroundTransparent::-webkit-progress-bar {
+  background-color: transparent;
+}
+
+.backgroundRed {
+  background-color: hsla(6, 74%, 43%, 1);
+}
+.backgroundRed::-webkit-progress-bar {
+  background-color: hsla(6, 74%, 43%, 1);
+}
+
+.progressGreen::-webkit-progress-value {
+  background-color: hsla(112, 45%, 42%, 1);
+}
+.progressGreen::-moz-progress-bar {
+  background-color: hsla(112, 45%, 42%, 1);
+}
+
+.progressOrange::-webkit-progress-value {
+  background-color: hsla(29, 86%, 55%, 1);
+}
+.progressOrange::-moz-progress-bar {
+  background-color: hsla(29, 86%, 55%, 1);
+}
+
+.progressRed::-webkit-progress-value {
+  background-color: hsla(6, 74%, 43%, 1);
+}
+.progressRed::-moz-progress-bar {
+  background-color: hsla(6, 74%, 43%, 1);
+}

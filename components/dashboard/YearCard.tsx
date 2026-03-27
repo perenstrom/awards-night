@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import Link from 'next/link';
 import { Bet, NominationData } from 'types/nominations';
-import styles from './YearCard.module.scss';
+import styles from './YearCard.module.css';
 import { YearCardWrapper } from './YearCardWrapper';
 import { YearCardChevron } from './YearCardChevron';
 
@@ -208,34 +208,36 @@ export const YearCard: React.FC<Props> = ({ nominationData, bets }) => {
   );
 
   return (
-    <Link className={styles.link} href={`/me/bets/${year.year}`}>
+    <Link className="no-underline" href={`/me/bets/${year.year}`}>
       <YearCardWrapper year={year.year}>
-        <h2 className={styles.heading}>
+        <h2 className="text-[0.95rem] not-italic font-bold leading-[normal] m-0">
           {year.year}
-          <small className={styles.subHeading}> - {year.name}</small>
+          <small className="text-[0.65rem] italic font-normal leading-[normal] m-0">
+            {' '}- {year.name}
+          </small>
         </h2>
-        <div className={styles.textAndChevronWrapper}>
-          <p className={styles.stateText}>{stateText}</p>
+        <div className="flex justify-between items-center mt-[18px]">
+          <p className="text-[0.8rem] font-light leading-[normal]">{stateText}</p>
           <YearCardChevron year={year.year} />
         </div>
         <div className={styles.progressWrapper}>
           <progress
-            className={clsx([
+            className={clsx(
               styles.progressBar,
               styles[progressData.primary.color.background],
               styles[progressData.primary.color.progress]
-            ])}
+            )}
             value={progressData.primary.value}
             max={progressData.primary.max}
           />
           {progressData.secondary && (
             <progress
-              className={clsx([
+              className={clsx(
                 styles.progressBar,
                 styles.progressBarSecondary,
                 styles[progressData.secondary.color.background],
                 styles[progressData.secondary.color.progress]
-              ])}
+              )}
               value={progressData.secondary.value}
               max={progressData.secondary.max}
             />
