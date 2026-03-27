@@ -8,7 +8,6 @@ import { NominationList } from 'components/NominationList';
 import { isAdmin } from 'lib/authorization';
 import { Typography } from 'components/base/Typography';
 import { Button } from 'components/base/Button';
-import styles from './year.module.scss';
 
 export const metadata: Metadata = {
   title: 'Admin dashboard – Awards Night'
@@ -45,13 +44,13 @@ export default async function Page(props: Props) {
         Admin page for {year.year}
       </Typography>
       {year.bettingOpen && (
-        <form action={closeBetting} className={styles.closeWrapper}>
+        <form action={closeBetting} className="mb-4 flex">
           <input type="hidden" name="year" value={year.year} />
           <Button type="submit">Close betting</Button>
         </form>
       )}
       {!year.bettingOpen && !year.awardsFinished && allCategoriesDecided && (
-        <form action={closeYear} className={styles.closeWrapper}>
+        <form action={closeYear} className="mb-4 flex">
           <input type="hidden" name="year" value={year.year} />
           <Button type="submit">Close year</Button>
         </form>

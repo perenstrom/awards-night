@@ -9,7 +9,6 @@ import { getBetsForPlayerCached } from 'services/prisma/bets';
 import { Typography } from 'components/base/Typography';
 import { Button } from 'components/base/Button';
 import { setBet } from '../actions';
-import styles from './meYear.module.scss';
 
 export const metadata: Metadata = {
   title: 'My predictions – Awards Night'
@@ -45,14 +44,14 @@ export default async function Page(props: Props) {
 
   return (
     <MainContainer>
-      <div className={styles.header}>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <Typography variant="h1" noMargin={true} color="white">
           {year.bettingOpen
             ? `${year.year} predictions`
             : `${year.year} results`}
         </Typography>
-        <div className={styles.buttonWrapper}>
-          <div className={styles.backLink}>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="md:hidden">
             <Button element="a" href="/me/bets">
               &lt; My Bets
             </Button>

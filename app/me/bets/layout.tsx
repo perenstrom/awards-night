@@ -2,7 +2,6 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import YearList from 'components/dashboard/YearList';
 import { auth0 } from 'lib/auth0';
-import styles from '../me.module.scss';
 
 export default async function BetsLayout({
   children
@@ -13,7 +12,7 @@ export default async function BetsLayout({
   if (!session) redirect('/');
 
   return (
-    <div className={styles.mainWrapper}>
+    <div className="flex min-h-screen w-screen">
       <YearList />
       {children}
     </div>
