@@ -66,6 +66,9 @@
 }
 
 @theme {
+  --font-family-bebas-neue: var(--font-bebas-neue);
+  --font-family-cormorant-garamond: var(--font-cormorant-garamond);
+  --color-gold: #bba267;
   --color-text-primary: var(--color-text-primary);
   --color-primary-weak: var(--color-primary-weak);
   --color-primary-weak-invisible: var(--color-primary-weak-invisible);

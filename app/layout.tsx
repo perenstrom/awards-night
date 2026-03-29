@@ -1,7 +1,7 @@
 import './global.css';
 import { Metadata } from 'next';
 import { Auth0Provider } from '@auth0/nextjs-auth0';
-import { Inter, Roboto, Charis_SIL } from 'next/font/google';
+import { Inter, Roboto, Charis_SIL, Bebas_Neue, Cormorant_Garamond } from 'next/font/google';
 import { auth0 } from 'lib/auth0';
 
 const title = 'Awards Night – Social prediction for the Academy Awards';
@@ -24,6 +24,19 @@ const charis_SIL = Charis_SIL({
   weight: ['400', '700'],
   display: 'swap'
 });
+const bebasNeue = Bebas_Neue({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-bebas-neue',
+  display: 'swap'
+});
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant-garamond',
+  display: 'swap'
+});
 
 export default async function RootLayout({
   children
@@ -35,7 +48,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.className} ${roboto.className} ${charis_SIL.className}`}
+      className={`dark ${inter.className} ${roboto.className} ${charis_SIL.className} ${bebasNeue.variable} ${cormorantGaramond.variable}`}
     >
       <head>
         <meta
