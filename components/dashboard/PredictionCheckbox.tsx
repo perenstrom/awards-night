@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import styles from './PredictionCheckbox.module.scss';
 
 interface Props {
   selected: boolean;
@@ -14,18 +13,21 @@ export const PredictionCheckbox = ({
 }: Props) => {
   return (
     <svg
-      className={clsx(styles.icon, {
-        [styles.selected]: selected,
-        [styles.correct]: state === 'correct',
-        [styles.incorrect]: state === 'incorrect'
-      })}
+      className={clsx(
+        'mx-1.5 w-[1.3rem] min-w-[1.3rem] sm:mx-2 sm:w-8 sm:min-w-8 text-primary-weak',
+        {
+          'text-text-primary': selected,
+          'text-active-green': state === 'correct',
+          'text-incorrect-red': state === 'incorrect'
+        }
+      )}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
     >
       {loading ? (
         <>
           <path
-            className={styles.rotate}
+            className="animate-[spin_1.2s_linear_infinite] origin-center"
             fill="currentcolor"
             d="M 236.762 123.974 C 239.649 133.739 234.104 144.081 224.34 146.969 C 178.467 160.661 145.074 203.125 145.074 253.33 C 145.074 314.572 194.76 364.258 255.999 364.258 C 317.241 364.258 366.927 314.572 366.927 253.33 C 366.927 203.125 333.534 160.661 287.719 146.969 C 277.954 144.081 272.35 133.739 275.296 123.974 C 278.243 114.212 288.527 108.606 298.29 111.554 C 359.358 129.752 403.901 186.314 403.901 253.33 C 403.901 335.024 337.693 401.233 255.999 401.233 C 174.307 401.233 108.099 335.024 108.099 253.33 C 108.099 186.314 152.642 129.752 213.767 111.554 C 223.532 108.664 233.872 114.212 236.762 123.974 Z"
           />

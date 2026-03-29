@@ -1,5 +1,7 @@
-import styles from './LeaderboardItem.module.scss';
-
 export const LeaderboardItemRest = () => {
-  return <li className={styles.wrapperRest}>...</li>;
+  return (
+    <li className="flex-1 flex justify-center items-center bg-muted-badge">
+      ...
+    </li>
+  );
 };

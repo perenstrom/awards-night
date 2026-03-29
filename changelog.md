@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.7.0
+
+- Redesign start page
+- Redesign admin page
+- Minor styling adjustments across the app
+- Migrate code to ShadCN, Tailwind, and remove sass
+
 ## 4.6.0
 
 - Allow multiple winners

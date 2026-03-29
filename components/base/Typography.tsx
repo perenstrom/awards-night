@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import styles from './Typography.module.scss';
 
 interface Props {
   children: React.ReactNode;
@@ -8,16 +7,26 @@ interface Props {
   noMargin?: boolean;
 }
 
+const variantClasses: Record<Props['variant'], string> = {
+  h1: 'text-h1 max-md:text-h1-mobile',
+  h2: 'text-h2 max-md:text-h2-mobile',
+  h3: 'text-h3 max-md:text-h3-mobile',
+  h4: 'text-h4 max-md:text-h4-mobile',
+  h5: 'text-h5 max-md:text-h5-mobile',
+  h6: 'text-h6 max-md:text-h6-mobile',
+  body: 'text-base'
+};
+
 const getClassNames = (
   variant: Props['variant'],
   noMargin: boolean,
   color: Props['color'] = 'black'
 ) =>
   clsx(
-    styles.base,
-    styles[variant],
-    { [styles.margin]: !noMargin },
-    styles[color]
+    variant === 'body' ? 'leading-[1.6]' : 'leading-[1.2]',
+    variantClasses[variant],
+    !noMargin && 'mb-5',
+    color === 'white' ? 'text-text-primary' : 'text-black'
   );
 
 export const Typography = (props: Props) => {

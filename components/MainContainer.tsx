@@ -1,5 +1,7 @@
-import styles from './MainContainer.module.scss';
-
 export const MainContainer: React.ElementType = ({ children }) => {
-  return <div className={styles.container}>{children}</div>;
+  return (
+    <div className="pt-16 px-6 w-full mx-auto">
+      {children}
+    </div>
+  );
 };

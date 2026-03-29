@@ -1,85 +1,120 @@
+import { Mail } from 'lucide-react';
 import { LoginLink } from 'components/LoginLink';
-import { GridItem } from './_components/GridItem';
-import { GridWrapper } from './_components/GridWrapper';
-import { CardImage } from './_components/CardImage';
-import { Container } from './_components/Container';
-import { CardContent } from './_components/CardContent';
-import { FeatureHeading } from './_components/FeatureHeading';
-import { BodyText } from './_components/BodyText';
+import { GetStartedButton } from './_components/GetStartedButton';
+
+const features = [
+  {
+    num: '01',
+    title: 'GATHER YOUR FRIENDS',
+    body: 'Invite your crew to a private prediction league.'
+  },
+  {
+    num: '02',
+    title: 'PREDICT THE WINNERS',
+    body: 'Submit your picks for every category before the ceremony.'
+  },
+  {
+    num: '03',
+    title: 'SEE RESULTS LIVE',
+    body: 'Watch the leaderboard update in real time as winners are announced.'
+  }
+];
 
 export default function Page() {
   return (
-    <div className="bg-white">
-      <div className="flex flex-col justify-center w-full h-[20rem] bg-black bg-[url(/images/hero.jpg)] bg-no-repeat bg-center bg-cover">
-        <LoginLink />
-        <div className="flex flex-1 justify-center items-center">
-          <Container noPaddingTop>
-            <h1 className="text-7xl text-white text-center text-shadow-lg mb-4">
-              Awards Night
-            </h1>
-            <h2 className="text-xl text-white text-center text-shadow-lg">
-              Social Prediction for the Academy Awards
-            </h2>
-          </Container>
+    <main className="flex flex-col lg:flex-row min-h-screen bg-[#0D0D0D]">
+      {/* Left panel – cinema image */}
+      <div
+        className="relative flex flex-col justify-between h-[360px] lg:h-screen lg:w-[40%] overflow-hidden shrink-0"
+        style={{
+          backgroundImage: "url('/images/cinema.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-linear-to-b from-[#0D0D0D33] to-[#0D0D0DED]" />
+
+        {/* Login – top right */}
+        <div className="relative z-10 flex justify-end p-6 lg:p-8">
+          <LoginLink
+            className="leading-none transition-opacity duration-300 ease-in"
+            linkClassName="font-bebas-neue text-[13px] tracking-[0.15em] text-white/75 no-underline"
+          />
+        </div>
+
+        {/* Branding – bottom */}
+        <div className="relative z-10 p-8 lg:p-16">
+          <div className="w-12 h-0.5 bg-gold mb-4" />
+          <h1 className="font-bebas-neue text-[52px] lg:text-[72px] leading-[0.9] tracking-tight text-white">
+            AWARDS
+            <br />
+            NIGHT
+          </h1>
+          <p className="font-cormorant-garamond italic text-white/50 text-base mt-3">
+            Social prediction for the Academy Awards
+          </p>
         </div>
       </div>
-      <div className="flex flex-1 justify-center items-center">
-        <Container>
-          <GridWrapper>
-            <GridItem>
-              <CardImage
-                src="/images/gather.jpg"
-                alt="Image of friends sitting around a camp fire"
-                height="220"
-              />
-              <CardContent>
-                <FeatureHeading>Gather your friends</FeatureHeading>
-                <BodyText>
-                  Find the cinephiles amongst your friends and challenge them
-                </BodyText>
-              </CardContent>
-            </GridItem>
-            <GridItem>
-              <CardImage
-                src="/images/predict.png"
-                alt="Screenshot of a list of movies being marked"
-                height="220"
-              />
-              <CardContent>
-                <FeatureHeading>Predict winners</FeatureHeading>
-                <BodyText>
-                  Privately choose which films will win in each category
-                </BodyText>
-              </CardContent>
-            </GridItem>
-            <GridItem>
-              <CardImage
-                src="/images/live-view.png"
-                alt="Screenshot of a category of movies with a score board"
-                height="220"
-              />
-              <CardContent>
-                <FeatureHeading>See results live</FeatureHeading>
-                <BodyText>
-                  Follow the ceremony and see the results update live
-                </BodyText>
-              </CardContent>
-            </GridItem>
-          </GridWrapper>
-          <div className="py-12 w-[60%] my-0 mx-auto text-center">
-            <h2 className="text-3xl text-black font-bold m-0 mb-4">
-              Get access!
-            </h2>
-            <BodyText>
-              Awards Night is currently under development and in closed alpha.
-              If you want to be a part of the alpha testing, send me an e-mail
-              at{' '}
-              <a href="mailto:hello@awardsnight.app">hello@awardsnight.app</a>.
-            </BodyText>
-            <BodyText>– Per Enström.</BodyText>
-          </div>
-        </Container>
+
+      {/* Thin vertical divider – desktop only */}
+      <div className="hidden lg:block w-px bg-gold/25 shrink-0" />
+
+      {/* Right panel – content */}
+      <div className="flex-1 flex flex-col justify-center bg-[#141414] px-7 lg:px-[72px] py-16 gap-6 lg:gap-9">
+        <span className="font-bebas-neue text-[11px] tracking-[0.35em] text-gold uppercase">
+          ACADEMY AWARDS 2026
+        </span>
+
+        <h2 className="font-bebas-neue text-[52px] lg:text-[72px] leading-[0.9] tracking-tight text-white">
+          PREDICT.
+          <br />
+          COMPETE.
+          <br />
+          WATCH.
+        </h2>
+
+        <div className="h-px bg-[#2A2A2A]" />
+
+        <ol className="flex flex-col gap-4 lg:gap-5 list-none p-0 m-0">
+          {features.map(({ num, title, body }) => (
+            <li key={num} className="flex gap-4 lg:gap-5 items-start">
+              <span className="font-bebas-neue text-[11px] tracking-[0.35em] text-gold pt-0.5 shrink-0">
+                {num}
+              </span>
+              <div>
+                <p className="font-bebas-neue text-[17px] lg:text-[18px] tracking-[0.05em] text-[#F5F4F2] m-0">
+                  {title}
+                </p>
+                <p className="font-cormorant-garamond italic text-[14px] lg:text-[15px] text-[#8A8A8A] m-0 mt-1">
+                  {body}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="flex gap-3 flex-wrap">
+          <GetStartedButton />
+          <a
+            href="mailto:hello@awardsnight.app"
+            className="font-bebas-neue text-[16px] lg:text-[17px] tracking-[0.15em] border border-gold text-gold px-8 lg:px-10 py-3.5 inline-flex items-center gap-2 no-underline"
+          >
+            <Mail size={15} strokeWidth={1.5} />
+            LEARN MORE
+          </a>
+        </div>
+
+        <p className="font-cormorant-garamond italic text-[13px] text-[#5A5A5A] m-0">
+          Closed alpha —{' '}
+          <a
+            href="mailto:hello@awardsnight.app"
+            className="text-[#5A5A5A] no-underline hover:text-gold transition-colors"
+          >
+            hello@awardsnight.app
+          </a>
+        </p>
       </div>
-    </div>
+    </main>
   );
 }

@@ -3,11 +3,17 @@
 import React, { RefObject, useEffect, useRef, useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Category } from 'types/nominations';
-import { Button } from 'components/base/Button';
-import { InputField } from 'components/base/InputField';
-import { LoadingSpinner } from 'components/base/LoadingSpinner';
-import { Typography } from 'components/base/Typography';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel
+} from '@/components/ui/field';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
 import { createYear } from '../../app/admin/actions';
 
 const FormContent: React.FC<{
@@ -22,78 +28,84 @@ const FormContent: React.FC<{
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <div className="flex gap-4">
-          <InputField
-            id="year"
-            inputRef={yearInputRef}
-            name="year"
-            label="Year"
-            type="number"
-            min={1900}
-            max={2100}
-            required
-            placeholder="2025"
-          />
-          <InputField
-            id="name"
-            inputRef={nameInputRef}
-            name="name"
-            label="Name"
-            type="text"
-            required
-            placeholder="97th Academy Awards"
-          />
-          <InputField
-            id="date"
-            inputRef={dateInputRef}
-            name="date"
-            label="Date"
-            type="date"
-            required
-          />
-        </div>
+      <FieldGroup className="gap-4">
+        <AdminFieldRow className="gap-y-4">
+          <Field className="min-w-32 flex-1">
+            <FieldLabel htmlFor="year">Year</FieldLabel>
+            <Input
+              ref={yearInputRef}
+              id="year"
+              name="year"
+              type="number"
+              min={1900}
+              max={2100}
+              required
+              placeholder="2025"
+            />
+          </Field>
+          <Field className="min-w-48 flex-1">
+            <FieldLabel htmlFor="name">Name</FieldLabel>
+            <Input
+              ref={nameInputRef}
+              id="name"
+              name="name"
+              type="text"
+              required
+              placeholder="97th Academy Awards"
+            />
+          </Field>
+          <Field className="min-w-40 flex-1">
+            <FieldLabel htmlFor="date">Date</FieldLabel>
+            <Input ref={dateInputRef} id="date" name="date" type="date" required />
+          </Field>
+        </AdminFieldRow>
 
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <Typography variant="h3">Categories</Typography>
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-lg font-semibold leading-tight text-card-foreground">
+              Categories
+            </h3>
             <Button
               type="button"
-              color="secondary"
+              variant="secondary"
               onClick={onToggleAll}
               disabled={pending}
             >
               {allSelected ? 'Deselect All' : 'Select All'}
             </Button>
           </div>
-          <div className="mt-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
             {categories.map((category) => (
-              <div key={category.slug} className="flex items-center gap-2">
+              <Field
+                key={category.slug}
+                orientation="horizontal"
+                className="items-center gap-2"
+              >
                 <input
                   type="checkbox"
                   id={`category-${category.slug}`}
                   name="categories"
                   value={category.slug}
-                  className="w-4 h-4 category-checkbox"
+                  className="category-checkbox size-4 accent-primary"
                 />
-                <label
+                <FieldLabel
                   htmlFor={`category-${category.slug}`}
-                  className="text-sm"
+                  className="font-normal"
                 >
                   {category.name}
-                </label>
-              </div>
+                </FieldLabel>
+              </Field>
             ))}
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <Button type="submit" color="primary" disabled={pending}>
+          <Button type="submit" disabled={pending}>
             Create Year
           </Button>
-          {pending && <LoadingSpinner />}
+          {pending && <Spinner className="size-8" />}
         </div>
-      </div>
+      </FieldGroup>
     </>
   );
 };
@@ -116,60 +128,51 @@ export const AddYearForm: React.FC<AddYearFormProps> = ({
       '.category-checkbox'
     ) as NodeListOf<HTMLInputElement>;
     const newState = !allSelected;
-    
+
     checkboxes.forEach((checkbox) => {
       checkbox.checked = newState;
     });
-    
+
     setAllSelected(newState);
   };
 
   useEffect(() => {
     if (statusMessage?.severity === 'success') {
-      // Clear form on success
       if (yearInputRef.current) yearInputRef.current.value = '';
       if (nameInputRef.current) nameInputRef.current.value = '';
       if (dateInputRef.current) dateInputRef.current.value = '';
 
-      // Uncheck all category checkboxes
-      const checkboxes = document.querySelectorAll(
-        'input[name="categories"]'
-      );
+      const checkboxes = document.querySelectorAll('input[name="categories"]');
       checkboxes.forEach((checkbox) => {
         (checkbox as HTMLInputElement).checked = false;
       });
 
-      // Reset allSelected state
       setAllSelected(false);
 
-      // Focus on year input
       if (yearInputRef.current) yearInputRef.current.focus();
     }
   }, [statusMessage]);
 
   return (
-    <div className="mt-4 p-4 rounded-md bg-white">
-      <Typography variant="h2">Add year</Typography>
-      <div className="mt-4">
-        <form action={createYearAction}>
-          <FormContent
-            yearInputRef={yearInputRef}
-            nameInputRef={nameInputRef}
-            dateInputRef={dateInputRef}
-            categories={availableCategories}
-            allSelected={allSelected}
-            onToggleAll={handleToggleAll}
+    <AdminSection title="Add year">
+      <form action={createYearAction}>
+        <FormContent
+          yearInputRef={yearInputRef}
+          nameInputRef={nameInputRef}
+          dateInputRef={dateInputRef}
+          categories={availableCategories}
+          allSelected={allSelected}
+          onToggleAll={handleToggleAll}
+        />
+      </form>
+      {statusMessage && (
+        <div className="mt-4">
+          <Alert
+            severity={statusMessage.severity}
+            message={statusMessage.message}
           />
-        </form>
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
-            />
-          </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </AdminSection>
   );
 };

@@ -2,10 +2,20 @@
 
 import React, { useEffect, useActionState } from 'react';
 import { Group, Player } from 'types/nominations';
-import { Typography } from 'components/base/Typography';
-import { Button } from 'components/base/Button';
-import { InputField } from 'components/base/InputField';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
+import { Card, CardContent } from '@/components/ui/card';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { StatusMessage } from 'types/utilityTypes';
 import {
   addPlayerToGroup,
@@ -37,7 +47,6 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
     null
   );
 
-  // Get the latest status message
   const currentState: StatusMessage | null =
     createGroupState ||
     addPlayerState ||
@@ -45,7 +54,6 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
     deleteGroupState ||
     null;
 
-  // Reload page on success to refresh data
   useEffect(() => {
     if (currentState?.severity === 'success') {
       window.location.reload();
@@ -61,167 +69,179 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
   };
 
   return (
-    <div className="mt-4 p-4 rounded-md bg-white">
-      <Typography variant="h2">Group Administration</Typography>
-
-      {/* Create Group Form */}
-      <div className="mt-4">
-        <Typography variant="h3">Create New Group</Typography>
-        <form action={createGroupAction} className="mt-2">
-          <div className="flex gap-4">
-            <InputField id="group-name" name="groupName" label="Group Name" />
-            <InputField id="group-slug" name="groupSlug" label="Group Slug" />
-            <div className="flex flex-col">
-              <label
-                htmlFor="owner-select"
-                className="text-sm font-medium mb-1"
-              >
-                Owner *
-              </label>
-              <select
-                id="owner-select"
-                name="ownerId"
-                required
-                className="border border-gray-300 rounded-md p-2"
-              >
-                <option value="">Select owner...</option>
-                {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end">
-              <Button type="submit">Create</Button>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      {/* Status Messages */}
-      {currentState && (
-        <div className="mt-4">
-          <Alert
-            severity={currentState.severity}
-            message={currentState.message}
-          />
-        </div>
-      )}
-
-      {/* Groups List */}
-      <div className="mt-6">
-        <Typography variant="h3">Groups</Typography>
-        <div className="mt-4 space-y-4">
-          {groups.map((group) => {
-            const groupMembers = getPlayersInGroup(group.id);
-            const playersNotInGroup = getPlayersNotInGroup(group.id);
-
-            return (
-              <div
-                key={group.id}
-                className="border border-gray-300 rounded-md p-4"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <Typography variant="h4">
-                      {group.name || 'Unnamed Group'}
-                    </Typography>
-                    <Typography variant="body" color="black">
-                      Slug: {group.slug}
-                    </Typography>
-                    <Typography variant="body" color="black">
-                      Owner:{' '}
-                      {players.find((p) => p.id === group.ownerId)?.name ||
-                        'Unknown'}
-                    </Typography>
-                  </div>
-                  {groupMembers.length === 0 && (
-                    <form action={deleteGroupAction}>
-                      <input type="hidden" name="groupId" value={group.id} />
-                      <button
-                        type="submit"
-                        className="bg-red-500 hover:bg-red-600 text-white"
-                      >
-                        Delete Group
-                      </button>
-                    </form>
-                  )}
-                </div>
-
-                {/* Members List */}
-                {groupMembers.length > 0 && (
-                  <div className="mb-3">
-                    <div className="font-semibold mb-2">
-                      <Typography variant="body">
-                        Members ({groupMembers.length})
-                      </Typography>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {groupMembers.map((member) => (
-                        <div
-                          key={member.id}
-                          className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded"
-                        >
-                          <span>{member.name}</span>
-                          <form
-                            action={removePlayerAction}
-                            onSubmit={(e) => {
-                              if (
-                                !confirm(
-                                  'Are you sure you want to remove this player? They must remain in at least one group.'
-                                )
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <input
-                              type="hidden"
-                              name="groupId"
-                              value={group.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="playerId"
-                              value={member.id}
-                            />
-                            <button
-                              type="submit"
-                              className="text-xs px-2 py-1 bg-red-500 hover:bg-red-600 text-white"
-                            >
-                              ✕
-                            </button>
-                          </form>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Add Player Form */}
-                {playersNotInGroup.length > 0 && (
-                  <form action={addPlayerAction} className="flex gap-2">
-                    <input type="hidden" name="groupId" value={group.id} />
-                    <select
-                      name="playerId"
-                      className="border border-gray-300 rounded-md p-2 flex-1"
-                    >
-                      <option value="">Select player to add...</option>
-                      {playersNotInGroup.map((player) => (
-                        <option key={player.id} value={player.id}>
-                          {player.name}
-                        </option>
-                      ))}
-                    </select>
-                    <Button type="submit">Add Player</Button>
-                  </form>
-                )}
+    <AdminSection title="Group Administration">
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-2 text-base font-semibold text-card-foreground">
+            Create New Group
+          </h3>
+          <form action={createGroupAction}>
+            <AdminFieldRow>
+              <Field className="min-w-40 flex-1">
+                <FieldLabel htmlFor="group-name">Group Name</FieldLabel>
+                <Input id="group-name" name="groupName" />
+              </Field>
+              <Field className="min-w-40 flex-1">
+                <FieldLabel htmlFor="group-slug">Group Slug</FieldLabel>
+                <Input id="group-slug" name="groupSlug" />
+              </Field>
+              <Field className="min-w-48 flex-1">
+                <FieldLabel htmlFor="owner-select">Owner *</FieldLabel>
+                <Select name="ownerId" required>
+                  <SelectTrigger id="owner-select" className="w-full">
+                    <SelectValue placeholder="Select owner..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {players.map((player) => (
+                      <SelectItem key={player.id} value={String(player.id)}>
+                        {player.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <div className="flex items-end pb-0.5">
+                <Button type="submit">Create</Button>
               </div>
-            );
-          })}
+            </AdminFieldRow>
+          </form>
+        </div>
+
+        {currentState && (
+          <div>
+            <Alert
+              severity={currentState.severity}
+              message={currentState.message}
+            />
+          </div>
+        )}
+
+        <div>
+          <h3 className="mb-4 text-base font-semibold text-card-foreground">
+            Groups
+          </h3>
+          <div className="space-y-4">
+            {groups.map((group) => {
+              const groupMembers = getPlayersInGroup(group.id);
+              const playersNotInGroup = getPlayersNotInGroup(group.id);
+
+              return (
+                <Card key={group.id}>
+                  <CardContent className="pt-6">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <div>
+                        <h4 className="text-lg font-semibold text-card-foreground">
+                          {group.name || 'Unnamed Group'}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Slug: {group.slug}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Owner:{' '}
+                          {players.find((p) => p.id === group.ownerId)?.name ||
+                            'Unknown'}
+                        </p>
+                      </div>
+                      {groupMembers.length === 0 && (
+                        <form action={deleteGroupAction}>
+                          <input type="hidden" name="groupId" value={group.id} />
+                          <Button type="submit" variant="destructive" size="sm">
+                            Delete Group
+                          </Button>
+                        </form>
+                      )}
+                    </div>
+
+                    {groupMembers.length > 0 && (
+                      <div className="mb-3">
+                        <div className="mb-2 font-semibold text-sm text-card-foreground">
+                          Members ({groupMembers.length})
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {groupMembers.map((member) => (
+                            <div
+                              key={member.id}
+                              className="flex items-center gap-2 rounded-md bg-muted px-3 py-1"
+                            >
+                              <span className="text-sm text-card-foreground">
+                                {member.name}
+                              </span>
+                              <form
+                                action={removePlayerAction}
+                                onSubmit={(e) => {
+                                  if (
+                                    !confirm(
+                                      'Are you sure you want to remove this player? They must remain in at least one group.'
+                                    )
+                                  ) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                              >
+                                <input
+                                  type="hidden"
+                                  name="groupId"
+                                  value={group.id}
+                                />
+                                <input
+                                  type="hidden"
+                                  name="playerId"
+                                  value={member.id}
+                                />
+                                <Button
+                                  type="submit"
+                                  variant="destructive"
+                                  size="icon-sm"
+                                  aria-label={`Remove ${member.name}`}
+                                >
+                                  ✕
+                                </Button>
+                              </form>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {playersNotInGroup.length > 0 && (
+                      <form
+                        action={addPlayerAction}
+                        className="flex flex-wrap items-end gap-2"
+                      >
+                        <input type="hidden" name="groupId" value={group.id} />
+                        <Field className="min-w-48 flex-1">
+                          <FieldLabel htmlFor={`add-player-${group.id}`}>
+                            Add player
+                          </FieldLabel>
+                          <Select name="playerId">
+                            <SelectTrigger
+                              id={`add-player-${group.id}`}
+                              className="w-full"
+                            >
+                              <SelectValue placeholder="Select player to add..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {playersNotInGroup.map((player) => (
+                                <SelectItem
+                                  key={player.id}
+                                  value={String(player.id)}
+                                >
+                                  {player.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                        <Button type="submit">Add Player</Button>
+                      </form>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </AdminSection>
   );
 };

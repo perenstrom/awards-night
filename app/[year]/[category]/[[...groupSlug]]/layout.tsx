@@ -1,8 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { clsx } from 'clsx';
-import Link from 'next/link';
 import { auth0 } from 'lib/auth0';
 import { NominationsWrapper } from 'components/presentationMode/NominationsWrapper';
 import { getLoggedInPlayer } from 'lib/player';
@@ -15,7 +13,8 @@ import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItem
 import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { NominationsPoller } from 'components/presentationMode/NominationsPoller';
 import { GroupSelector } from 'components/presentationMode/GroupSelector';
-import styles from './layout.module.scss';
+import { SidebarHeading } from 'components/presentationMode/SidebarHeading';
+import { CategoryNavList } from 'components/presentationMode/CategoryNavList';
 
 interface Props {
   params: Promise<{ year: string; category: string; groupSlug?: string[] }>;
@@ -93,17 +92,17 @@ export default async function CategoryLayout(
       awardsFinished={year.awardsFinished}
     >
       <NominationsWrapper>
-        <div className={styles.sidebar}>
-          <div className={styles.sidebarContent}>
+        <div className="flex basis-[20em] grow-0 flex-col overflow-hidden border-r-[0.5px] border-solid border-sidebar-border bg-background-grey-1 px-4 pb-4 pt-8">
+          <div className="flex flex-1 flex-col">
             {!!players.length && (
               <>
-                <h2 className={styles.subHeading}>
+                <SidebarHeading size="lg">
                   {bettingOpen ? 'Players' : 'Leaderboard'}
-                </h2>
-                <ol className={styles.leaderboard}>
+                </SidebarHeading>
+                <ol className="mb-[0.5em] p-0 font-bold text-white [&_li]:flex [&_li]:items-baseline [&_li]:justify-between [&_li]:gap-[0.5em] [&_li]:overflow-hidden [&_li]:rounded-lg [&_li]:px-[0.5em] [&_li]:py-[0.2em] [&_li]:text-[0.8em] [&_ol]:[counter-reset:position]">
                   {bettingOpen ? (
                     <>
-                      <ol className={styles.leaderboardOverflow}>
+                      <ol className="grid grid-cols-3 gap-[0.5em] p-0 text-base">
                         {players.slice(0, 18).map((player) => (
                           <LeaderboardItemSmall
                             key={player.id}
@@ -142,7 +141,7 @@ export default async function CategoryLayout(
                           />
                         ))}
                       {playersSortedByCorrect.length > 4 && (
-                        <ol className={styles.leaderboardOverflow}>
+                        <ol className="grid grid-cols-3 gap-[0.5em] p-0 text-base">
                           {playersSortedByCorrect.slice(4, 9).map((player) => (
                             <LeaderboardItemSmall
                               key={player.id}
@@ -171,48 +170,24 @@ export default async function CategoryLayout(
             )}
             {!!completedCategories.length && (
               <>
-                <h2 className={styles.subHeadingSmall}>Completed categories</h2>
-                <ul className={styles.categories}>
-                  {completedCategories.map((category) => (
-                    <li
-                      className={clsx(styles.categoryItem, {
-                        [styles.active]: categorySlug === category.slug
-                      })}
-                      key={category.slug}
-                    >
-                      <Link
-                        href={`/${year.year}/${category.slug}${
-                          groupSlug ? `/${groupSlug}` : ''
-                        }`}
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <SidebarHeading>Completed categories</SidebarHeading>
+                <CategoryNavList
+                  categories={completedCategories}
+                  currentSlug={categorySlug}
+                  year={year.year}
+                  groupSlug={groupSlug}
+                />
               </>
             )}
             {!!upcomingCategories.length && (
               <>
-                <h2 className={styles.subHeadingSmall}>Upcoming categories</h2>
-                <ul className={styles.categories}>
-                  {upcomingCategories.map((category) => (
-                    <li
-                      className={clsx(styles.categoryItem, {
-                        [styles.active]: categorySlug === category.slug
-                      })}
-                      key={category.slug}
-                    >
-                      <Link
-                        href={`/${year.year}/${category.slug}${
-                          groupSlug ? `/${groupSlug}` : ''
-                        }`}
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <SidebarHeading>Upcoming categories</SidebarHeading>
+                <CategoryNavList
+                  categories={upcomingCategories}
+                  currentSlug={categorySlug}
+                  year={year.year}
+                  groupSlug={groupSlug}
+                />
               </>
             )}
           </div>

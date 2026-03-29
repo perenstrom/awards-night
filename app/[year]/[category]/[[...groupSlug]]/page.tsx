@@ -9,7 +9,6 @@ import { getLoggedInPlayer } from 'lib/player';
 import { getBettingData, getBettingDataBySlug } from 'lib/getBettingData';
 import { getGroupsForPlayer } from 'services/prisma/groups';
 import { normalizeBets, normalizePlayers } from 'utils/normalizer';
-import styles from './category.module.scss';
 
 interface Props {
   params: Promise<{ year: string; category: string; groupSlug?: string[] }>;
@@ -103,12 +102,15 @@ export default async function Page(props: Props) {
   };
 
   return (
-    <div className={styles.main}>
-      <h1 className={styles.heading}>{category.name}</h1>
+    <div className="flex basis-full grow flex-col bg-[linear-gradient(180deg,#24242e_0%,#111115_24.3%)] p-[3em] pt-[1em]">
+      <h1 className="m-0 pb-[0.2em] text-[2.7em] font-light text-text-primary">
+        {category.name}
+      </h1>
       <div
-        className={clsx(styles.nominationsArea, {
-          [styles.largeNomination]: categoryNominations.length <= 6
-        })}
+        className={clsx(
+          'flex h-full flex-wrap content-start items-start justify-start gap-[1em]',
+          categoryNominations.length <= 6 ? 'text-[1em]' : 'text-[0.7em]'
+        )}
       >
         {categoryNominations.map((nomination) => (
           <NominatedFilm

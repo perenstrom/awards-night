@@ -1,4 +1,15 @@
-import { InputField } from 'components/base/InputField';
+'use client';
+
+import { Field, FieldLabel } from '@/components/ui/field';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Film } from 'types/nominations';
 
 interface Props {
@@ -8,25 +19,30 @@ interface Props {
 
 export const NominationFields = ({ availableFilms, index }: Props) => {
   return (
-    <div className="flex flex-wrap items-end gap-4 mt-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor={`film-${index}`}>Film</label>
-        <select
-          id={`film-${index}`}
-          name="films"
-          className="border border-gray-300 rounded-md p-2 hover:border-black"
-        >
-          {availableFilms.map((film) => (
-            <option key={film.imdbId} value={film.imdbId}>
-              {`${film.name} ${
-                film.releaseDate &&
-                `(${new Date(film.releaseDate).getFullYear()})`
-              }`}
-            </option>
-          ))}
-        </select>
-      </div>
-      <InputField id={`nominee-${index}`} name={`nominees`} label="Nominee" />
-    </div>
+    <AdminFieldRow className="mt-4">
+      <Field className="min-w-48 flex-1">
+        <FieldLabel htmlFor={`film-${index}`}>Film</FieldLabel>
+        <Select name="films" defaultValue={availableFilms[0]?.imdbId}>
+          <SelectTrigger id={`film-${index}`}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {availableFilms.map((film) => (
+              <SelectItem key={film.imdbId} value={film.imdbId}>
+                {`${film.name}${
+                  film.releaseDate
+                    ? ` (${new Date(film.releaseDate).getFullYear()})`
+                    : ''
+                }`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field className="min-w-40 flex-1">
+        <FieldLabel htmlFor={`nominee-${index}`}>Nominee</FieldLabel>
+        <Input id={`nominee-${index}`} name={`nominees`} />
+      </Field>
+    </AdminFieldRow>
   );
 };

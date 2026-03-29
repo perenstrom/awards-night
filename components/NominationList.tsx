@@ -3,7 +3,6 @@ import { FormAction } from 'types/utilityTypes';
 import { getBetForNomination } from 'utils/nominations';
 import { BetItem } from './BetItem';
 import { Typography } from './base/Typography';
-import styles from './NominationList.module.scss';
 
 export const NominationList: React.FC<{
   formAction: FormAction;
@@ -16,11 +15,11 @@ export const NominationList: React.FC<{
   return (Object.values(categories) as Category[]).map((category) => (
     <form action={formAction} key={category.slug}>
       <input type="hidden" name="year" value={year.year} />
-      <div className={styles.categoryWrapper}>
+      <div className="mb-8">
         <Typography variant="h2" color="white">
           {category.name}
         </Typography>
-        <ul className={styles.listWrapper}>
+        <ul className="flex flex-col gap-4 p-0">
           {category.nominations.map((nominationId) => {
             const nomination = nominations[nominationId];
 

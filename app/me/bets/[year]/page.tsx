@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getNominationData } from 'lib/getNominationData';
@@ -7,9 +8,8 @@ import { getLoggedInPlayer } from 'lib/player';
 import { NominationList } from 'components/NominationList';
 import { getBetsForPlayerCached } from 'services/prisma/bets';
 import { Typography } from 'components/base/Typography';
-import { Button } from 'components/base/Button';
+import { Button } from '@/components/ui/button';
 import { setBet } from '../actions';
-import styles from './meYear.module.scss';
 
 export const metadata: Metadata = {
   title: 'My predictions – Awards Night'
@@ -45,20 +45,20 @@ export default async function Page(props: Props) {
 
   return (
     <MainContainer>
-      <div className={styles.header}>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <Typography variant="h1" noMargin={true} color="white">
           {year.bettingOpen
             ? `${year.year} predictions`
             : `${year.year} results`}
         </Typography>
-        <div className={styles.buttonWrapper}>
-          <div className={styles.backLink}>
-            <Button element="a" href="/me/bets">
-              &lt; My Bets
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="md:hidden">
+            <Button asChild>
+              <Link href="/me/bets">&lt; My Bets</Link>
             </Button>
           </div>
-          <Button element="a" href={presentationUrl}>
-            Go to presentation mode &gt;
+          <Button asChild>
+            <Link href={presentationUrl}>Go to presentation mode &gt;</Link>
           </Button>
         </div>
       </div>
