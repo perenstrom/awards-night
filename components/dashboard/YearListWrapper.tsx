@@ -15,7 +15,7 @@ export default function YearListWrapper({
   return (
     <div
       className={clsx(
-        'max-h-screen sticky top-0 overflow-y-auto w-full p-2 md:min-w-[300px] md:max-w-[300px]',
+        'max-h-screen sticky top-0 overflow-y-auto w-full p-2 md:w-75',
         isDashboardRoot ? 'flex flex-col' : 'hidden md:flex md:flex-col'
       )}
     >

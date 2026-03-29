@@ -7,14 +7,10 @@ import { TmdbFilmResult } from 'types/nominations';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
 import { createFilmByTmdb, searchFilms } from '../../app/admin/actions';
 
 const SearchFormContent: React.FC<{
@@ -24,8 +20,8 @@ const SearchFormContent: React.FC<{
 
   return (
     <>
-      <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
-        <Field className="min-w-[12rem] max-w-md flex-1">
+      <AdminFieldRow>
+        <Field className="min-w-48 max-w-md flex-1">
           <FieldLabel htmlFor="filmQuery">Film name</FieldLabel>
           <Input ref={inputRef} id="filmQuery" name="filmQuery" />
         </Field>
@@ -38,7 +34,7 @@ const SearchFormContent: React.FC<{
           Search
         </Button>
         {pending && <Spinner className="size-8" />}
-      </FieldGroup>
+      </AdminFieldRow>
     </>
   );
 };
@@ -108,32 +104,27 @@ export const AddFilmBySearch = () => {
   }, [statusMessageCreate]);
 
   return (
-    <Card className="mt-4">
-      <CardHeader>
-        <CardTitle className="text-xl">Search and add films</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={searchAction}>
-          <SearchFormContent inputRef={searchFilmInputElement} />
+    <AdminSection title="Search and add films">
+      <form action={searchAction}>
+        <SearchFormContent inputRef={searchFilmInputElement} />
+      </form>
+      {searchResults && searchResults.length > 0 && (
+        <form action={saveAction}>
+          <ul className="mt-4">
+            {searchResults.map((film) => (
+              <SearchResult film={film} key={film.tmdbId} />
+            ))}
+          </ul>
         </form>
-        {searchResults && searchResults.length > 0 && (
-          <form action={saveAction}>
-            <ul className="mt-4">
-              {searchResults.map((film) => (
-                <SearchResult film={film} key={film.tmdbId} />
-              ))}
-            </ul>
-          </form>
-        )}
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
-            />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+      {statusMessage && (
+        <div className="mt-4">
+          <Alert
+            severity={statusMessage.severity}
+            message={statusMessage.message}
+          />
+        </div>
+      )}
+    </AdminSection>
   );
 };

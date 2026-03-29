@@ -1,8 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { clsx } from 'clsx';
-import Link from 'next/link';
 import { auth0 } from 'lib/auth0';
 import { NominationsWrapper } from 'components/presentationMode/NominationsWrapper';
 import { getLoggedInPlayer } from 'lib/player';
@@ -15,6 +13,8 @@ import { LeaderboardItemRest } from 'components/presentationMode/LeaderboardItem
 import { LeaderboardItem } from 'components/presentationMode/LeaderboardItem';
 import { NominationsPoller } from 'components/presentationMode/NominationsPoller';
 import { GroupSelector } from 'components/presentationMode/GroupSelector';
+import { SidebarHeading } from 'components/presentationMode/SidebarHeading';
+import { CategoryNavList } from 'components/presentationMode/CategoryNavList';
 
 interface Props {
   params: Promise<{ year: string; category: string; groupSlug?: string[] }>;
@@ -92,13 +92,13 @@ export default async function CategoryLayout(
       awardsFinished={year.awardsFinished}
     >
       <NominationsWrapper>
-        <div className="flex basis-[20em] grow-0 flex-col overflow-hidden border-r-[0.5px] border-solid border-[#696b7e] bg-[#363636] px-4 pb-4 pt-8 font-[Inter,sans-serif]">
+        <div className="flex basis-[20em] grow-0 flex-col overflow-hidden border-r-[0.5px] border-solid border-sidebar-border bg-background-grey-1 px-4 pb-4 pt-8">
           <div className="flex flex-1 flex-col">
             {!!players.length && (
               <>
-                <h2 className="m-0 pb-[0.2em] font-[Inter,sans-serif] text-[1.7em] font-light text-text-primary">
+                <SidebarHeading size="lg">
                   {bettingOpen ? 'Players' : 'Leaderboard'}
-                </h2>
+                </SidebarHeading>
                 <ol className="mb-[0.5em] p-0 font-bold text-white [&_li]:flex [&_li]:items-baseline [&_li]:justify-between [&_li]:gap-[0.5em] [&_li]:overflow-hidden [&_li]:rounded-lg [&_li]:px-[0.5em] [&_li]:py-[0.2em] [&_li]:text-[0.8em] [&_ol]:[counter-reset:position]">
                   {bettingOpen ? (
                     <>
@@ -170,54 +170,24 @@ export default async function CategoryLayout(
             )}
             {!!completedCategories.length && (
               <>
-                <h2 className="mx-0 mb-[0.2em] mt-4 font-[Inter,sans-serif] text-[1.2em] font-light text-text-primary">
-                  Completed categories
-                </h2>
-                <ul className="mx-0 mb-[0.5em] mt-0 list-none p-0 font-[Inter,sans-serif] text-[0.8em] font-medium leading-normal text-text-primary">
-                  {completedCategories.map((category) => (
-                    <li className="p-0" key={category.slug}>
-                      <Link
-                        className={clsx(
-                          'no-underline',
-                          categorySlug === category.slug
-                            ? 'text-[#ef8b2c]'
-                            : 'text-text-primary'
-                        )}
-                        href={`/${year.year}/${category.slug}${
-                          groupSlug ? `/${groupSlug}` : ''
-                        }`}
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <SidebarHeading>Completed categories</SidebarHeading>
+                <CategoryNavList
+                  categories={completedCategories}
+                  currentSlug={categorySlug}
+                  year={year.year}
+                  groupSlug={groupSlug}
+                />
               </>
             )}
             {!!upcomingCategories.length && (
               <>
-                <h2 className="mx-0 mb-[0.2em] mt-4 font-[Inter,sans-serif] text-[1.2em] font-light text-text-primary">
-                  Upcoming categories
-                </h2>
-                <ul className="mx-0 mb-[0.5em] mt-0 list-none p-0 font-[Inter,sans-serif] text-[0.8em] font-medium leading-normal text-text-primary">
-                  {upcomingCategories.map((category) => (
-                    <li className="p-0" key={category.slug}>
-                      <Link
-                        className={clsx(
-                          'no-underline',
-                          categorySlug === category.slug
-                            ? 'text-[#ef8b2c]'
-                            : 'text-text-primary'
-                        )}
-                        href={`/${year.year}/${category.slug}${
-                          groupSlug ? `/${groupSlug}` : ''
-                        }`}
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <SidebarHeading>Upcoming categories</SidebarHeading>
+                <CategoryNavList
+                  categories={upcomingCategories}
+                  currentSlug={categorySlug}
+                  year={year.year}
+                  groupSlug={groupSlug}
+                />
               </>
             )}
           </div>

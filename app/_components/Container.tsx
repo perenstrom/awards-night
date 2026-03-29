@@ -12,7 +12,7 @@ export const Container = ({
   return (
     <div
       className={clsx(
-        'max-w-[900px] w-full mx-auto px-4 box-border',
+        'max-w-4xl w-full mx-auto px-4 box-border',
         !noPaddingTop && 'pt-4',
         className
       )}

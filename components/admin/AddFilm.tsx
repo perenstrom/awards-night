@@ -5,14 +5,10 @@ import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
 import { createFilm } from '../../app/admin/actions';
 
 const FormContent: React.FC<{
@@ -22,8 +18,8 @@ const FormContent: React.FC<{
 
   return (
     <>
-      <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
-        <Field className="min-w-[12rem] max-w-md flex-1">
+      <AdminFieldRow>
+        <Field className="min-w-48 max-w-md flex-1">
           <FieldLabel htmlFor="imdb-id">IMDb ID</FieldLabel>
           <Input ref={inputRef} id="imdb-id" name="imdbId" />
         </Field>
@@ -36,7 +32,7 @@ const FormContent: React.FC<{
           Add
         </Button>
         {pending && <Spinner className="size-8" />}
-      </FieldGroup>
+      </AdminFieldRow>
     </>
   );
 };
@@ -53,23 +49,18 @@ export const AddFilm = () => {
   }, [statusMessage]);
 
   return (
-    <Card className="mt-4">
-      <CardHeader>
-        <CardTitle className="text-xl">Add film</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={createFilmAction}>
-          <FormContent inputRef={imdbIdInputElement} />
-        </form>
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
-            />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <AdminSection title="Add film">
+      <form action={createFilmAction}>
+        <FormContent inputRef={imdbIdInputElement} />
+      </form>
+      {statusMessage && (
+        <div className="mt-4">
+          <Alert
+            severity={statusMessage.severity}
+            message={statusMessage.message}
+          />
+        </div>
+      )}
+    </AdminSection>
   );
 };

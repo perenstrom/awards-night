@@ -11,13 +11,9 @@ import {
   FieldGroup,
   FieldLabel
 } from '@/components/ui/field';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
 import { createYear } from '../../app/admin/actions';
 
 const FormContent: React.FC<{
@@ -33,8 +29,8 @@ const FormContent: React.FC<{
   return (
     <>
       <FieldGroup className="gap-4">
-        <FieldGroup className="flex flex-row flex-wrap gap-4 gap-y-4">
-          <Field className="min-w-[8rem] flex-1">
+        <AdminFieldRow className="gap-y-4">
+          <Field className="min-w-32 flex-1">
             <FieldLabel htmlFor="year">Year</FieldLabel>
             <Input
               ref={yearInputRef}
@@ -47,7 +43,7 @@ const FormContent: React.FC<{
               placeholder="2025"
             />
           </Field>
-          <Field className="min-w-[12rem] flex-1">
+          <Field className="min-w-48 flex-1">
             <FieldLabel htmlFor="name">Name</FieldLabel>
             <Input
               ref={nameInputRef}
@@ -58,11 +54,11 @@ const FormContent: React.FC<{
               placeholder="97th Academy Awards"
             />
           </Field>
-          <Field className="min-w-[10rem] flex-1">
+          <Field className="min-w-40 flex-1">
             <FieldLabel htmlFor="date">Date</FieldLabel>
             <Input ref={dateInputRef} id="date" name="date" type="date" required />
           </Field>
-        </FieldGroup>
+        </AdminFieldRow>
 
         <div>
           <div className="mb-2 flex items-center justify-between">
@@ -158,30 +154,25 @@ export const AddYearForm: React.FC<AddYearFormProps> = ({
   }, [statusMessage]);
 
   return (
-    <Card className="mt-4">
-      <CardHeader>
-        <CardTitle className="text-xl">Add year</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={createYearAction}>
-          <FormContent
-            yearInputRef={yearInputRef}
-            nameInputRef={nameInputRef}
-            dateInputRef={dateInputRef}
-            categories={availableCategories}
-            allSelected={allSelected}
-            onToggleAll={handleToggleAll}
+    <AdminSection title="Add year">
+      <form action={createYearAction}>
+        <FormContent
+          yearInputRef={yearInputRef}
+          nameInputRef={nameInputRef}
+          dateInputRef={dateInputRef}
+          categories={availableCategories}
+          allSelected={allSelected}
+          onToggleAll={handleToggleAll}
+        />
+      </form>
+      {statusMessage && (
+        <div className="mt-4">
+          <Alert
+            severity={statusMessage.severity}
+            message={statusMessage.message}
           />
-        </form>
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
-            />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </AdminSection>
   );
 };

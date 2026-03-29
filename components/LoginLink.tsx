@@ -13,14 +13,14 @@ export const LoginLink = async () => {
       {player ? (
         <Link
           href="/me"
-          className="text-white/30 no-underline"
+          className="text-text-primary/30 no-underline"
         >
           DASHBOARD
         </Link>
       ) : (
         <a
           href="/auth/login"
-          className="text-white/30 no-underline"
+          className="text-text-primary/30 no-underline"
         >
           LOGIN
         </a>

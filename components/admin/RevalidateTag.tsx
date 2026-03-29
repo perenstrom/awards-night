@@ -5,14 +5,10 @@ import { useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
 import { revalidateTag } from '../../app/admin/actions';
 
 const FormContent: React.FC<{
@@ -22,8 +18,8 @@ const FormContent: React.FC<{
 
   return (
     <>
-      <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
-        <Field className="min-w-[12rem] max-w-md flex-1">
+      <AdminFieldRow>
+        <Field className="min-w-48 max-w-md flex-1">
           <FieldLabel htmlFor="tag">Tag</FieldLabel>
           <Input ref={inputRef} id="tag" name="tag" />
         </Field>
@@ -36,7 +32,7 @@ const FormContent: React.FC<{
           Revalidate
         </Button>
         {pending && <Spinner className="size-8" />}
-      </FieldGroup>
+      </AdminFieldRow>
     </>
   );
 };
@@ -56,23 +52,18 @@ export const RevalidateTag = () => {
   }, [statusMessage]);
 
   return (
-    <Card className="mt-4">
-      <CardHeader>
-        <CardTitle className="text-xl">Revalidate Tag</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={revalidateTagAction}>
-          <FormContent inputRef={tagInputElement} />
-        </form>
-        {statusMessage && (
-          <div className="mt-4">
-            <Alert
-              severity={statusMessage.severity}
-              message={statusMessage.message}
-            />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <AdminSection title="Revalidate Tag">
+      <form action={revalidateTagAction}>
+        <FormContent inputRef={tagInputElement} />
+      </form>
+      {statusMessage && (
+        <div className="mt-4">
+          <Alert
+            severity={statusMessage.severity}
+            message={statusMessage.message}
+          />
+        </div>
+      )}
+    </AdminSection>
   );
 };

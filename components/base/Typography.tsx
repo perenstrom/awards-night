@@ -8,12 +8,12 @@ interface Props {
 }
 
 const variantClasses: Record<Props['variant'], string> = {
-  h1: 'text-[2.986rem] max-md:text-[1.476rem]',
-  h2: 'text-[2.488rem] max-md:text-[1.383rem]',
-  h3: 'text-[2.074rem] max-md:text-[1.296rem]',
-  h4: 'text-[1.728rem] max-md:text-[1.215rem]',
-  h5: 'text-[1.44rem] max-md:text-[1.138rem]',
-  h6: 'text-[1.2rem] max-md:text-[1.067rem]',
+  h1: 'text-h1 max-md:text-h1-mobile',
+  h2: 'text-h2 max-md:text-h2-mobile',
+  h3: 'text-h3 max-md:text-h3-mobile',
+  h4: 'text-h4 max-md:text-h4-mobile',
+  h5: 'text-h5 max-md:text-h5-mobile',
+  h6: 'text-h6 max-md:text-h6-mobile',
   body: 'text-base'
 };
 
@@ -23,7 +23,6 @@ const getClassNames = (
   color: Props['color'] = 'black'
 ) =>
   clsx(
-    'font-[Inter,sans-serif]',
     variant === 'body' ? 'leading-[1.6]' : 'leading-[1.2]',
     variantClasses[variant],
     !noMargin && 'mb-5',

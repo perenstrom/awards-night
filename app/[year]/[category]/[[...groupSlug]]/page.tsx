@@ -103,7 +103,7 @@ export default async function Page(props: Props) {
 
   return (
     <div className="flex basis-full grow flex-col bg-[linear-gradient(180deg,#24242e_0%,#111115_24.3%)] p-[3em] pt-[1em]">
-      <h1 className="m-0 pb-[0.2em] font-[Inter,sans-serif] text-[2.7em] font-light text-text-primary">
+      <h1 className="m-0 pb-[0.2em] text-[2.7em] font-light text-text-primary">
         {category.name}
       </h1>
       <div

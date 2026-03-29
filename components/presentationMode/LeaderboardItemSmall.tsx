@@ -1,3 +1,4 @@
+import { TruncatedText } from 'components/base/TruncatedText';
 
 interface props {
   name: string;
@@ -26,9 +27,7 @@ export const LeaderboardItemSmall: React.FC<props> = ({
       className="flex-1 flex items-center"
       style={colorStyle}
     >
-      <div className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis px-1.5 -mx-1.5">
-        {name}
-      </div>
+      <TruncatedText>{name}</TruncatedText>
       {showScore && <div className="flex-none">{correct}</div>}
     </li>
   );

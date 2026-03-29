@@ -1,3 +1,5 @@
+import { TruncatedText } from 'components/base/TruncatedText';
+
 interface props {
   name: string;
   correct: number;
@@ -29,9 +31,7 @@ export const LeaderboardItem: React.FC<props> = ({
       className="flex items-center mb-2.5 text-base first:text-xl first:mb-1.5 first:py-0.5 first:px-2"
       style={colorStyle}
     >
-      <div className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis px-1.5 -mx-1.5">
-        {text}
-      </div>
+      <TruncatedText>{text}</TruncatedText>
       <div className="text-[0.8em] whitespace-nowrap">
         {correct} / {total}
       </div>

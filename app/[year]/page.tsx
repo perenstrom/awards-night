@@ -36,7 +36,7 @@ export default async function Page(props: Props) {
       <Typography variant="h1" color="white">
         Nominations for {year.year}
       </Typography>
-      <ul className="text-white [&_a]:text-white">
+      <ul className="text-text-primary [&_a]:text-text-primary">
         {Object.values(nominationData.categories).map((category) => (
           <li key={category.slug}>
             <Link href={`/${year.year}/${category.slug}`}>{category.name}</Link>

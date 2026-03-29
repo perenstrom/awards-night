@@ -3,7 +3,7 @@
   width: 28.4em;
   height: 12.9em;
   box-sizing: border-box;
-  background: #2c2c2c;
+  background: var(--color-card-dark);
   border-radius: 0.25em;
   padding: 0.7em;
   overflow: hidden;
@@ -17,7 +17,7 @@
     "poster ."
     "poster bets";
 
-  color: #e5e7f8;
+  color: var(--color-text-primary);
   font-family: "Inter", sans-serif;
 }
 

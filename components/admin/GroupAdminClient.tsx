@@ -4,15 +4,18 @@ import React, { useEffect, useActionState } from 'react';
 import { Group, Player } from 'types/nominations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { AdminFieldRow } from 'components/admin/AdminFieldRow';
+import { Card, CardContent } from '@/components/ui/card';
 import { Alert } from 'components/base/Alert';
+import { AdminSection } from 'components/admin/AdminSection';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { StatusMessage } from 'types/utilityTypes';
 import {
   addPlayerToGroup,
@@ -20,12 +23,6 @@ import {
   deleteGroup,
   removePlayerFromGroup
 } from 'app/admin/actions';
-
-const nativeSelectClassName = cn(
-  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none',
-  'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-  'disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30'
-);
 
 interface Props {
   groups: Group[];
@@ -72,45 +69,41 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
   };
 
   return (
-    <Card className="mt-4">
-      <CardHeader>
-        <CardTitle className="text-xl">Group Administration</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <AdminSection title="Group Administration">
+      <div className="space-y-6">
         <div>
           <h3 className="mb-2 text-base font-semibold text-card-foreground">
             Create New Group
           </h3>
           <form action={createGroupAction}>
-            <FieldGroup className="flex flex-row flex-wrap items-end gap-4">
-              <Field className="min-w-[10rem] flex-1">
+            <AdminFieldRow>
+              <Field className="min-w-40 flex-1">
                 <FieldLabel htmlFor="group-name">Group Name</FieldLabel>
                 <Input id="group-name" name="groupName" />
               </Field>
-              <Field className="min-w-[10rem] flex-1">
+              <Field className="min-w-40 flex-1">
                 <FieldLabel htmlFor="group-slug">Group Slug</FieldLabel>
                 <Input id="group-slug" name="groupSlug" />
               </Field>
-              <Field className="min-w-[12rem] flex-1">
+              <Field className="min-w-48 flex-1">
                 <FieldLabel htmlFor="owner-select">Owner *</FieldLabel>
-                <select
-                  id="owner-select"
-                  name="ownerId"
-                  required
-                  className={nativeSelectClassName}
-                >
-                  <option value="">Select owner...</option>
-                  {players.map((player) => (
-                    <option key={player.id} value={player.id}>
-                      {player.name}
-                    </option>
-                  ))}
-                </select>
+                <Select name="ownerId" required>
+                  <SelectTrigger id="owner-select" className="w-full">
+                    <SelectValue placeholder="Select owner..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {players.map((player) => (
+                      <SelectItem key={player.id} value={String(player.id)}>
+                        {player.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
               <div className="flex items-end pb-0.5">
                 <Button type="submit">Create</Button>
               </div>
-            </FieldGroup>
+            </AdminFieldRow>
           </form>
         </div>
 
@@ -216,22 +209,28 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
                         className="flex flex-wrap items-end gap-2"
                       >
                         <input type="hidden" name="groupId" value={group.id} />
-                        <Field className="min-w-[12rem] flex-1">
+                        <Field className="min-w-48 flex-1">
                           <FieldLabel htmlFor={`add-player-${group.id}`}>
                             Add player
                           </FieldLabel>
-                          <select
-                            id={`add-player-${group.id}`}
-                            name="playerId"
-                            className={nativeSelectClassName}
-                          >
-                            <option value="">Select player to add...</option>
-                            {playersNotInGroup.map((player) => (
-                              <option key={player.id} value={player.id}>
-                                {player.name}
-                              </option>
-                            ))}
-                          </select>
+                          <Select name="playerId">
+                            <SelectTrigger
+                              id={`add-player-${group.id}`}
+                              className="w-full"
+                            >
+                              <SelectValue placeholder="Select player to add..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {playersNotInGroup.map((player) => (
+                                <SelectItem
+                                  key={player.id}
+                                  value={String(player.id)}
+                                >
+                                  {player.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </Field>
                         <Button type="submit">Add Player</Button>
                       </form>
@@ -242,7 +241,7 @@ export const GroupAdminClient: React.FC<Props> = ({ groups, players }) => {
             })}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </AdminSection>
   );
 };
